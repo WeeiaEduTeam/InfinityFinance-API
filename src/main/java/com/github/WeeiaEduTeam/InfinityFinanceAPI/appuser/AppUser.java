@@ -6,9 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Getter
@@ -16,21 +14,31 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "AppUser")
 public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
-    @Column(unique = true)
+    //@Column(unique = true)
     private String username;
+
+    //@Column(unique = true)
+    private String email;
+
     private String password;
 
     private String firstName;
     private String secondName;
 
-    @OneToMany
-    @JoinColumn(name = "cart_id")
-    private List<Role> roles = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "AppUser_UserRole",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "role_id") }
+    )
+    private List<Role> roles =  new ArrayList<>();
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
