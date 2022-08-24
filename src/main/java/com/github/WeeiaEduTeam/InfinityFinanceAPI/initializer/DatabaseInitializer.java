@@ -127,10 +127,10 @@ public class DatabaseInitializer implements CommandLineRunner {
                     Ledger.builder()
                             .value(1020)
                             .quantity(1)
-                            .category(categoryList.get(5))
+                            .category(categoryList.get(4))
                             .appuser(appUserList.get(1))
-                            .build()
-                    /*Ledger.builder()
+                            .build(),
+                    Ledger.builder()
                             .value(100)
                             .quantity(1)
                             .category(categoryList.get(4))
@@ -164,8 +164,8 @@ public class DatabaseInitializer implements CommandLineRunner {
                             .value(100)
                             .quantity(1)
                             .category(categoryList.get(2))
-                            .appuser(appUserList.get(2))
-                            .build()*/
+                            .appuser(appUserList.get(1))
+                            .build()
                 )
         );
     }

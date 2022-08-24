@@ -1,5 +1,6 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.ledger.Ledger;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,7 +15,6 @@ import java.util.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "AppUser")
 public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,13 +32,11 @@ public class AppUser {
     private String firstName;
     private String secondName;
 
-    @ManyToMany
-    @JoinTable(
-            name = "AppUser_UserRole",
-            joinColumns = { @JoinColumn(name = "user_id") },
-            inverseJoinColumns = { @JoinColumn(name = "role_id") }
-    )
+    @ManyToMany(mappedBy = "users")
     private List<Role> roles =  new ArrayList<>();
+
+    @OneToMany(mappedBy = "appuser")
+    private List<Ledger> ledgers = new ArrayList<>();
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
