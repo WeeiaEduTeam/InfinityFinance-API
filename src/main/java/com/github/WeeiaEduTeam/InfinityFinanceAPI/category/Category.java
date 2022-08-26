@@ -1,6 +1,8 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.category;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.ledger.Ledger;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.Transaction;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -25,8 +27,9 @@ public class Category {
     //@Column(unique = true)
     private String name;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "category")
-    private List<Ledger> ledgers = new ArrayList<>();
+    private List<Transaction> transactions = new ArrayList<>();
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
