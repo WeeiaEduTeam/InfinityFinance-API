@@ -7,18 +7,18 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.CategoryService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class TransactionUtils {
 
     private final AppUserService appUserService;
     private final CategoryService categoryService;
 
-    public TransactionDTO mapTransactionToTransactionDTO(Transaction transaction) {
+    public static TransactionDTO mapTransactionToTransactionDTO(Transaction transaction) {
         return TransactionDTO.builder()
                 .categoryName(transaction.getCategory().getName())
                 .transactionType(transaction.getTransactionType())
@@ -38,27 +38,44 @@ public class TransactionUtils {
     }
 
     private Category getCategoryByName(String categoryName) {
-        return categoryService.getCategoryByName(categoryName);
+        var foundCategory = categoryService.getCategoryByName(categoryName);
+
+        if(foundCategory.isPresent())
+            return foundCategory.get();
+
+        return null;
     }
 
     private AppUser getAppUserByUserName(String userName) {
         var foundUser = appUserService.getUserByUserName(userName);
 
-        return foundUser.orElse(null);
+        if(foundUser.isPresent())
+            return foundUser.get();
+
+        return null;
     }
 
     private AppUser getAppUserById(long userId) {
         var foundUser = appUserService.getUserById(userId);
 
-        return foundUser.orElse(null);
+        if(foundUser.isPresent())
+            return foundUser.get();
+
+        return null;
     }
 
     public Transaction createTransactionFromCreateTransactionDTOAndUserId(CreateTransactionDTO createTransactionDTO, long userId) {
+        var appUser = getAppUserById(userId);
+        var category = getCategoryByName(createTransactionDTO.getCategoryName());
+
+
+
         return Transaction.builder()
                 .quantity(createTransactionDTO.getQuantity())
                 .value(createTransactionDTO.getValue())
-                .appuser(getAppUserById(userId))
-                .category(getCategoryByName(createTransactionDTO.getCategoryName()))
+                .transactionType(createTransactionDTO.getTransactionType())
+                .appuser(appUser)
+                .category(category)
                 .build();
     }
 }
