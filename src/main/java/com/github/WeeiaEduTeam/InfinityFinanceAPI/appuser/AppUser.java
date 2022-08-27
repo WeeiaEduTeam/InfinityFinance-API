@@ -1,6 +1,7 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.ledger.Ledger;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.Transaction;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,11 +33,16 @@ public class AppUser {
     private String firstName;
     private String secondName;
 
-    @ManyToMany(mappedBy = "users")
+
+    @ManyToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
+    @JoinTable(name="user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
     private List<Role> roles =  new ArrayList<>();
 
     @OneToMany(mappedBy = "appuser")
-    private List<Ledger> ledgers = new ArrayList<>();
+    private List<Transaction> transactions = new ArrayList<>();
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

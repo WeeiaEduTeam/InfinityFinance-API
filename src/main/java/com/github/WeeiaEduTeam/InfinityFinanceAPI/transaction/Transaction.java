@@ -1,5 +1,6 @@
-package com.github.WeeiaEduTeam.InfinityFinanceAPI.ledger;
+package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.Category;
 import lombok.*;
@@ -16,10 +17,14 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Ledger {
+public class Transaction {
+    /*
+        TODO: NEED SHORT DESCRIPTION AND TITLE
+        Include this information in service and database builder.
+    */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ledger_id")
+    @Column(name = "transaction_id")
     private Long id;
 
     @Enumerated(EnumType.STRING)
@@ -29,12 +34,12 @@ public class Ledger {
     private int value;
     private int quantity;
 
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "appuser_id")
     private AppUser appuser;
 
