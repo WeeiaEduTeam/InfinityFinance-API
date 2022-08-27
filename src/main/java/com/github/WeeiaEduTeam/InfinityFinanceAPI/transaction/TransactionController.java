@@ -1,5 +1,6 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,13 @@ import java.util.List;
 public class TransactionController {
 
     private final TransactionService transactionService;
+
+    @PostMapping("/users/{userId}/transactions") // user
+    ResponseEntity<TransactionDTO> createTransactionForGivenUser(@PathVariable long userId, @RequestBody CreateTransactionDTO createTransactionDTO) {
+        var transaction = transactionService.createTransactionForGivenUser(userId, createTransactionDTO);
+
+        return ResponseEntity.created(URI.create("/users/" + userId + "/transactions")).body(transaction);
+    }
 
     /*
         TODO: pageable
