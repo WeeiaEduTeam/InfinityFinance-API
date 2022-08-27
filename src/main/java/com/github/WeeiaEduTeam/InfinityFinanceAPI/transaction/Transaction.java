@@ -18,6 +18,10 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Transaction {
+    /*
+        TODO: NEED SHORT DESCRIPTION AND TITLE
+        Include this information in service and database builder.
+    */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "transaction_id")

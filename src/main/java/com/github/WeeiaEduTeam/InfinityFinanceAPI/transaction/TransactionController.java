@@ -3,18 +3,22 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping(path = "/api/v1")
 public class TransactionController {
 
     private final TransactionService transactionService;
 
+    /*
+        TODO: pageable
+        req param income, outcome
+     */
     @GetMapping("/users/{userId}/transactions/category/{categoryId}")
     public ResponseEntity<List<TransactionDTO>> getAllTransactionsForGivenUserAndCategory(@PathVariable long userId, @PathVariable long categoryId) {
         var transactions = transactionService.getAllTransactionsForGivenUserAndCategory(userId, categoryId);

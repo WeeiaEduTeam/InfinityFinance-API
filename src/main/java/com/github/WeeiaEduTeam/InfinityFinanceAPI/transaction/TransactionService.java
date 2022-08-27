@@ -13,7 +13,6 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
 
-
     public List<TransactionDTO> getAllTransactionsForGivenUserAndCategory(long userId, long categoryId) {
         var foundTransactions = transactionRepository.findAllByAppuserIdAndCategoryId(userId, categoryId);
 
