@@ -11,7 +11,11 @@ import lombok.*;
 public class CreateTransactionDTO {
 
     private TransactionType transactionType;
+
     private int value;
     private int quantity;
+
+    private String title;
+    private String description;
     private String categoryName;
 }

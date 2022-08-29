@@ -1,6 +1,5 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.Category;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.CategoryService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
@@ -20,7 +19,6 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final CategoryService categoryService;
-
 
     @Autowired
     private TransactionUtils transactionUtils;
@@ -46,28 +44,34 @@ public class TransactionService {
 
         var transaction = transactionUtils.createTransactionFromCreateTransactionDTOAndUserId(createTransactionDTO, userId);
 
+        // VALIDATE QUANTITY AND AMOUNT  are positive
+
         if (transaction.getAppuser() == null) {
+            //EXCEPTION
             log.error("User not found in appUserService, called from createTransactionForGivenUser\n Create error handler");
         }
 
         if (transaction.getCategory() == null) {
-            Category category = Category.builder()
-                    .name(createTransactionDTO.getCategoryName())
-                    .build();
+            var savedCategory = saveCategory(createTransactionDTO.getCategoryName());
 
-            var savedCategoryDTO = categoryService.createCategory(category);
-
-
-            transaction.setCategory(category);
+            transaction.setCategory(savedCategory);
         }
 
-            log.info("Saved succesfully");
-            savedTransaction = transactionRepository.save(transaction);
+        log.info("Saved succesfully");
+        savedTransaction = transactionRepository.save(transaction);
 
 
         log.info(String.valueOf(transactionUtils));
         log.info(String.valueOf(savedTransaction));
 
         return TransactionUtils.mapTransactionToTransactionDTO(savedTransaction);
+    }
+
+    private Category saveCategory(String categoryName) {
+        Category category = Category.builder()
+                .name(categoryName)
+                .build();
+
+        return categoryService.createCategory(category);
     }
 }

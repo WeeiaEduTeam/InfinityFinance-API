@@ -6,8 +6,10 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.Category;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.CategoryService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,20 +20,39 @@ public class TransactionUtils {
     private final AppUserService appUserService;
     private final CategoryService categoryService;
 
+    public Transaction createTransactionFromCreateTransactionDTOAndUserId(CreateTransactionDTO createTransactionDTO, long userId) {
+        var appUser = getAppUserById(userId);
+        var category = getCategoryByName(createTransactionDTO.getCategoryName());
+
+        return Transaction.builder()
+                .transactionType(createTransactionDTO.getTransactionType())
+                .value(createTransactionDTO.getValue())
+                .quantity(createTransactionDTO.getQuantity())
+                .title(createTransactionDTO.getTitle())
+                .description(createTransactionDTO.getDescription())
+                .appuser(appUser)
+                .category(category)
+                .build();
+    }
+
     public static TransactionDTO mapTransactionToTransactionDTO(Transaction transaction) {
         return TransactionDTO.builder()
                 .categoryName(transaction.getCategory().getName())
                 .transactionType(transaction.getTransactionType())
                 .value(transaction.getValue())
                 .quantity(transaction.getQuantity())
+                .title(transaction.getTitle())
+                .description(transaction.getDescription())
                 .userName(transaction.getAppuser().getUsername())
                 .build();
     }
 
     public Transaction mapTransactionDTOToTransaction(TransactionDTO transactionDTO) {
         return Transaction.builder()
-                .quantity(transactionDTO.getQuantity())
                 .value(transactionDTO.getValue())
+                .quantity(transactionDTO.getQuantity())
+                .title(transactionDTO.getTitle())
+                .description(transactionDTO.getDescription())
                 .appuser(getAppUserByUserName(transactionDTO.getUserName()))
                 .category(getCategoryByName(transactionDTO.getCategoryName()))
                 .build();
@@ -40,42 +61,18 @@ public class TransactionUtils {
     private Category getCategoryByName(String categoryName) {
         var foundCategory = categoryService.getCategoryByName(categoryName);
 
-        if(foundCategory.isPresent())
-            return foundCategory.get();
-
-        return null;
+        return foundCategory.orElse(null);
     }
 
     private AppUser getAppUserByUserName(String userName) {
         var foundUser = appUserService.getUserByUserName(userName);
 
-        if(foundUser.isPresent())
-            return foundUser.get();
-
-        return null;
+        return foundUser.orElse(null);
     }
 
     private AppUser getAppUserById(long userId) {
         var foundUser = appUserService.getUserById(userId);
 
-        if(foundUser.isPresent())
-            return foundUser.get();
-
-        return null;
-    }
-
-    public Transaction createTransactionFromCreateTransactionDTOAndUserId(CreateTransactionDTO createTransactionDTO, long userId) {
-        var appUser = getAppUserById(userId);
-        var category = getCategoryByName(createTransactionDTO.getCategoryName());
-
-
-
-        return Transaction.builder()
-                .quantity(createTransactionDTO.getQuantity())
-                .value(createTransactionDTO.getValue())
-                .transactionType(createTransactionDTO.getTransactionType())
-                .appuser(appUser)
-                .category(category)
-                .build();
+        return foundUser.orElse(null);
     }
 }

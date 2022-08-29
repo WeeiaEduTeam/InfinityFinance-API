@@ -12,17 +12,15 @@ import java.util.Optional;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-    @Autowired
-    private final CategoryUtils categoryUtils;
 
     public Optional<Category> getCategoryByName(String categoryName) {
 
         return Optional.ofNullable(categoryRepository.findByName(categoryName));
     }
 
-    public CategoryDTO createCategory(Category category) {
+    public Category createCategory(Category category) {
         var savedCategory = categoryRepository.save(category);
 
-        return categoryUtils.mapCategoryToCategoryDTO(savedCategory);
+        return savedCategory;
     }
 }

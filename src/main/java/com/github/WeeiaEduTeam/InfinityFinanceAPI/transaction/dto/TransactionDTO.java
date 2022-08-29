@@ -19,8 +19,12 @@ import java.util.Date;
 public class TransactionDTO {
 
     private TransactionType transactionType;
+
     private int value;
     private int quantity;
+
+    private String title;
+    private String description;
     private String categoryName;
     private String userName;
 }

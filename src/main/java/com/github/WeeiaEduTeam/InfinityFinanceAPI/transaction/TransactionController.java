@@ -16,7 +16,7 @@ public class TransactionController {
 
     private final TransactionService transactionService;
 
-    @PostMapping("/users/{userId}/transactions") // user
+    @PostMapping("/users/{userId}/transactions")
     ResponseEntity<TransactionDTO> createTransactionForGivenUser(@PathVariable long userId, @RequestBody CreateTransactionDTO createTransactionDTO) {
         var transaction = transactionService.createTransactionForGivenUser(userId, createTransactionDTO);
 
