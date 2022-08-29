@@ -26,6 +26,7 @@ public class TransactionController {
     /*
         TODO: pageable
         req param income, outcome
+        req param category name instead of id?
      */
     @GetMapping("/users/{userId}/transactions/category/{categoryId}")
     public ResponseEntity<List<TransactionDTO>> getAllTransactionsForGivenUserAndCategory(@PathVariable long userId, @PathVariable long categoryId) {

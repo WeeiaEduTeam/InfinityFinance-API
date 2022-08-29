@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.github.WeeiaEduTeam.InfinityFinanceAPI.utils.Utils.isPositive;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -40,14 +42,15 @@ public class TransactionService {
     }
 
     public TransactionDTO createTransactionForGivenUser(long userId, CreateTransactionDTO createTransactionDTO) {
+        if(!isPositive(createTransactionDTO.getQuantity()) || !isPositive(createTransactionDTO.getValue())) {
+            log.error("Quantity or value is not positive, called from createTransactionForGivenUser\n Create error handler");
+        }
+
         Transaction savedTransaction = null;
 
         var transaction = transactionUtils.createTransactionFromCreateTransactionDTOAndUserId(createTransactionDTO, userId);
 
-        // VALIDATE QUANTITY AND AMOUNT  are positive
-
         if (transaction.getAppuser() == null) {
-            //EXCEPTION
             log.error("User not found in appUserService, called from createTransactionForGivenUser\n Create error handler");
         }
 
@@ -59,7 +62,6 @@ public class TransactionService {
 
         log.info("Saved succesfully");
         savedTransaction = transactionRepository.save(transaction);
-
 
         log.info(String.valueOf(transactionUtils));
         log.info(String.valueOf(savedTransaction));

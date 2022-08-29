@@ -24,7 +24,6 @@ public class Transaction {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    //@Type(type = "com.github.WeeiaEduTeam.InfinityFinanceAPI.ledge.TransactionType")
     private TransactionType transactionType;
 
     private int value;
