@@ -65,9 +65,8 @@ public class TransactionUtils {
     }
 
     private AppUser getAppUserByUserName(String userName) {
-        var foundUser = appUserService.getUserByUserName(userName);
 
-        return foundUser.orElse(null);
+        return appUserService.getUserByUserName(userName);
     }
 
     private AppUser getAppUserById(long userId) {

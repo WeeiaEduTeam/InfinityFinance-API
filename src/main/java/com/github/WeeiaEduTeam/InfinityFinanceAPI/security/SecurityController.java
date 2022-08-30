@@ -26,7 +26,7 @@ public class SecurityController {
         String refreshToken = request.getHeader(AUTHORIZATION);
         String accessToken = securityService.refreshAccessToken(refreshToken, request.getRequestURL().toString());
 
-        response.setHeader("Access_token", accessToken);
-        response.setHeader("Refresh_token", refreshToken);
+        response.setHeader("access_token", accessToken);
+        response.setHeader("refresh_token", refreshToken);
     }
 }

@@ -2,6 +2,10 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -9,7 +13,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AppUserService {
+public class AppUserService implements UserDetailsService {
 
     private final AppUserRepository appUserRepository;
 
@@ -18,8 +22,12 @@ public class AppUserService {
         return appUserRepository.findById(userId);
     }
 
-    public Optional<AppUser> getUserByUserName(String userName) {
+    public AppUser getUserByUserName(String username) {
+        return appUserRepository.findByUsername(username);
+    }
 
-        return Optional.ofNullable(appUserRepository.findByUsername(userName));
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return getUserByUserName(username);
     }
 }
