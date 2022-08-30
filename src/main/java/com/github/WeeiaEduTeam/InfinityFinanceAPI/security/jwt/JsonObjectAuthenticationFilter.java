@@ -1,4 +1,4 @@
-package com.github.WeeiaEduTeam.InfinityFinanceAPI.security;
+package com.github.WeeiaEduTeam.InfinityFinanceAPI.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserCredentialsDTO;

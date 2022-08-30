@@ -11,6 +11,7 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleRepository;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -60,9 +61,9 @@ public class DatabaseInitializer implements CommandLineRunner {
         appUserList.addAll(
                 Arrays.asList(
                     AppUser.builder()
-                            .username("pasa")
+                            .username("admin")
                             .email("patryk@wp.pl")
-                            .password("{noop}need to bcrypt this passwd")
+                            .password("{noop}admin")
                             .firstName("Patryk")
                             .secondName("Yes")
                             .roles(Arrays.asList(roleList.get(0)))
@@ -74,7 +75,15 @@ public class DatabaseInitializer implements CommandLineRunner {
                             .firstName("Geraldo")
                             .secondName("Ciro")
                             .roles(roleList)
-                            .build()
+                            .build(),
+                        AppUser.builder()
+                                .username("test")
+                                .email("superaancko@o2.pl")
+                                .password("{bcrypt}" + new BCryptPasswordEncoder().encode("test"))
+                                .firstName("Oki")
+                                .secondName("Ok")
+                                .roles(roleList)
+                                .build()
                 )
         );
     }

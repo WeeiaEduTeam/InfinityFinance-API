@@ -2,6 +2,7 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.security;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserCredentialsDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class SecurityController {

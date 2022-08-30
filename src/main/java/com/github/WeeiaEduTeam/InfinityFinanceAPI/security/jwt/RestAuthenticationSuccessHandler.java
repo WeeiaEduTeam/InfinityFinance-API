@@ -1,6 +1,7 @@
-package com.github.WeeiaEduTeam.InfinityFinanceAPI.security;
+package com.github.WeeiaEduTeam.InfinityFinanceAPI.security.jwt;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.github.WeeiaEduTeam.InfinityFinanceAPI.security.JwtUtil.TOKEN_PREFIX;
+import static com.github.WeeiaEduTeam.InfinityFinanceAPI.security.jwt.JwtUtil.TOKEN_PREFIX;
 
 @Component
 @RequiredArgsConstructor

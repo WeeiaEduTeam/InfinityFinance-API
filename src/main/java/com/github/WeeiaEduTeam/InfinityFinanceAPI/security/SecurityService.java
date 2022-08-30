@@ -3,10 +3,11 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.security;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static com.github.WeeiaEduTeam.InfinityFinanceAPI.security.JwtUtil.TOKEN_PREFIX;
+import static com.github.WeeiaEduTeam.InfinityFinanceAPI.security.jwt.JwtUtil.TOKEN_PREFIX;
 
 @RequiredArgsConstructor
 @Service

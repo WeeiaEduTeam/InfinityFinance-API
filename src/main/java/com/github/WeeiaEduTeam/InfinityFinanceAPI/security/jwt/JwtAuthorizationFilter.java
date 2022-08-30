@@ -1,7 +1,6 @@
-package com.github.WeeiaEduTeam.InfinityFinanceAPI.security;
+package com.github.WeeiaEduTeam.InfinityFinanceAPI.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +16,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.WeeiaEduTeam.InfinityFinanceAPI.security.JwtUtil.TOKEN_PREFIX;
+import static com.github.WeeiaEduTeam.InfinityFinanceAPI.security.jwt.JwtUtil.TOKEN_PREFIX;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -72,6 +71,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             return null;
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        userDetails.getAuthorities().forEach(e -> logger.info("CreateUsername + " + e));
+
 
         return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null, userDetails.getAuthorities());
     }
