@@ -7,12 +7,11 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.github.WeeiaEduTeam.InfinityFinanceAPI.utils.Utils.isPositive;
+import static com.github.WeeiaEduTeam.InfinityFinanceAPI.util.Util.isPositive;
 
 @Service
 @RequiredArgsConstructor
@@ -22,14 +21,13 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final CategoryService categoryService;
 
-    @Autowired
-    private TransactionUtils transactionUtils;
+    private final TransactionUtil transactionUtil;
 
     public List<TransactionDTO> getAllTransactionsForGivenUserAndCategory(long userId, long categoryId) {
         var foundTransactions = transactionRepository.findAllByAppuserIdAndCategoryId(userId, categoryId);
 
         return foundTransactions.stream()
-                .map(TransactionUtils::mapTransactionToTransactionDTO)
+                .map(TransactionUtil::mapTransactionToTransactionDTO)
                 .toList();
     }
 
@@ -37,7 +35,7 @@ public class TransactionService {
         var foundTransactions = transactionRepository.findAllByAppuserId(userId);
 
         return foundTransactions.stream()
-                .map(TransactionUtils::mapTransactionToTransactionDTO)
+                .map(TransactionUtil::mapTransactionToTransactionDTO)
                 .toList();
     }
 
@@ -48,7 +46,7 @@ public class TransactionService {
 
         Transaction savedTransaction = null;
 
-        var transaction = transactionUtils.createTransactionFromCreateTransactionDTOAndUserId(createTransactionDTO, userId);
+        var transaction = transactionUtil.createTransactionFromCreateTransactionDTOAndUserId(createTransactionDTO, userId);
 
         if (transaction.getAppuser() == null) {
             log.error("User not found in appUserService, called from createTransactionForGivenUser\n Create error handler");
@@ -63,10 +61,10 @@ public class TransactionService {
         log.info("Saved succesfully");
         savedTransaction = transactionRepository.save(transaction);
 
-        log.info(String.valueOf(transactionUtils));
+        log.info(String.valueOf(transactionUtil));
         log.info(String.valueOf(savedTransaction));
 
-        return TransactionUtils.mapTransactionToTransactionDTO(savedTransaction);
+        return TransactionUtil.mapTransactionToTransactionDTO(savedTransaction);
     }
 
     private Category saveCategory(String categoryName) {

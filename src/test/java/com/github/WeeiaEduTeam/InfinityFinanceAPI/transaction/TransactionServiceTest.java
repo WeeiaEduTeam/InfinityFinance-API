@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.Transaction;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -22,15 +21,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Collections;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 class TransactionServiceTest {
 
     @InjectMocks
@@ -42,7 +38,7 @@ class TransactionServiceTest {
     @Mock
     private CategoryService categoryService;
     @Mock
-    private TransactionUtils transactionUtils;
+    private TransactionUtil transactionUtil;
 
     Transaction transactionTest;
     AppUser appUserTest;
@@ -93,9 +89,8 @@ class TransactionServiceTest {
                 .build();
     }
 
-    /*
-    transactionutils is null
-    @Test
+
+    /*@Test
     @DisplayName("Should save transaction for given user and found category.")
     void createTransactionForGivenUser() {
         //given

@@ -4,6 +4,7 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransact
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -16,7 +17,17 @@ public class TransactionController {
 
     private final TransactionService transactionService;
 
-    @PostMapping("/users/{userId}/transactions")
+    @GetMapping("/secured/justAuth")
+    public String justAuthenticated() {
+        return "auth";
+    }
+
+    @GetMapping("/admin/needAdminRole")
+    public String justAdmin() {
+        return "role_admin";
+    }
+
+    @PostMapping("/admin/users/{userId}/transactions")
     ResponseEntity<TransactionDTO> createTransactionForGivenUser(@PathVariable long userId, @RequestBody CreateTransactionDTO createTransactionDTO) {
         var transaction = transactionService.createTransactionForGivenUser(userId, createTransactionDTO);
 
@@ -28,14 +39,14 @@ public class TransactionController {
         req param income, outcome
         req param category name instead of id?
      */
-    @GetMapping("/users/{userId}/transactions/category/{categoryId}")
+    @GetMapping("/admin/user/{userId}/transactions/category/{categoryId}")
     public ResponseEntity<List<TransactionDTO>> getAllTransactionsForGivenUserAndCategory(@PathVariable long userId, @PathVariable long categoryId) {
         var transactions = transactionService.getAllTransactionsForGivenUserAndCategory(userId, categoryId);
 
         return ResponseEntity.ok(transactions);
     }
 
-    @GetMapping("/users/{userId}/transactions")
+    @GetMapping("/admin/users/{userId}/transactions")
     public ResponseEntity<List<TransactionDTO>> getAllTransactionsForGivenUserAndCategory(@PathVariable long userId) {
         var transactions = transactionService.getAllTransactionsForGivenUser(userId);
 

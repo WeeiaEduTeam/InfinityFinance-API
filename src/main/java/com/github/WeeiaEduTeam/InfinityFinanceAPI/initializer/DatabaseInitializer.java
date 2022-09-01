@@ -11,9 +11,11 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleRepository;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -60,21 +62,29 @@ public class DatabaseInitializer implements CommandLineRunner {
         appUserList.addAll(
                 Arrays.asList(
                     AppUser.builder()
-                            .username("pasa")
+                            .username("admin")
                             .email("patryk@wp.pl")
-                            .password("need to bcrypt this passwd")
+                            .password("{noop}admin")
                             .firstName("Patryk")
                             .secondName("Yes")
-                            .roles(Arrays.asList(roleList.get(0)))
+                            .roles(Collections.singletonList(roleList.get(0)))
                             .build(),
                     AppUser.builder()
-                            .username("geralt123")
+                            .username("user")
                             .email("superaancko@o2.pl")
-                            .password("need to bcrypt this passwd2")
+                            .password("{noop}user")
                             .firstName("Geraldo")
                             .secondName("Ciro")
-                            .roles(roleList)
-                            .build()
+                            .roles(Collections.singletonList(roleList.get(1)))
+                            .build(),
+                        AppUser.builder()
+                                .username("test")
+                                .email("superaancko@o2.pl")
+                                .password("{bcrypt}" + new BCryptPasswordEncoder().encode("test"))
+                                .firstName("Oki")
+                                .secondName("Ok")
+                                .roles(roleList)
+                                .build()
                 )
         );
     }
