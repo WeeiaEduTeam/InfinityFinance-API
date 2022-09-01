@@ -17,6 +17,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionDTO {
+    long id;
 
     private TransactionType transactionType;
 

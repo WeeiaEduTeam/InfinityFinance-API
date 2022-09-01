@@ -14,7 +14,9 @@ import org.mockito.InjectMocks;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -41,10 +43,12 @@ class TransactionServiceTest {
     private TransactionUtil transactionUtil;
 
     Transaction transactionTest;
+    TransactionDTO transactionDTOTest;
     AppUser appUserTest;
     Role roleTest;
     Category categoryTest;
     CreateTransactionDTO createTransactionDTOTest;
+    CreateTransactionDTO createTransactionDTOEditTest;
 
     @BeforeEach
     void init() {
@@ -79,6 +83,17 @@ class TransactionServiceTest {
                 .quantity(2)
                 .build();
 
+        transactionDTOTest = TransactionDTO.builder()
+                .id(1L)
+                .transactionType(TransactionType.INCOME)
+                .title("title")
+                .description("desc")
+                .userName("name")
+                .value(600)
+                .quantity(2)
+                .categoryName("name")
+                .build();
+
         createTransactionDTOTest = CreateTransactionDTO.builder()
                 .transactionType(transactionTest.getTransactionType())
                 .title(transactionTest.getTitle())
@@ -90,11 +105,13 @@ class TransactionServiceTest {
     }
 
 
-    /*@Test
+    @Test
     @DisplayName("Should save transaction for given user and found category.")
-    void createTransactionForGivenUser() {
+    void shouldCreateTransactionForGivenUser() {
         //given
-        Mockito.when(transactionRepository.save(Mockito.any(Transaction.class))).thenReturn(transactionTest);
+        when(transactionUtil.createTransactionFromCreateTransactionDTOAndUserId(any(CreateTransactionDTO.class), eq(1L))).thenReturn(transactionTest);
+        when(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).thenReturn(transactionDTOTest);
+        when(transactionRepository.save(any(Transaction.class))).thenReturn(transactionTest);
 
         //when
         var savedTransaction = transactionService.createTransactionForGivenUser(appUserTest.getId(), createTransactionDTOTest);
@@ -104,12 +121,34 @@ class TransactionServiceTest {
         assertThat(savedTransaction, hasProperty("transactionType", equalTo(TransactionType.INCOME)));
         assertThat(savedTransaction, hasProperty("value", equalTo(600)));
         assertThat(savedTransaction, hasProperty("quantity", equalTo(2)));
-    }*/
+    }
+
+    @Test
+    @DisplayName("Should replace transaction content.")
+    void shouldReplaceTransactionForGivenUser() {
+        //given
+        when(transactionUtil.overwriteTransactionByCreateTransactionDTO(any(Transaction.class), any(CreateTransactionDTO.class))).thenReturn(transactionTest);
+        when(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).thenReturn(transactionDTOTest);
+        when(transactionRepository.findByIdAndAppuserId(1L, 1L)).thenReturn(transactionTest);
+
+        //when
+        var savedTransaction = transactionService.replaceTransaction(transactionTest.getAppuser().getId(), transactionTest.getId(), createTransactionDTOTest);
+
+        //then
+        assertThat(savedTransaction, instanceOf(TransactionDTO.class));
+        assertThat(savedTransaction, hasProperty("transactionType", equalTo(TransactionType.INCOME)));
+        assertThat(savedTransaction, hasProperty("value", equalTo(600)));
+        assertThat(savedTransaction, hasProperty("quantity", equalTo(2)));
+        assertThat(savedTransaction, hasProperty("description", equalTo("desc")));
+        assertThat(savedTransaction, hasProperty("title", equalTo("title")));
+        assertThat(savedTransaction, hasProperty("categoryName", equalTo("name")));
+    }
 
     @Test
     @DisplayName("Should get all transactions for given user and category.")
-    void getAllTransactionsForGivenUserAndCategory() {
+    void shouldGetAllTransactionsForGivenUserAndCategory() {
         //given
+        when(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).thenReturn(transactionDTOTest);
         when(transactionRepository.findAllByAppuserIdAndCategoryId(appUserTest.getId(), categoryTest.getId())).thenReturn(Collections.singletonList(transactionTest));
 
         //when
@@ -128,7 +167,7 @@ class TransactionServiceTest {
 
     @Test
     @DisplayName("Should get all transactions for given user.")
-    void getAllTransactionsForGivenUser() {
+    void shouldGetAllTransactionsForGivenUser() {
         //given
         when(transactionRepository.findAllByAppuserId(appUserTest.getId())).thenReturn(Collections.singletonList(transactionTest));
 

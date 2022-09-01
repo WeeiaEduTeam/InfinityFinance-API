@@ -27,13 +27,6 @@ public class TransactionController {
         return "role_admin";
     }
 
-    @PostMapping("/admin/users/{userId}/transactions")
-    ResponseEntity<TransactionDTO> createTransactionForGivenUser(@PathVariable long userId, @RequestBody CreateTransactionDTO createTransactionDTO) {
-        var transaction = transactionService.createTransactionForGivenUser(userId, createTransactionDTO);
-
-        return ResponseEntity.created(URI.create("/users/" + userId + "/transactions")).body(transaction);
-    }
-
     /*
         TODO: pageable
         req param income, outcome
@@ -51,6 +44,25 @@ public class TransactionController {
         var transactions = transactionService.getAllTransactionsForGivenUser(userId);
 
         return ResponseEntity.ok(transactions);
+    }
+
+    @PostMapping("/admin/users/{userId}/transactions")
+    ResponseEntity<TransactionDTO> createTransactionForGivenUser(@PathVariable long userId, @RequestBody CreateTransactionDTO createTransactionDTO) {
+        var transaction = transactionService.createTransactionForGivenUser(userId, createTransactionDTO);
+
+        return ResponseEntity.created(URI.create("/users/" + userId + "/transactions")).body(transaction);
+    }
+
+
+    // change into patch because of merging location with uni
+    @PutMapping("/admin/users/{userId}/transactions/{transactionId}") //admin
+    ResponseEntity<TransactionDTO> replaceUniversityWithLocation(
+            @PathVariable Long userId, @PathVariable Long transactionId,
+            @RequestBody CreateTransactionDTO createTransactionDTO) {
+
+        var replacedTransaction = transactionService.replaceTransaction(userId, transactionId, createTransactionDTO);
+
+        return ResponseEntity.ok(replacedTransaction);
     }
 
 }
