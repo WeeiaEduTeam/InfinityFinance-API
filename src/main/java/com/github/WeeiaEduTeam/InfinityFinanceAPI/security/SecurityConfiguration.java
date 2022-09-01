@@ -75,7 +75,8 @@ public class SecurityConfiguration {
 
         http.authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
-                .antMatchers("/api/v1/secured/**").authenticated()
+                .antMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/api/v1/**").authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(STATELESS)
                 .and()

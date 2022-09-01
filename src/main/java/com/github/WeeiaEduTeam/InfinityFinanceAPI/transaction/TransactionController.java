@@ -17,9 +17,14 @@ public class TransactionController {
 
     private final TransactionService transactionService;
 
-    @GetMapping("/secured")
-    public String temporary() {
-        return "test";
+    @GetMapping("/secured/justAuth")
+    public String justAuthenticated() {
+        return "auth";
+    }
+
+    @GetMapping("/admin/needAdminRole")
+    public String justAdmin() {
+        return "role_admin";
     }
 
     @PostMapping("/admin/users/{userId}/transactions")

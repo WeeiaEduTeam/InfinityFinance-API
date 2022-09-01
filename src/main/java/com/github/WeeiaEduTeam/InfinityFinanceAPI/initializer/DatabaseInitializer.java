@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -66,15 +67,15 @@ public class DatabaseInitializer implements CommandLineRunner {
                             .password("{noop}admin")
                             .firstName("Patryk")
                             .secondName("Yes")
-                            .roles(Arrays.asList(roleList.get(0)))
+                            .roles(Collections.singletonList(roleList.get(0)))
                             .build(),
                     AppUser.builder()
-                            .username("geralt123")
+                            .username("user")
                             .email("superaancko@o2.pl")
-                            .password("{noop}need to bcrypt this passwd2")
+                            .password("{noop}user")
                             .firstName("Geraldo")
                             .secondName("Ciro")
-                            .roles(roleList)
+                            .roles(Collections.singletonList(roleList.get(1)))
                             .build(),
                         AppUser.builder()
                                 .username("test")
