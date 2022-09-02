@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.github.WeeiaEduTeam.InfinityFinanceAPI.util.Util.isPositive;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -40,11 +38,7 @@ public class TransactionService {
     }
 
     public TransactionDTO createTransactionForGivenUser(long userId, CreateTransactionDTO createTransactionDTO) {
-        if(!isPositive(createTransactionDTO.getQuantity()) || !isPositive(createTransactionDTO.getValue())) {
-            throw new RuntimeException("Quantity or value is not positive, called from createTransactionForGivenUser\n Create error handler");
-        }
-
-        Transaction savedTransaction = null;
+        validateArgumentsArePositive(createTransactionDTO.getQuantity(), createTransactionDTO.getValue());
 
         var transaction = transactionUtil.createTransactionFromCreateTransactionDTOAndUserId(createTransactionDTO, userId);
 
@@ -58,7 +52,7 @@ public class TransactionService {
             transaction.setCategory(savedCategory);
         }
 
-        savedTransaction = transactionRepository.save(transaction);
+        Transaction savedTransaction = transactionRepository.save(transaction);
 
         return transactionUtil.mapTransactionToTransactionDTO(savedTransaction);
     }
@@ -72,9 +66,7 @@ public class TransactionService {
     }
 
     public TransactionDTO replaceTransaction(Long userId, Long transactionId, CreateTransactionDTO createTransactionDTO) {
-        if(!isPositive(createTransactionDTO.getQuantity()) || !isPositive(createTransactionDTO.getValue())) {
-            throw new RuntimeException("Quantity or value is not positive, called from replaceTransaction\n Create error handler");
-        }
+        validateArgumentsArePositive(createTransactionDTO.getQuantity(), createTransactionDTO.getValue());
 
         var foundTransaction = transactionRepository.findByIdAndAppuserId(transactionId, userId);
 
@@ -94,7 +86,11 @@ public class TransactionService {
         return transactionUtil.mapTransactionToTransactionDTO(overwrittenTransaction);
     }
 
-    public void deleteOneTransactionForUser(long transactionId, long userId) {
+    private void validateArgumentsArePositive(int... values) {
+        transactionUtil.validateArgumentsArePositive(values);
+    }
+
+    public void deleteOneTransaction(long transactionId) {
 
         var foundTransaction = transactionRepository.findById(transactionId);
 

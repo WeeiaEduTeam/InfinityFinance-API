@@ -15,18 +15,17 @@ import org.mockito.InjectMocks;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
 
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
@@ -103,8 +102,22 @@ class TransactionServiceTest {
                 .build();
     }
 
+    @Test
+    @DisplayName("Should delete transaction and related category with no relations.")
+    void shouldDeleteTransactionByIdAndCategory() {
+        // given
+        when(transactionRepository.findById(anyLong())).thenReturn(Optional.ofNullable(transactionTest));
+
+        // when
+        transactionService.deleteOneTransaction(transactionTest.getId());
+
+        // then
+        verify(transactionRepository).delete(transactionTest);
+        verify(categoryService).deleteCategoryIfNotRelated(transactionTest.getCategory().getId());
+    }
 
     @Test
+    @DisplayName("Should create transaction for given user with unknown category.")
     void shouldCreateTransactionForGivenUserWithUnknownCategory() {
         //given
         when(transactionUtil.createTransactionFromCreateTransactionDTOAndUserId(any(CreateTransactionDTO.class), eq(1L))).thenReturn(transactionTest);

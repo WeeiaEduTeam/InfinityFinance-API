@@ -7,13 +7,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static com.github.WeeiaEduTeam.InfinityFinanceAPI.util.Util.isPositive;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+
+    private final CategoryUtil categoryUtil;
 
     public Optional<Category> getCategoryByName(String categoryName) {
 
@@ -29,9 +30,13 @@ public class CategoryService {
         var foundCategory = categoryRepository.findById(id);
 
         foundCategory.ifPresent((category) -> {
-            if (!isPositive(category.getTransactions().size()))
+            if (!isNumberPositive(category.getTransactions().size()))
                 deleteCategoryById(category.getId());
         });
+    }
+
+    private boolean isNumberPositive(int value) {
+        return categoryUtil.isNumberPositive(value);
     }
 
     private void deleteCategoryById(Long id) {

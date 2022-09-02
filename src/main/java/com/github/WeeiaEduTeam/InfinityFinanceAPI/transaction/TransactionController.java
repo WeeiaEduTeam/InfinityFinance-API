@@ -1,12 +1,10 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.CategoryService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -34,7 +32,7 @@ public class TransactionController {
         req param income, outcome
         req param category name instead of id?
      */
-    @GetMapping("/admin/user/{userId}/transactions/category/{categoryId}")
+    @GetMapping("/admin/users/{userId}/transactions/category/{categoryId}")
     public ResponseEntity<List<TransactionDTO>> getAllTransactionsForGivenUserAndCategory(@PathVariable long userId, @PathVariable long categoryId) {
         var transactions = transactionService.getAllTransactionsForGivenUserAndCategory(userId, categoryId);
 
@@ -67,9 +65,9 @@ public class TransactionController {
         return ResponseEntity.ok(replacedTransaction);
     }
 
-    @DeleteMapping("/admin/users/{userId}/transactions/{transactionId:[0-9]+}")
-    ResponseEntity<Void> deleteSingleTransactionForGivenUser(@PathVariable long userId, @PathVariable long transactionId) {
-        transactionService.deleteOneTransactionForUser(transactionId, userId);
+    @DeleteMapping("/admin/users/transactions/{transactionId:[0-9]+}")
+    ResponseEntity<Void> deleteSingleTransaction(@PathVariable long transactionId) {
+        transactionService.deleteOneTransaction(transactionId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
