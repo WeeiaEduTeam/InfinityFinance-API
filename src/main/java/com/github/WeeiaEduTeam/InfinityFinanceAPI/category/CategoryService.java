@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static com.github.WeeiaEduTeam.InfinityFinanceAPI.util.Util.isPositive;
+
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
@@ -19,8 +21,20 @@ public class CategoryService {
     }
 
     public Category createCategory(Category category) {
-        var savedCategory = categoryRepository.save(category);
 
-        return savedCategory;
+        return categoryRepository.save(category);
+    }
+
+    public void deleteCategoryIfNotRelated(Long id) {
+        var foundCategory = categoryRepository.findById(id);
+
+        foundCategory.ifPresent((category) -> {
+            if (!isPositive(category.getTransactions().size()))
+                deleteCategoryById(category.getId());
+        });
+    }
+
+    private void deleteCategoryById(Long id) {
+        categoryRepository.deleteById(id);
     }
 }

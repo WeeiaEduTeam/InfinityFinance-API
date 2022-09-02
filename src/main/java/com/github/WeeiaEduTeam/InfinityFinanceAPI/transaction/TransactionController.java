@@ -1,8 +1,10 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.CategoryService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -54,8 +56,8 @@ public class TransactionController {
     }
 
 
-    // change into patch because of merging location with uni
-    @PutMapping("/admin/users/{userId}/transactions/{transactionId}") //admin
+
+    @PutMapping("/admin/users/{userId}/transactions/{transactionId}")
     ResponseEntity<TransactionDTO> replaceUniversityWithLocation(
             @PathVariable Long userId, @PathVariable Long transactionId,
             @RequestBody CreateTransactionDTO createTransactionDTO) {
@@ -63,6 +65,13 @@ public class TransactionController {
         var replacedTransaction = transactionService.replaceTransaction(userId, transactionId, createTransactionDTO);
 
         return ResponseEntity.ok(replacedTransaction);
+    }
+
+    @DeleteMapping("/admin/users/{userId}/transactions/{transactionId:[0-9]+}")
+    ResponseEntity<Void> deleteSingleTransactionForGivenUser(@PathVariable long userId, @PathVariable long transactionId) {
+        transactionService.deleteOneTransactionForUser(transactionId, userId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

@@ -93,4 +93,14 @@ public class TransactionService {
 
         return transactionUtil.mapTransactionToTransactionDTO(overwrittenTransaction);
     }
+
+    public void deleteOneTransactionForUser(long transactionId, long userId) {
+
+        var foundTransaction = transactionRepository.findById(transactionId);
+
+        foundTransaction.ifPresent((transaction) -> {
+            transactionRepository.delete(transaction);
+            categoryService.deleteCategoryIfNotRelated(transaction.getCategory().getId());
+        });
+    }
 }

@@ -28,7 +28,7 @@ public class Category {
     private String name;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", orphanRemoval = true)
     private List<Transaction> transactions = new ArrayList<>();
 
     @CreationTimestamp
