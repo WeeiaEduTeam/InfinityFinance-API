@@ -32,21 +32,21 @@ public class TransactionController {
         req param income, outcome
         req param category name instead of id?
      */
-    @GetMapping("/admin/users/{userId}/transactions/category/{categoryId}")
+    @GetMapping("/admin/users/{userId:[0-9]+}/transactions/category/{categoryId:[0-9]+}")
     public ResponseEntity<List<TransactionDTO>> getAllTransactionsForGivenUserAndCategory(@PathVariable long userId, @PathVariable long categoryId) {
         var transactions = transactionService.getAllTransactionsForGivenUserAndCategory(userId, categoryId);
 
         return ResponseEntity.ok(transactions);
     }
 
-    @GetMapping("/admin/users/{userId}/transactions")
+    @GetMapping("/admin/users/{userId:[0-9]+}/transactions")
     public ResponseEntity<List<TransactionDTO>> getAllTransactionsForGivenUserAndCategory(@PathVariable long userId) {
         var transactions = transactionService.getAllTransactionsForGivenUser(userId);
 
         return ResponseEntity.ok(transactions);
     }
 
-    @PostMapping("/admin/users/{userId}/transactions")
+    @PostMapping("/admin/users/{userId:[0-9]+}/transactions")
     ResponseEntity<TransactionDTO> createTransactionForGivenUser(@PathVariable long userId, @RequestBody CreateTransactionDTO createTransactionDTO) {
         var transaction = transactionService.createTransactionForGivenUser(userId, createTransactionDTO);
 
@@ -55,7 +55,7 @@ public class TransactionController {
 
 
 
-    @PutMapping("/admin/users/{userId}/transactions/{transactionId}")
+    @PutMapping("/admin/users/{userId:[0-9]+}/transactions/{transactionId:[0-9]+}")
     ResponseEntity<TransactionDTO> replaceUniversityWithLocation(
             @PathVariable Long userId, @PathVariable Long transactionId,
             @RequestBody CreateTransactionDTO createTransactionDTO) {

@@ -1,15 +1,16 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.category;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.dto.CategoryDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.Util;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.BaseUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
-public class CategoryUtil {
+public class CategoryUtil extends BaseUtil {
 
-    private final Util mainUtil;
 
     public CategoryDTO mapCategoryToCategoryDTO(Category category) {
         return CategoryDTO.builder()
@@ -18,6 +19,6 @@ public class CategoryUtil {
     }
 
     public boolean isNumberPositive(int value) {
-        return mainUtil.isPositive(value);
+        return isPositive(value);
     }
 }

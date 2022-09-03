@@ -6,22 +6,18 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.Category;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.CategoryService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.Util;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.BaseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class TransactionUtil {
+public class TransactionUtil extends BaseUtil {
 
     private final AppUserService appUserService;
     private final CategoryService categoryService;
-
-    private final Util mainUtil;
 
     public Transaction createTransactionFromCreateTransactionDTOAndUserId(CreateTransactionDTO createTransactionDTO, long userId) {
         AppUser appUser = null;
@@ -44,7 +40,7 @@ public class TransactionUtil {
     }
 
     private boolean isNumberPositive(long number) {
-        return mainUtil.isPositive(number);
+        return isPositive(number);
     }
 
     public TransactionDTO mapTransactionToTransactionDTO(Transaction transaction) {
@@ -101,7 +97,7 @@ public class TransactionUtil {
         return foundUser.orElse(null);
     }
 
-    public void validateArgumentsArePositive(int... values) {
-        mainUtil.validateArgumentsArePositive(values);
+    public void validateIntArgumentsArePositive(int... values) {
+        validateArgumentsArePositive(values);
     }
 }

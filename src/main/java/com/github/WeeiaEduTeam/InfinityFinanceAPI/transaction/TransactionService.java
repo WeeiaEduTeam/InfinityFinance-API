@@ -87,7 +87,7 @@ public class TransactionService {
     }
 
     private void validateArgumentsArePositive(int... values) {
-        transactionUtil.validateArgumentsArePositive(values);
+        transactionUtil.validateIntArgumentsArePositive(values);
     }
 
     public void deleteOneTransaction(long transactionId) {
