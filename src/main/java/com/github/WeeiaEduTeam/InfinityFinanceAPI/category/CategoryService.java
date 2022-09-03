@@ -7,11 +7,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+
+    private final CategoryUtil categoryUtil;
 
     public Optional<Category> getCategoryByName(String categoryName) {
 
@@ -19,8 +22,24 @@ public class CategoryService {
     }
 
     public Category createCategory(Category category) {
-        var savedCategory = categoryRepository.save(category);
 
-        return savedCategory;
+        return categoryRepository.save(category);
+    }
+
+    public void deleteCategoryIfNotRelated(Long id) {
+        var foundCategory = categoryRepository.findById(id);
+
+        foundCategory.ifPresent((category) -> {
+            if (!isNumberPositive(category.getTransactions().size()))
+                deleteCategoryById(category.getId());
+        });
+    }
+
+    private boolean isNumberPositive(int value) {
+        return categoryUtil.isNumberPositive(value);
+    }
+
+    private void deleteCategoryById(Long id) {
+        categoryRepository.deleteById(id);
     }
 }

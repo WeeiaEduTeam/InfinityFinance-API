@@ -6,6 +6,7 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.Category;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.CategoryService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.BaseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -13,13 +14,18 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class TransactionUtil {
+public class TransactionUtil extends BaseUtil {
 
     private final AppUserService appUserService;
     private final CategoryService categoryService;
 
     public Transaction createTransactionFromCreateTransactionDTOAndUserId(CreateTransactionDTO createTransactionDTO, long userId) {
-        var appUser = getAppUserById(userId);
+        AppUser appUser = null;
+
+        if(isNumberPositive(userId)) {
+            appUser = getAppUserById(userId);
+        }
+
         var category = getCategoryByName(createTransactionDTO.getCategoryName());
 
         return Transaction.builder()
@@ -33,9 +39,16 @@ public class TransactionUtil {
                 .build();
     }
 
-    public static TransactionDTO mapTransactionToTransactionDTO(Transaction transaction) {
+    private boolean isNumberPositive(long number) {
+        return isPositive(number);
+    }
+
+    public TransactionDTO mapTransactionToTransactionDTO(Transaction transaction) {
+        String category = transaction.getCategory().getName();
+
         return TransactionDTO.builder()
-                .categoryName(transaction.getCategory().getName())
+                .id(transaction.getId())
+                .categoryName(category)
                 .transactionType(transaction.getTransactionType())
                 .value(transaction.getValue())
                 .quantity(transaction.getQuantity())
@@ -56,6 +69,17 @@ public class TransactionUtil {
                 .build();
     }
 
+    public Transaction overwriteTransactionByCreateTransactionDTO(Transaction main, CreateTransactionDTO toConvert) {
+       var convertedTransaction = createTransactionFromCreateTransactionDTOAndUserId(toConvert, -1);
+
+       main.setTransactionType(convertedTransaction.getTransactionType());
+       main.setCategory(convertedTransaction.getCategory());
+       main.setValue(convertedTransaction.getValue());
+       main.setQuantity(convertedTransaction.getQuantity());
+
+       return main;
+    }
+
     private Category getCategoryByName(String categoryName) {
         var foundCategory = categoryService.getCategoryByName(categoryName);
 
@@ -71,5 +95,9 @@ public class TransactionUtil {
         var foundUser = appUserService.getUserById(userId);
 
         return foundUser.orElse(null);
+    }
+
+    public void validateIntArgumentsArePositive(int... values) {
+        validateArgumentsArePositive(values);
     }
 }
