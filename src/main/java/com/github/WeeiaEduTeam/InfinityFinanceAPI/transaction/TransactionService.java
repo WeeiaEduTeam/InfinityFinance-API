@@ -53,7 +53,7 @@ public class TransactionService {
         var transaction = transactionUtil.createTransactionFromCreateTransactionDTOAndUserId(createTransactionDTO, userId);
 
         if (transaction.getAppuser() == null) {
-            throw new RuntimeException("User not found in appUserService, called from createTransactionForGivenUser\n Create error handler");
+            throw new UsernameNotFoundException("User not found during mapping");
         }
 
         if (transaction.getCategory() == null) {
@@ -76,10 +76,11 @@ public class TransactionService {
     public TransactionDTO replaceTransaction(Long userId, Long transactionId, CreateTransactionDTO createTransactionDTO) {
         validateArgumentsArePositive(createTransactionDTO.getQuantity(), createTransactionDTO.getValue());
 
-        var foundTransaction = transactionRepository.findByIdAndAppuserId(transactionId, userId);
+        var foundTransaction = getTransactionByIdAndByAppuserId(transactionId, userId);
 
-        if (foundTransaction == null)
+        if (foundTransaction == null) {
             throw new RuntimeException("Transaction with given id doesn't exists\n Create error handler");
+        }
 
         var overwrittenTransaction = transactionUtil.overwriteTransactionByCreateTransactionDTO(foundTransaction, createTransactionDTO);
 

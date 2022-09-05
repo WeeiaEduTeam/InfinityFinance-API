@@ -64,7 +64,7 @@ public class TransactionUtil extends BaseUtil {
                 .quantity(transactionDTO.getQuantity())
                 .title(transactionDTO.getTitle())
                 .description(transactionDTO.getDescription())
-                .appuser(getAppUserByUserName(transactionDTO.getUserName()))
+                .appuser(getAppUserByUsername(transactionDTO.getUserName()))
                 .category(getCategoryByName(transactionDTO.getCategoryName()))
                 .build();
     }
@@ -86,7 +86,7 @@ public class TransactionUtil extends BaseUtil {
         return foundCategory.orElse(null);
     }
 
-    private AppUser getAppUserByUserName(String userName) {
+    private AppUser getAppUserByUsername(String userName) {
 
         return appUserService.getUserByUserName(userName);
     }

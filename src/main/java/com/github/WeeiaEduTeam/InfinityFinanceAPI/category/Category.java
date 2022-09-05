@@ -3,6 +3,7 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.category;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.Transaction;
+import junit.runner.Version;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -15,6 +16,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Category {
@@ -41,4 +43,4 @@ public class Category {
     public Category(String categoryName) {
         this.name = categoryName;
     }
-}
+    }

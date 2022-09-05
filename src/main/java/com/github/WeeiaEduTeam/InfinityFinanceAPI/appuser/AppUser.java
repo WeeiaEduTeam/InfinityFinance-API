@@ -25,10 +25,10 @@ public class AppUser implements UserDetails {
     @Column(name = "user_id")
     private Long id;
 
-    //@Column(unique = true)
+    @Column(unique = true)
     private String username;
 
-    //@Column(unique = true)
+    @Column(unique = true)
     private String email;
 
     private String password;

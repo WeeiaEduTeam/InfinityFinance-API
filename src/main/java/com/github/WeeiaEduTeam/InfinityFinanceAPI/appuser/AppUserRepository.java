@@ -13,9 +13,11 @@ import java.util.Optional;
 public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     default Optional<Long> getLoggedInUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
         if (!(auth instanceof AnonymousAuthenticationToken)) {
             return getIdByUsername(auth.getName());
         }
+
         return Optional.empty();
     }
 
@@ -23,4 +25,6 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     Optional<Long> getIdByUsername(String username);
 
     AppUser findByUsername(String username);
+
+    Boolean existsByEmail(String email);
 }
