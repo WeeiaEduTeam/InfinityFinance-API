@@ -30,4 +30,10 @@ public class AppUserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return getUserByUserName(username);
     }
+
+    public Long getLoggedInUserId() {
+        return appUserRepository.getLoggedInUserId().orElseThrow(() -> new UsernameNotFoundException("User not found in the database"));
+    }
+
+
 }
