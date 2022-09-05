@@ -87,4 +87,23 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PostMapping("/users/transactions")
+    ResponseEntity<TransactionDTO> createTransactionForLoggedUser( @RequestBody CreateTransactionDTO createTransactionDTO) {
+        var transaction = transactionService.createTransactionForLoggedUser(createTransactionDTO);
+
+        return ResponseEntity.created(URI.create("/users/transactions" + transaction.getId())).body(transaction);
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PutMapping("/users/transactions/{transactionId:[0-9]+}")
+    ResponseEntity<TransactionDTO> replaceUniversityWithLocationForLoggedUser(
+            @PathVariable Long transactionId,
+            @RequestBody CreateTransactionDTO createTransactionDTO) {
+
+        var replacedTransaction = transactionService.replaceTransactionForLoggedUser(transactionId, createTransactionDTO);
+
+        return ResponseEntity.ok(replacedTransaction);
+    }
+
 }

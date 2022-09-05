@@ -24,19 +24,27 @@ public class TransactionService {
     private final TransactionUtil transactionUtil;
 
     public List<TransactionDTO> getAllTransactionsForGivenUserAndCategory(long userId, long categoryId) {
-        var foundTransactions = transactionRepository.findAllByAppuserIdAndCategoryId(userId, categoryId);
+        var foundTransactions = getTransactionsByAppuserIdAndCategoryId(userId, categoryId);
 
         return foundTransactions.stream()
                 .map(transactionUtil::mapTransactionToTransactionDTO)
                 .toList();
     }
 
+    private List<Transaction> getTransactionsByAppuserIdAndCategoryId(long userId, long categoryId) {
+        return transactionRepository.findAllByAppuserIdAndCategoryId(userId, categoryId);
+    }
+
     public List<TransactionDTO> getAllTransactionsForGivenUser(long userId) {
-        var foundTransactions = transactionRepository.findAllByAppuserId(userId);
+        var foundTransactions = getTransactionsByAppuserId(userId);
 
         return foundTransactions.stream()
                 .map(transactionUtil::mapTransactionToTransactionDTO)
                 .toList();
+    }
+
+    private List<Transaction> getTransactionsByAppuserId(long userId) {
+        return transactionRepository.findAllByAppuserId(userId);
     }
 
     public TransactionDTO createTransactionForGivenUser(long userId, CreateTransactionDTO createTransactionDTO) {
@@ -45,7 +53,7 @@ public class TransactionService {
         var transaction = transactionUtil.createTransactionFromCreateTransactionDTOAndUserId(createTransactionDTO, userId);
 
         if (transaction.getAppuser() == null) {
-            log.error("User not found in appUserService, called from createTransactionForGivenUser\n Create error handler");
+            throw new RuntimeException("User not found in appUserService, called from createTransactionForGivenUser\n Create error handler");
         }
 
         if (transaction.getCategory() == null) {
@@ -60,9 +68,7 @@ public class TransactionService {
     }
 
     private Category saveCategory(String categoryName) {
-        Category category = Category.builder()
-                .name(categoryName)
-                .build();
+        Category category = new Category(categoryName);
 
         return categoryService.createCategory(category);
     }
@@ -126,12 +132,24 @@ public class TransactionService {
     public void deleteSingleTransactionForLoggedUser(long transactionId) {
         long loggedInUserId = getLoggedUserId();
 
-        var foundTransaction = getTransactionById(transactionId);
-
-        if(Long.compare(foundTransaction.getAppuser().getId(), loggedInUserId) != 0) {
-            throw new RuntimeException("Transaction id is not related with given logged user id");
-        }
+        var foundTransaction = getTransactionByIdAndByAppuserId(transactionId, loggedInUserId);
 
         deleteTransactionWithCategory(foundTransaction);
+    }
+
+    private Transaction getTransactionByIdAndByAppuserId(long transactionId, long loggedInUserId) {
+        return transactionRepository.findByIdAndAppuserId(transactionId, loggedInUserId);
+    }
+
+    public TransactionDTO createTransactionForLoggedUser(CreateTransactionDTO createTransactionDTO) {
+        long loggedInUserId = getLoggedUserId();
+
+        return createTransactionForGivenUser(loggedInUserId, createTransactionDTO);
+    }
+
+    public TransactionDTO replaceTransactionForLoggedUser(Long transactionId, CreateTransactionDTO createTransactionDTO) {
+        long loggedInUserId = getLoggedUserId();
+
+        return replaceTransaction(loggedInUserId, transactionId, createTransactionDTO);
     }
 }

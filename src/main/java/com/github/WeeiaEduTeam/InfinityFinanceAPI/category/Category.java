@@ -15,7 +15,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Category {
@@ -38,4 +37,8 @@ public class Category {
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
+
+    public Category(String categoryName) {
+        this.name = categoryName;
+    }
 }
