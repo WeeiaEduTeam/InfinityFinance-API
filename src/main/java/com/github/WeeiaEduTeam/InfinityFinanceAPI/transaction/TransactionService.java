@@ -52,19 +52,28 @@ public class TransactionService {
 
         var transaction = transactionUtil.createTransactionFromCreateTransactionDTOAndUserId(createTransactionDTO, userId);
 
-        if (transaction.getAppuser() == null) {
-            throw new UsernameNotFoundException("User not found during mapping");
-        }
+        validateTransactionUserNotNull(transaction);
 
-        if (transaction.getCategory() == null) {
-            var savedCategory = saveCategory(createTransactionDTO.getCategoryName());
-
-            transaction.setCategory(savedCategory);
-        }
+        ifCategoryDoesNotExistsCreate(transaction, createTransactionDTO.getCategoryName());
 
         Transaction savedTransaction = transactionRepository.save(transaction);
 
         return transactionUtil.mapTransactionToTransactionDTO(savedTransaction);
+    }
+
+    private void validateTransactionUserNotNull(Transaction transaction) {
+        if(transaction == null)
+            throw new RuntimeException("Transaction not found");
+        else if (transaction.getAppuser() == null)
+            throw new UsernameNotFoundException("User not found during mapping");
+    }
+
+    private void ifCategoryDoesNotExistsCreate(Transaction transaction, String categoryName) {
+        if (transaction != null && transaction.getCategory() == null) {
+            var savedCategory = saveCategory(categoryName);
+
+            transaction.setCategory(savedCategory);
+        }
     }
 
     private Category saveCategory(String categoryName) {
@@ -78,17 +87,11 @@ public class TransactionService {
 
         var foundTransaction = getTransactionByIdAndByAppuserId(transactionId, userId);
 
-        if (foundTransaction == null) {
-            throw new RuntimeException("Transaction with given id doesn't exists\n Create error handler");
-        }
+        validateTransactionUserNotNull(foundTransaction);
 
         var overwrittenTransaction = transactionUtil.overwriteTransactionByCreateTransactionDTO(foundTransaction, createTransactionDTO);
 
-        if (overwrittenTransaction.getCategory() == null) {
-            var savedCategory = saveCategory(createTransactionDTO.getCategoryName());
-
-            overwrittenTransaction.setCategory(savedCategory);
-        }
+        ifCategoryDoesNotExistsCreate(overwrittenTransaction, createTransactionDTO.getCategoryName());
 
         transactionRepository.save(overwrittenTransaction);
 
