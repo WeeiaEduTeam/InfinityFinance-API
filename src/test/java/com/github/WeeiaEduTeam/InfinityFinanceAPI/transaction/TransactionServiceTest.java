@@ -282,14 +282,14 @@ class TransactionServiceTest {
     }
 
     @Test
-    @DisplayName("Should delete transaction for logged user and related category with no relations.")
+    @DisplayName("Should delete transaction and related category with no relations for logged user.")
     void shouldDeleteTransactionByIdAndCategoryForLoggedUser() {
         // given
         given(appUserService.getLoggedInUserId()).willReturn(1L);
-        given(transactionRepository.findById(anyLong())).willReturn(Optional.ofNullable(transactionTest));
+        given(transactionRepository.findByIdAndAppuserId(anyLong(), anyLong())).willReturn(transactionTest);
 
-        // when
-        transactionService.deleteOneTransaction(transactionTest.getId());
+        //when
+        transactionService.deleteSingleTransactionForLoggedUser(transactionTest.getId());
 
         // then
         verify(transactionRepository).delete(transactionTest);
