@@ -25,15 +25,12 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
 @Slf4j
@@ -62,7 +59,6 @@ class TransactionServiceTest {
     Category categoryTest;
     CreateTransactionDTO createTransactionDTOTest;
     Transaction transactionNullCategoryAndUserTest;
-    Transaction transactionWithUser;
 
     @BeforeEach
     void init() {
@@ -121,12 +117,7 @@ class TransactionServiceTest {
                 .appuser(null)
                 .category(null)
                 .build();
-
-        transactionWithUser = Transaction.builder()
-                .appuser(appUserTest)
-                .category(null)
-                .build();
-    }
+        }
 
     @Test
     @DisplayName("Should delete transaction and related category with no relations.")
@@ -139,14 +130,14 @@ class TransactionServiceTest {
 
         // then
         verify(transactionRepository).delete(transactionTest);
-        verify(categoryService).deleteCategoryIfNotRelated(transactionTest.getCategory().getId());
+        verify(categoryService).checkAndDeleteCategoryIfNotRelated(transactionTest.getCategory().getId());
     }
 
     @Test
     @DisplayName("Should create transaction for given user with known category.")
     void shouldCreateTransactionForGivenUserWithKnownCategory() {
         //given
-        given(transactionUtil.createTransactionFromCreateTransactionDTOAndUserId(any(CreateTransactionDTO.class), eq(1L))).willReturn(transactionTest);
+        given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class), eq(1L))).willReturn(transactionTest);
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
         given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
 
@@ -165,7 +156,7 @@ class TransactionServiceTest {
     @DisplayName("Should save transaction for given user and found category.")
     void shouldCreateTransactionForGivenUser() {
         //given
-        given(transactionUtil.createTransactionFromCreateTransactionDTOAndUserId(any(CreateTransactionDTO.class), eq(1L))).willReturn(transactionTest);
+        given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class), eq(1L))).willReturn(transactionTest);
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
         given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
 
@@ -293,7 +284,7 @@ class TransactionServiceTest {
 
         // then
         verify(transactionRepository).delete(transactionTest);
-        verify(categoryService).deleteCategoryIfNotRelated(transactionTest.getCategory().getId());
+        verify(categoryService).checkAndDeleteCategoryIfNotRelated(transactionTest.getCategory().getId());
     }
 
     @Test
@@ -301,7 +292,7 @@ class TransactionServiceTest {
     void shouldCreateTransactionForLoggedUserWithKnownCategory() {
         //given
         given(appUserService.getLoggedInUserId()).willReturn(1L);
-        given(transactionUtil.createTransactionFromCreateTransactionDTOAndUserId(any(CreateTransactionDTO.class), eq(1L))).willReturn(transactionTest);
+        given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class), eq(1L))).willReturn(transactionTest);
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
         given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
 
@@ -337,21 +328,6 @@ class TransactionServiceTest {
         assertThat(savedTransaction, hasProperty("title", equalTo("title")));
         assertThat(savedTransaction, hasProperty("categoryName", equalTo("name")));
     }
-
-    @Test
-    @DisplayName("Should throw exception when unknown user.")
-    void shouldThrowExceptionWhenUnknownUser() {
-        //given
-        given(appUserService.getLoggedInUserId()).willReturn(1L);
-        given(transactionUtil.createTransactionFromCreateTransactionDTOAndUserId(any(CreateTransactionDTO.class), anyLong()))
-                .willReturn(transactionNullCategoryAndUserTest);
-
-        //when
-        assertThatThrownBy(() -> transactionService.createTransactionForGivenUser(1L, createTransactionDTOTest))
-                .isInstanceOf(UsernameNotFoundException.class)
-                .hasMessage("User not found during mapping");
-    }
-
     @Test
     @DisplayName("Should create category during create transaction.")
     void shouldThrowExceptionWhenUnknownCategory() {
@@ -359,9 +335,9 @@ class TransactionServiceTest {
         transactionNullCategoryAndUserTest.setAppuser(appUserTest);
 
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
-        given(categoryService.createCategory(any(Category.class))).willReturn(categoryTest);
+        given(categoryService.createCategory(anyString())).willReturn(categoryTest);
         given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
-        given(transactionUtil.createTransactionFromCreateTransactionDTOAndUserId(any(CreateTransactionDTO.class), anyLong()))
+        given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class), anyLong()))
                 .willReturn(transactionNullCategoryAndUserTest);
 
         //when

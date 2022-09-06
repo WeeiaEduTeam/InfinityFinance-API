@@ -1,5 +1,6 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.Category;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.CategoryService;
@@ -7,7 +8,6 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransact
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,9 +26,7 @@ public class TransactionService {
     public List<TransactionDTO> getAllTransactionsForGivenUserAndCategory(long userId, long categoryId) {
         var foundTransactions = getTransactionsByAppuserIdAndCategoryId(userId, categoryId);
 
-        return foundTransactions.stream()
-                .map(transactionUtil::mapTransactionToTransactionDTO)
-                .toList();
+        return foundTransactions.stream().map(transactionUtil::mapTransactionToTransactionDTO).toList();
     }
 
     private List<Transaction> getTransactionsByAppuserIdAndCategoryId(long userId, long categoryId) {
@@ -38,9 +36,7 @@ public class TransactionService {
     public List<TransactionDTO> getAllTransactionsForGivenUser(long userId) {
         var foundTransactions = getTransactionsByAppuserId(userId);
 
-        return foundTransactions.stream()
-                .map(transactionUtil::mapTransactionToTransactionDTO)
-                .toList();
+        return foundTransactions.stream().map(transactionUtil::mapTransactionToTransactionDTO).toList();
     }
 
     private List<Transaction> getTransactionsByAppuserId(long userId) {
@@ -50,22 +46,34 @@ public class TransactionService {
     public TransactionDTO createTransactionForGivenUser(long userId, CreateTransactionDTO createTransactionDTO) {
         validateArgumentsArePositive(createTransactionDTO.getQuantity(), createTransactionDTO.getValue());
 
-        var transaction = transactionUtil.createTransactionFromCreateTransactionDTOAndUserId(createTransactionDTO, userId);
-
-        validateTransactionUserNotNull(transaction);
+        var transaction = createTransactionFromCreateTransactionDTOAndUserId(createTransactionDTO, userId);
 
         ifCategoryDoesNotExistsCreate(transaction, createTransactionDTO.getCategoryName());
 
-        Transaction savedTransaction = transactionRepository.save(transaction);
+        saveTransaction(transaction);
 
-        return transactionUtil.mapTransactionToTransactionDTO(savedTransaction);
+        return mapTransactionToTransactionDTO(transaction);
     }
 
-    private void validateTransactionUserNotNull(Transaction transaction) {
-        if(transaction == null)
-            throw new RuntimeException("Transaction not found");
-        else if (transaction.getAppuser() == null)
-            throw new UsernameNotFoundException("User not found during mapping");
+    private Transaction createTransactionFromCreateTransactionDTOAndUserId(CreateTransactionDTO createTransactionDTO, long userId) {
+        var transaction = transactionUtil.mapCreateTransactionDTOToTransaction(createTransactionDTO, userId);
+
+        var appUser = getUserById(userId);
+
+        var category = getCategoryByName(createTransactionDTO.getCategoryName());
+
+        transaction.setAppuser(appUser);
+        transaction.setCategory(category);
+
+        return transaction;
+    }
+
+    private Category getCategoryByName(String categoryName) {
+        return categoryService.getCategoryByName(categoryName);
+    }
+
+    private AppUser getUserById(long userId) {
+        return appUserService.getUserById(userId);
     }
 
     private void ifCategoryDoesNotExistsCreate(Transaction transaction, String categoryName) {
@@ -77,9 +85,7 @@ public class TransactionService {
     }
 
     private Category saveCategory(String categoryName) {
-        Category category = new Category(categoryName);
-
-        return categoryService.createCategory(category);
+        return categoryService.createCategory(categoryName);
     }
 
     public TransactionDTO replaceTransaction(Long userId, Long transactionId, CreateTransactionDTO createTransactionDTO) {
@@ -87,15 +93,21 @@ public class TransactionService {
 
         var foundTransaction = getTransactionByIdAndByAppuserId(transactionId, userId);
 
-        validateTransactionUserNotNull(foundTransaction);
-
         var overwrittenTransaction = transactionUtil.overwriteTransactionByCreateTransactionDTO(foundTransaction, createTransactionDTO);
 
         ifCategoryDoesNotExistsCreate(overwrittenTransaction, createTransactionDTO.getCategoryName());
 
-        transactionRepository.save(overwrittenTransaction);
+        saveTransaction(overwrittenTransaction);
 
-        return transactionUtil.mapTransactionToTransactionDTO(overwrittenTransaction);
+        return mapTransactionToTransactionDTO(overwrittenTransaction);
+    }
+
+    private void saveTransaction(Transaction transaction) {
+        transactionRepository.save(transaction);
+    }
+
+    private TransactionDTO mapTransactionToTransactionDTO(Transaction transaction) {
+        return transactionUtil.mapTransactionToTransactionDTO(transaction);
     }
 
     private void validateArgumentsArePositive(int... values) {
@@ -130,7 +142,7 @@ public class TransactionService {
 
     private void deleteTransactionWithCategory(Transaction transaction) {
         transactionRepository.delete(transaction);
-        categoryService.deleteCategoryIfNotRelated(transaction.getCategory().getId());
+        categoryService.checkAndDeleteCategoryIfNotRelated(transaction.getCategory().getId());
     }
 
     public void deleteSingleTransactionForLoggedUser(long transactionId) {

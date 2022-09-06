@@ -19,28 +19,14 @@ public class TransactionUtil extends BaseUtil {
     private final AppUserService appUserService;
     private final CategoryService categoryService;
 
-    public Transaction createTransactionFromCreateTransactionDTOAndUserId(CreateTransactionDTO createTransactionDTO, long userId) {
-        AppUser appUser = null;
-
-        if(isNumberPositive(userId)) {
-            appUser = getAppUserById(userId);
-        }
-
-        var category = getCategoryByName(createTransactionDTO.getCategoryName());
-
+    public Transaction mapCreateTransactionDTOToTransaction(CreateTransactionDTO createTransactionDTO, long userId) {
         return Transaction.builder()
                 .transactionType(createTransactionDTO.getTransactionType())
                 .value(createTransactionDTO.getValue())
                 .quantity(createTransactionDTO.getQuantity())
                 .title(createTransactionDTO.getTitle())
                 .description(createTransactionDTO.getDescription())
-                .appuser(appUser)
-                .category(category)
                 .build();
-    }
-
-    private boolean isNumberPositive(long number) {
-        return isPositive(number);
     }
 
     public TransactionDTO mapTransactionToTransactionDTO(Transaction transaction) {
@@ -70,7 +56,7 @@ public class TransactionUtil extends BaseUtil {
     }
 
     public Transaction overwriteTransactionByCreateTransactionDTO(Transaction main, CreateTransactionDTO toConvert) {
-       var convertedTransaction = createTransactionFromCreateTransactionDTOAndUserId(toConvert, -1);
+       var convertedTransaction = mapCreateTransactionDTOToTransaction(toConvert, -1);
 
        main.setTransactionType(convertedTransaction.getTransactionType());
        main.setCategory(convertedTransaction.getCategory());
@@ -81,9 +67,7 @@ public class TransactionUtil extends BaseUtil {
     }
 
     private Category getCategoryByName(String categoryName) {
-        var foundCategory = categoryService.getCategoryByName(categoryName);
-
-        return foundCategory.orElse(null);
+        return categoryService.getCategoryByName(categoryName);
     }
 
     private AppUser getAppUserByUsername(String userName) {
@@ -92,9 +76,7 @@ public class TransactionUtil extends BaseUtil {
     }
 
     private AppUser getAppUserById(long userId) {
-        var foundUser = appUserService.getUserById(userId);
-
-        return foundUser.orElse(null);
+        return appUserService.getUserById(userId);
     }
 
     public void validateIntArgumentsArePositive(int... values) {
