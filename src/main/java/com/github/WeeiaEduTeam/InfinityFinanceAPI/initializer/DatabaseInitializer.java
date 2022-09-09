@@ -63,7 +63,7 @@ public class DatabaseInitializer implements CommandLineRunner {
                 Arrays.asList(
                     AppUser.builder()
                             .username("admin")
-                            .email("superaancko@o2.pl")
+                            .email("superancko@o2.pl")
                             .password("{bcrypt}" + new BCryptPasswordEncoder().encode("admin"))
                             .firstName("Oki")
                             .secondName("Ok")

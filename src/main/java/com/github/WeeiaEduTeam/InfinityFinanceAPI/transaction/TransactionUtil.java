@@ -16,9 +16,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TransactionUtil extends BaseUtil {
 
-    private final AppUserService appUserService;
-    private final CategoryService categoryService;
-
     public Transaction mapCreateTransactionDTOToTransaction(CreateTransactionDTO createTransactionDTO, long userId) {
         return Transaction.builder()
                 .transactionType(createTransactionDTO.getTransactionType())
@@ -44,17 +41,6 @@ public class TransactionUtil extends BaseUtil {
                 .build();
     }
 
-    public Transaction mapTransactionDTOToTransaction(TransactionDTO transactionDTO) {
-        return Transaction.builder()
-                .value(transactionDTO.getValue())
-                .quantity(transactionDTO.getQuantity())
-                .title(transactionDTO.getTitle())
-                .description(transactionDTO.getDescription())
-                .appuser(getAppUserByUsername(transactionDTO.getUserName()))
-                .category(getCategoryByName(transactionDTO.getCategoryName()))
-                .build();
-    }
-
     public Transaction overwriteTransactionByCreateTransactionDTO(Transaction main, CreateTransactionDTO toConvert) {
        var convertedTransaction = mapCreateTransactionDTOToTransaction(toConvert, -1);
 
@@ -64,19 +50,6 @@ public class TransactionUtil extends BaseUtil {
        main.setQuantity(convertedTransaction.getQuantity());
 
        return main;
-    }
-
-    private Category getCategoryByName(String categoryName) {
-        return categoryService.getCategoryByName(categoryName);
-    }
-
-    private AppUser getAppUserByUsername(String userName) {
-
-        return appUserService.getUserByUserName(userName);
-    }
-
-    private AppUser getAppUserById(long userId) {
-        return appUserService.getUserById(userId);
     }
 
     public void validateIntArgumentsArePositive(int... values) {

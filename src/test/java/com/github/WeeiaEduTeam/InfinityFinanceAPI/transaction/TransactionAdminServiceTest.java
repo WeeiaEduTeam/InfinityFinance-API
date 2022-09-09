@@ -23,7 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -36,10 +36,10 @@ import static org.mockito.Mockito.verify;
 @Slf4j
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class TransactionServiceTest {
+class TransactionAdminServiceTest {
 
     @InjectMocks
-    private TransactionService transactionService;
+    private TransactionAdminService transactionAdminService;
 
     @Mock
     private TransactionRepository transactionRepository;
@@ -49,6 +49,7 @@ class TransactionServiceTest {
 
     @Mock
     private AppUserService appUserService;
+
     @Mock
     private TransactionUtil transactionUtil;
 
@@ -126,7 +127,7 @@ class TransactionServiceTest {
         given(transactionRepository.findById(anyLong())).willReturn(Optional.ofNullable(transactionTest));
 
         // when
-        transactionService.deleteOneTransaction(transactionTest.getId());
+        transactionAdminService.deleteOneTransaction(transactionTest.getId());
 
         // then
         verify(transactionRepository).delete(transactionTest);
@@ -139,10 +140,11 @@ class TransactionServiceTest {
         //given
         given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class), eq(1L))).willReturn(transactionTest);
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
+        given(appUserService.getUserById(anyLong())).willReturn(appUserTest);
         given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
 
         //when
-        var savedTransaction = transactionService.createTransactionForGivenUser(appUserTest.getId(), createTransactionDTOTest);
+        var savedTransaction = transactionAdminService.createTransactionForGivenUser(appUserTest.getId(), createTransactionDTOTest);
 
         //then
         assertThat(savedTransaction, instanceOf(TransactionDTO.class));
@@ -158,10 +160,11 @@ class TransactionServiceTest {
         //given
         given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class), eq(1L))).willReturn(transactionTest);
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
+        given(appUserService.getUserById(anyLong())).willReturn(appUserTest);
         given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
 
         //when
-        var savedTransaction = transactionService.createTransactionForGivenUser(appUserTest.getId(), createTransactionDTOTest);
+        var savedTransaction = transactionAdminService.createTransactionForGivenUser(appUserTest.getId(), createTransactionDTOTest);
 
         //then
         assertThat(savedTransaction, instanceOf(TransactionDTO.class));
@@ -180,7 +183,7 @@ class TransactionServiceTest {
         given(transactionRepository.findByIdAndAppuserId(1L, 1L)).willReturn(transactionTest);
 
         //when
-        var savedTransaction = transactionService.replaceTransaction(transactionTest.getAppuser().getId(), transactionTest.getId(), createTransactionDTOTest);
+        var savedTransaction = transactionAdminService.replaceTransaction(transactionTest.getAppuser().getId(), transactionTest.getId(), createTransactionDTOTest);
 
         //then
         assertThat(savedTransaction, instanceOf(TransactionDTO.class));
@@ -200,7 +203,7 @@ class TransactionServiceTest {
         given(transactionRepository.findAllByAppuserIdAndCategoryId(appUserTest.getId(), categoryTest.getId())).willReturn(Collections.singletonList(transactionTest));
 
         //when
-        var transactions = transactionService.getAllTransactionsForGivenUserAndCategory(appUserTest.getId(), categoryTest.getId());
+        var transactions = transactionAdminService.getAllTransactionsForGivenUserAndCategory(appUserTest.getId(), categoryTest.getId());
 
         //then
         assertEquals(transactions.size(), 1);
@@ -221,7 +224,7 @@ class TransactionServiceTest {
         given(transactionRepository.findAllByAppuserId(appUserTest.getId())).willReturn(Collections.singletonList(transactionTest));
 
         //when
-        var transactions = transactionService.getAllTransactionsForGivenUser(appUserTest.getId());
+        var transactions = transactionAdminService.getAllTransactionsForGivenUser(appUserTest.getId());
 
         //then
         assertEquals(transactions.size(), 1);
@@ -235,100 +238,6 @@ class TransactionServiceTest {
     }
 
     @Test
-    @DisplayName("Should get all transactions for current logged user.")
-    void shouldGetAllTransactionsForLoggedUser() {
-        //given
-        given(appUserService.getLoggedInUserId()).willReturn(1L);
-        given(transactionRepository.findAllByAppuserId(1L)).willReturn(Collections.singletonList(transactionTest));
-        given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
-        //when
-        var transactions = transactionService.getAllTransactionsForLoggedUser();
-
-        //then
-        var firstTransaction = transactions.get(0);
-        assertThat(firstTransaction, instanceOf(TransactionDTO.class));
-        assertThat(firstTransaction, hasProperty("transactionType", equalTo(TransactionType.INCOME)));
-        assertThat(firstTransaction, hasProperty("value", equalTo(600)));
-        assertThat(firstTransaction, hasProperty("quantity", equalTo(2)));
-        assertThat(firstTransaction, hasProperty("categoryName", equalTo("name")));
-    }
-
-    @Test
-    @DisplayName("Should get all transactions with given category for current logged user.")
-    void shouldGetAllTransactionsWithCategoryForLoggedUser() {
-        //given
-        given(appUserService.getLoggedInUserId()).willReturn(1L);
-        given(transactionRepository.findAllByAppuserIdAndCategoryId(1L, 1L)).willReturn(Collections.singletonList(transactionTest));
-        given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
-        //when
-        var transactions = transactionService.getAllTransactionsForLoggedUserAndGivenCategory(1L);
-
-        //then
-        var firstTransaction = transactions.get(0);
-        assertThat(firstTransaction, instanceOf(TransactionDTO.class));
-        assertThat(firstTransaction, hasProperty("transactionType", equalTo(TransactionType.INCOME)));
-        assertThat(firstTransaction, hasProperty("value", equalTo(600)));
-        assertThat(firstTransaction, hasProperty("quantity", equalTo(2)));
-        assertThat(firstTransaction, hasProperty("categoryName", equalTo("name")));
-    }
-
-    @Test
-    @DisplayName("Should delete transaction and related category with no relations for logged user.")
-    void shouldDeleteTransactionByIdAndCategoryForLoggedUser() {
-        // given
-        given(appUserService.getLoggedInUserId()).willReturn(1L);
-        given(transactionRepository.findByIdAndAppuserId(anyLong(), anyLong())).willReturn(transactionTest);
-
-        //when
-        transactionService.deleteSingleTransactionForLoggedUser(transactionTest.getId());
-
-        // then
-        verify(transactionRepository).delete(transactionTest);
-        verify(categoryService).checkAndDeleteCategoryIfNotRelated(transactionTest.getCategory().getId());
-    }
-
-    @Test
-    @DisplayName("Should create transaction for logged user with known category.")
-    void shouldCreateTransactionForLoggedUserWithKnownCategory() {
-        //given
-        given(appUserService.getLoggedInUserId()).willReturn(1L);
-        given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class), eq(1L))).willReturn(transactionTest);
-        given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
-        given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
-
-        //when
-        var savedTransaction = transactionService.createTransactionForLoggedUser(createTransactionDTOTest);
-
-        //then
-        assertThat(savedTransaction, instanceOf(TransactionDTO.class));
-        assertThat(savedTransaction, hasProperty("transactionType", equalTo(TransactionType.INCOME)));
-        assertThat(savedTransaction, hasProperty("value", equalTo(600)));
-        assertThat(savedTransaction, hasProperty("quantity", equalTo(2)));
-        assertThat(savedTransaction, hasProperty("categoryName", equalTo("name")));
-    }
-
-    @Test
-    @DisplayName("Should replace transaction content for logged user.")
-    void shouldReplaceTransactionForLoggedUser() {
-        //given
-        given(appUserService.getLoggedInUserId()).willReturn(1L);
-        given(transactionUtil.overwriteTransactionByCreateTransactionDTO(any(Transaction.class), any(CreateTransactionDTO.class))).willReturn(transactionTest);
-        given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
-        given(transactionRepository.findByIdAndAppuserId(1L, 1L)).willReturn(transactionTest);
-
-        //when
-        var savedTransaction = transactionService.replaceTransactionForLoggedUser(transactionTest.getAppuser().getId(), createTransactionDTOTest);
-
-        //then
-        assertThat(savedTransaction, instanceOf(TransactionDTO.class));
-        assertThat(savedTransaction, hasProperty("transactionType", equalTo(TransactionType.INCOME)));
-        assertThat(savedTransaction, hasProperty("value", equalTo(600)));
-        assertThat(savedTransaction, hasProperty("quantity", equalTo(2)));
-        assertThat(savedTransaction, hasProperty("description", equalTo("desc")));
-        assertThat(savedTransaction, hasProperty("title", equalTo("title")));
-        assertThat(savedTransaction, hasProperty("categoryName", equalTo("name")));
-    }
-    @Test
     @DisplayName("Should create category during create transaction.")
     void shouldThrowExceptionWhenUnknownCategory() {
         //given
@@ -337,11 +246,12 @@ class TransactionServiceTest {
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
         given(categoryService.createCategory(anyString())).willReturn(categoryTest);
         given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
+        given(appUserService.getUserById(anyLong())).willReturn(appUserTest);
         given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class), anyLong()))
                 .willReturn(transactionNullCategoryAndUserTest);
 
         //when
-        var transaction = transactionService.createTransactionForGivenUser(1L, createTransactionDTOTest);
+        var transaction = transactionAdminService.createTransactionForGivenUser(1L, createTransactionDTOTest);
 
         assertThat(transaction, instanceOf(TransactionDTO.class));
         assertThat(transaction, hasProperty("categoryName", equalTo(createTransactionDTOTest.getCategoryName())));

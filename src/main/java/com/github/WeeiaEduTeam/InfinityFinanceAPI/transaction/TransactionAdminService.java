@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class TransactionService {
+public class TransactionAdminService {
 
     private final TransactionRepository transactionRepository;
     private final AppUserService appUserService;
@@ -107,6 +107,7 @@ public class TransactionService {
     }
 
     private TransactionDTO mapTransactionToTransactionDTO(Transaction transaction) {
+
         return transactionUtil.mapTransactionToTransactionDTO(transaction);
     }
 
@@ -118,54 +119,18 @@ public class TransactionService {
         return transactionRepository.findById(transactionId).orElseThrow(() -> new RuntimeException("Transaction not found in the database"));
     }
 
-    public List<TransactionDTO> getAllTransactionsForLoggedUser() {
-        long loggedInUserId = appUserService.getLoggedInUserId();
-
-        return getAllTransactionsForGivenUser(loggedInUserId);
-    }
-
-    public List<TransactionDTO> getAllTransactionsForLoggedUserAndGivenCategory(long categoryId) {
-        long loggedInUserId = getLoggedUserId();
-
-        return getAllTransactionsForGivenUserAndCategory(loggedInUserId, categoryId);
-    }
-
-    private long getLoggedUserId() {
-        return appUserService.getLoggedInUserId();
-    }
-
     public void deleteOneTransaction(long transactionId) {
         var foundTransaction = getTransactionById(transactionId);
 
         deleteTransactionWithCategory(foundTransaction);
     }
 
-    private void deleteTransactionWithCategory(Transaction transaction) {
+    void deleteTransactionWithCategory(Transaction transaction) {
         transactionRepository.delete(transaction);
         categoryService.checkAndDeleteCategoryIfNotRelated(transaction.getCategory().getId());
     }
 
-    public void deleteSingleTransactionForLoggedUser(long transactionId) {
-        long loggedInUserId = getLoggedUserId();
-
-        var foundTransaction = getTransactionByIdAndByAppuserId(transactionId, loggedInUserId);
-
-        deleteTransactionWithCategory(foundTransaction);
-    }
-
-    private Transaction getTransactionByIdAndByAppuserId(long transactionId, long loggedInUserId) {
+    Transaction getTransactionByIdAndByAppuserId(long transactionId, long loggedInUserId) {
         return transactionRepository.findByIdAndAppuserId(transactionId, loggedInUserId);
-    }
-
-    public TransactionDTO createTransactionForLoggedUser(CreateTransactionDTO createTransactionDTO) {
-        long loggedInUserId = getLoggedUserId();
-
-        return createTransactionForGivenUser(loggedInUserId, createTransactionDTO);
-    }
-
-    public TransactionDTO replaceTransactionForLoggedUser(Long transactionId, CreateTransactionDTO createTransactionDTO) {
-        long loggedInUserId = getLoggedUserId();
-
-        return replaceTransaction(loggedInUserId, transactionId, createTransactionDTO);
     }
 }
