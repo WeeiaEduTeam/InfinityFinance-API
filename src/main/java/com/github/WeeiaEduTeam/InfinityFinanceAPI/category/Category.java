@@ -3,6 +3,7 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.category;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.Transaction;
+import junit.runner.Version;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -38,4 +39,8 @@ public class Category {
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
-}
+
+    public Category(String categoryName) {
+        this.name = categoryName;
+    }
+    }

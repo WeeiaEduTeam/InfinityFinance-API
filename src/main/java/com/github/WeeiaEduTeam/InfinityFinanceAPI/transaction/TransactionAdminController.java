@@ -13,19 +13,9 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1")
-public class TransactionController {
+public class TransactionAdminController {
 
-    private final TransactionService transactionService;
-
-    @GetMapping("/secured/justAuth")
-    public String justAuthenticated() {
-        return "auth";
-    }
-
-    @GetMapping("/admin/needAdminRole")
-    public String justAdmin() {
-        return "role_admin";
-    }
+    private final TransactionAdminService transactionAdminService;
 
     /*
         TODO: pageable
@@ -33,43 +23,43 @@ public class TransactionController {
         req param category name instead of id?
      */
     @GetMapping("/admin/users/{userId:[0-9]+}/transactions/category/{categoryId:[0-9]+}")
-    public ResponseEntity<List<TransactionDTO>> getAllTransactionsForGivenUserAndCategory(@PathVariable long userId, @PathVariable long categoryId) {
-        var transactions = transactionService.getAllTransactionsForGivenUserAndCategory(userId, categoryId);
+    public ResponseEntity<List<TransactionDTO>> getAllTransactionsForGivenUserAndCategory(
+            @PathVariable long userId, @PathVariable long categoryId){
+
+        var transactions = transactionAdminService.getAllTransactionsForGivenUserAndCategory(
+                userId, categoryId);
 
         return ResponseEntity.ok(transactions);
     }
 
     @GetMapping("/admin/users/{userId:[0-9]+}/transactions")
-    public ResponseEntity<List<TransactionDTO>> getAllTransactionsForGivenUserAndCategory(@PathVariable long userId) {
-        var transactions = transactionService.getAllTransactionsForGivenUser(userId);
+    public ResponseEntity<List<TransactionDTO>> getAllTransactionsForGivenUser(@PathVariable long userId) {
+        var transactions = transactionAdminService.getAllTransactionsForGivenUser(userId);
 
         return ResponseEntity.ok(transactions);
     }
 
     @PostMapping("/admin/users/{userId:[0-9]+}/transactions")
     ResponseEntity<TransactionDTO> createTransactionForGivenUser(@PathVariable long userId, @RequestBody CreateTransactionDTO createTransactionDTO) {
-        var transaction = transactionService.createTransactionForGivenUser(userId, createTransactionDTO);
+        var transaction = transactionAdminService.createTransactionForGivenUser(userId, createTransactionDTO);
 
         return ResponseEntity.created(URI.create("/users/" + userId + "/transactions")).body(transaction);
     }
-
-
 
     @PutMapping("/admin/users/{userId:[0-9]+}/transactions/{transactionId:[0-9]+}")
     ResponseEntity<TransactionDTO> replaceUniversityWithLocation(
             @PathVariable Long userId, @PathVariable Long transactionId,
             @RequestBody CreateTransactionDTO createTransactionDTO) {
 
-        var replacedTransaction = transactionService.replaceTransaction(userId, transactionId, createTransactionDTO);
+        var replacedTransaction = transactionAdminService.replaceTransaction(userId, transactionId, createTransactionDTO);
 
         return ResponseEntity.ok(replacedTransaction);
     }
 
     @DeleteMapping("/admin/users/transactions/{transactionId:[0-9]+}")
     ResponseEntity<Void> deleteSingleTransaction(@PathVariable long transactionId) {
-        transactionService.deleteOneTransaction(transactionId);
+        transactionAdminService.deleteOneTransaction(transactionId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
 }

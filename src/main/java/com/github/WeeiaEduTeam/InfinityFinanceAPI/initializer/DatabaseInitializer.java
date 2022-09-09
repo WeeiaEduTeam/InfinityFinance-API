@@ -63,8 +63,16 @@ public class DatabaseInitializer implements CommandLineRunner {
                 Arrays.asList(
                     AppUser.builder()
                             .username("admin")
+                            .email("superancko@o2.pl")
+                            .password("{bcrypt}" + new BCryptPasswordEncoder().encode("admin"))
+                            .firstName("Oki")
+                            .secondName("Ok")
+                            .roles(roleList)
+                            .build(),
+                    AppUser.builder()
+                            .username("singleadmin")
                             .email("patryk@wp.pl")
-                            .password("{noop}admin")
+                            .password("{noop}singleadmin")
                             .firstName("Patryk")
                             .secondName("Yes")
                             .roles(Collections.singletonList(roleList.get(0)))
@@ -76,15 +84,7 @@ public class DatabaseInitializer implements CommandLineRunner {
                             .firstName("Geraldo")
                             .secondName("Ciro")
                             .roles(Collections.singletonList(roleList.get(1)))
-                            .build(),
-                        AppUser.builder()
-                                .username("test")
-                                .email("superaancko@o2.pl")
-                                .password("{bcrypt}" + new BCryptPasswordEncoder().encode("test"))
-                                .firstName("Oki")
-                                .secondName("Ok")
-                                .roles(roleList)
-                                .build()
+                            .build()
                 )
         );
     }

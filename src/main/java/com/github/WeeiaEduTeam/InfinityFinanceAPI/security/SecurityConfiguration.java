@@ -32,7 +32,6 @@ public class SecurityConfiguration {
     private final JwtUtil jwtUtil;
     private final String secret;
 
-
     private static final String[] AUTH_WHITELIST = {
             // -- Swagger UI v2
             "/v2/api-docs",

@@ -16,31 +16,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TransactionUtil extends BaseUtil {
 
-    private final AppUserService appUserService;
-    private final CategoryService categoryService;
-
-    public Transaction createTransactionFromCreateTransactionDTOAndUserId(CreateTransactionDTO createTransactionDTO, long userId) {
-        AppUser appUser = null;
-
-        if(isNumberPositive(userId)) {
-            appUser = getAppUserById(userId);
-        }
-
-        var category = getCategoryByName(createTransactionDTO.getCategoryName());
-
+    public Transaction mapCreateTransactionDTOToTransaction(CreateTransactionDTO createTransactionDTO, long userId) {
         return Transaction.builder()
                 .transactionType(createTransactionDTO.getTransactionType())
                 .value(createTransactionDTO.getValue())
                 .quantity(createTransactionDTO.getQuantity())
                 .title(createTransactionDTO.getTitle())
                 .description(createTransactionDTO.getDescription())
-                .appuser(appUser)
-                .category(category)
                 .build();
-    }
-
-    private boolean isNumberPositive(long number) {
-        return isPositive(number);
     }
 
     public TransactionDTO mapTransactionToTransactionDTO(Transaction transaction) {
@@ -58,19 +41,8 @@ public class TransactionUtil extends BaseUtil {
                 .build();
     }
 
-    public Transaction mapTransactionDTOToTransaction(TransactionDTO transactionDTO) {
-        return Transaction.builder()
-                .value(transactionDTO.getValue())
-                .quantity(transactionDTO.getQuantity())
-                .title(transactionDTO.getTitle())
-                .description(transactionDTO.getDescription())
-                .appuser(getAppUserByUserName(transactionDTO.getUserName()))
-                .category(getCategoryByName(transactionDTO.getCategoryName()))
-                .build();
-    }
-
     public Transaction overwriteTransactionByCreateTransactionDTO(Transaction main, CreateTransactionDTO toConvert) {
-       var convertedTransaction = createTransactionFromCreateTransactionDTOAndUserId(toConvert, -1);
+       var convertedTransaction = mapCreateTransactionDTOToTransaction(toConvert, -1);
 
        main.setTransactionType(convertedTransaction.getTransactionType());
        main.setCategory(convertedTransaction.getCategory());
@@ -78,23 +50,6 @@ public class TransactionUtil extends BaseUtil {
        main.setQuantity(convertedTransaction.getQuantity());
 
        return main;
-    }
-
-    private Category getCategoryByName(String categoryName) {
-        var foundCategory = categoryService.getCategoryByName(categoryName);
-
-        return foundCategory.orElse(null);
-    }
-
-    private AppUser getAppUserByUserName(String userName) {
-
-        return appUserService.getUserByUserName(userName);
-    }
-
-    private AppUser getAppUserById(long userId) {
-        var foundUser = appUserService.getUserById(userId);
-
-        return foundUser.orElse(null);
     }
 
     public void validateIntArgumentsArePositive(int... values) {

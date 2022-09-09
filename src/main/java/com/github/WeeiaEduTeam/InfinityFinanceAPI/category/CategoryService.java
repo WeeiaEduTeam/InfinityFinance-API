@@ -1,11 +1,7 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.category;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.dto.CategoryDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 
 @Service
@@ -16,23 +12,30 @@ public class CategoryService {
 
     private final CategoryUtil categoryUtil;
 
-    public Optional<Category> getCategoryByName(String categoryName) {
+    public Category getCategoryByName(String categoryName) {
 
-        return Optional.ofNullable(categoryRepository.findByName(categoryName));
+        return categoryRepository.findByName(categoryName);
     }
 
-    public Category createCategory(Category category) {
+    public Category createCategory(String categoryName) {
+        Category category = new Category(categoryName);
 
         return categoryRepository.save(category);
     }
 
-    public void deleteCategoryIfNotRelated(Long id) {
-        var foundCategory = categoryRepository.findById(id);
+    public void checkAndDeleteCategoryIfNotRelated(Long id) {
+        var foundCategory = getCategoryById(id);
 
-        foundCategory.ifPresent((category) -> {
-            if (!isNumberPositive(category.getTransactions().size()))
-                deleteCategoryById(category.getId());
-        });
+        deleteCategoryIfNotRelated(foundCategory);
+    }
+
+    private void deleteCategoryIfNotRelated(Category foundCategory) {
+        if (!isNumberPositive(foundCategory.getTransactions().size()))
+            deleteCategoryById(foundCategory.getId());
+    }
+
+    private Category getCategoryById(long id) {
+        return categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found in database"));
     }
 
     private boolean isNumberPositive(int value) {
