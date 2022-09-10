@@ -18,7 +18,7 @@ public class TransactionUserController {
 
     private final TransactionUserService transactionUserService;
 
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/users/transactions")
     public ResponseEntity<List<TransactionDTO>> getAllTransactionsForLoggedUser() {
         var transactions = transactionUserService.getAllTransactionsForLoggedUser();
@@ -26,7 +26,7 @@ public class TransactionUserController {
         return ResponseEntity.ok(transactions);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/users/transactions/category/{categoryId:[0-9]+}")
     public ResponseEntity<List<TransactionDTO>> getAllTransactionsForLoggedUserAndGivenCategory(@PathVariable long categoryId) {
         var transactions = transactionUserService.getAllTransactionsForLoggedUserAndGivenCategory(categoryId);
@@ -34,7 +34,7 @@ public class TransactionUserController {
         return ResponseEntity.ok(transactions);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @DeleteMapping("/users/transactions/{transactionId:[0-9]+}")
     ResponseEntity<Void> deleteSingleTransactionForLoggedUser(@PathVariable long transactionId) {
         transactionUserService.deleteSingleTransactionForLoggedUser(transactionId);
@@ -42,7 +42,7 @@ public class TransactionUserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/users/transactions")
     ResponseEntity<TransactionDTO> createTransactionForLoggedUser( @RequestBody CreateTransactionDTO createTransactionDTO) {
         var transaction = transactionUserService.createTransactionForLoggedUser(createTransactionDTO);
@@ -50,7 +50,7 @@ public class TransactionUserController {
         return ResponseEntity.created(URI.create("/users/transactions" + transaction.getId())).body(transaction);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("/users/transactions/{transactionId:[0-9]+}")
     ResponseEntity<TransactionDTO> replaceUniversityWithLocationForLoggedUser(
             @PathVariable Long transactionId,

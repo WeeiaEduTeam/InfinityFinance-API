@@ -63,21 +63,81 @@ def generateUsers() {
     def exampleTimestamp = LocalDateTime.now()
 
     users.append("INSERT INTO app_user (username, email, password, first_name, second_name, created, updated)" +
-            "VALUES ('admin', 'admin@wp.pl', 'admin', '{noop}admin', 'admin','" + exampleTimestamp + "','" + exampleTimestamp + "');\n")
+            "VALUES ('admin', 'admin@wp.pl', '{noop}admin', 'admin', 'admin','" + exampleTimestamp + "','" + exampleTimestamp + "');\n")
 
     users.append("INSERT INTO app_user (username, email, password, first_name, second_name, created, updated)" +
-            "VALUES ('user', 'user@wp.pl', 'user', '{noop}user', 'user','" + exampleTimestamp + "','" + exampleTimestamp + "');\n")
+            "VALUES ('user', 'user@wp.pl', '{noop}user', 'user', 'user','" + exampleTimestamp + "','" + exampleTimestamp + "');\n")
 
     for (int i = 1; i <= 20; i++) {
         exampleTimestamp = LocalDateTime.now().minusDays(100 - i)
 
         def categoryInsert = "INSERT INTO app_user (username, email, password, first_name, second_name, created, updated)" +
-                "VALUES ('test${i}', 'test${i}@wp.pl', 'test${i}', '{noop}test${i}', 'test${i}','" + exampleTimestamp + "','" + exampleTimestamp + "');\n"
+                "VALUES ('test${i}', 'test${i}@wp.pl', '{noop}test${i}', 'test${i}', 'test${i}','" + exampleTimestamp + "','" + exampleTimestamp + "');\n"
 
         users.append(categoryInsert)
     }
 }
 
-generateCategories()
+def generateRelationUserRole() {
+    File relation = createFile("relationUserRole.sql")
+    clearFileAndGenerateHeader(relation)
+
+    def userRole = 1
+    def adminRole = 2
+    def adminId = 1
+    def userId = 2
+
+    relation.append("INSERT INTO user_roles (role_id, user_id) " +
+            "VALUES(" + userRole + "," + adminId + ");\n")
+
+    relation.append("INSERT INTO user_roles (role_id, user_id) " +
+            "VALUES(" + adminRole + "," + adminId + ");\n")
+
+    relation.append("INSERT INTO user_roles (role_id, user_id) " +
+            "VALUES(" + userRole + "," + userId + ");\n")
+
+    def numberOfUsersInserted = 22;
+
+    for (int i = 1; i <= numberOfUsersInserted; i++) {
+
+        def randomRole = (i % 2) + 1
+
+        def categoryInsert = "INSERT INTO user_roles (role_id, user_id) " +
+                "VALUES(" + randomRole + "," + i + ");\n"
+
+        relation.append(categoryInsert)
+
+        // admin has to obtain user role
+        if(randomRole == adminRole) {
+            categoryInsert = "INSERT INTO user_roles (role_id, user_id) " +
+                    "VALUES(" + userRole + "," + i + ");\n"
+
+            relation.append(categoryInsert)
+        }
+    }
+}
+
+def generateTransactions() {
+    File categories = createFile("transactions.sql")
+    clearFileAndGenerateHeader(categories)
+
+    //enums
+    def transactionsMap = [0:"INCOME", 1:"OUTCOME"]
+
+    def numberOfUsers = 22
+    for (int i = 1; i <= 200; i++) {
+        def exampleTimestamp = LocalDateTime.now().minusDays(i)
+
+        def categoryInsert = "INSERT INTO transaction (transaction_type, value, quantity, title, description, category_id, appuser_id, created, updated) VALUES " +
+                "('" + transactionsMap[i % 2] + "', ${i + i + (i % 10) * 10 + i % 2}, ${(i / 4) + 1}, 'Title ${i}', 'Description ${i}', ${(i % 20) + 1}, '${(i % numberOfUsers) + 1}' ,'" + exampleTimestamp + "','" + exampleTimestamp + "');\n"
+
+        categories.append(categoryInsert)
+    }
+
+}
+
 generateRoles()
 generateUsers()
+generateRelationUserRole()
+generateCategories()
+generateTransactions()
