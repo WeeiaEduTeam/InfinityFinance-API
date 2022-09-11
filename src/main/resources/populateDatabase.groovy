@@ -2,7 +2,7 @@ import groovy.transform.Field
 import groovy.time.*
 import java.time.*
 
-@Field int counter = 1
+@Field int counter = 5 /*write here next number after creating tables*/
 
 def createFile(name) {
     def currentDirPath = System.getProperty("user.dir")
@@ -124,7 +124,7 @@ def generateTransactions() {
     def transactionsMap = [0:"INCOME", 1:"OUTCOME"]
 
     def numberOfUsers = 22
-    for (int i = 1; i <= 40000; i++) {
+    for (int i = 1; i <= 8000; i++) {
         def exampleTimestamp = LocalDateTime.now().minusDays(i)
 
         def randomId = Math.abs(new Random().nextInt() % 2)
