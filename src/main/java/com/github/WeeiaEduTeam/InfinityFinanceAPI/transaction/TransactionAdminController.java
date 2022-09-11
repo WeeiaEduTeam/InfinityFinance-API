@@ -47,7 +47,7 @@ public class TransactionAdminController {
     }
 
     @PutMapping("/admin/users/{userId:[0-9]+}/transactions/{transactionId:[0-9]+}")
-    ResponseEntity<TransactionDTO> replaceUniversityWithLocation(
+    ResponseEntity<TransactionDTO> replaceTransactionForGivenUserIdAndTransactionId(
             @PathVariable Long userId, @PathVariable Long transactionId,
             @RequestBody CreateTransactionDTO createTransactionDTO) {
 

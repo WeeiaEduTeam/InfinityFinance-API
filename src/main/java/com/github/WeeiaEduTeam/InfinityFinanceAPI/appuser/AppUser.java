@@ -37,8 +37,8 @@ public class AppUser implements UserDetails {
     private String secondName;
 
 
-    @ManyToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
-    @JoinTable(name="user_roles",
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )

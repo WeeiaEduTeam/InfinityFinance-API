@@ -93,6 +93,9 @@ public class TransactionAdminService {
 
         var foundTransaction = getTransactionByIdAndByAppuserId(transactionId, userId);
 
+        if(foundTransaction == null)
+            throw new RuntimeException("Transaction not found or is transaction id is not related with user id");
+
         var overwrittenTransaction = transactionUtil.overwriteTransactionByCreateTransactionDTO(foundTransaction, createTransactionDTO);
 
         ifCategoryDoesNotExistsCreate(overwrittenTransaction, createTransactionDTO.getCategoryName());

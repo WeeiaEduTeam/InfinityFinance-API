@@ -35,7 +35,7 @@ def generateCategories() {
     File categories = createFile("categories.sql")
     clearFileAndGenerateHeader(categories)
 
-    for (int i = 1; i <= 20; i++) {
+    for (int i = 1; i <= 200; i++) {
         def exampleTimestamp = LocalDateTime.now().minusDays(100 - i)
 
         def categoryInsert = "INSERT INTO category (name, created, updated) " +
@@ -96,7 +96,7 @@ def generateRelationUserRole() {
     relation.append("INSERT INTO user_roles (role_id, user_id) " +
             "VALUES(" + userRole + "," + userId + ");\n")
 
-    def numberOfUsersInserted = 22;
+    def numberOfUsersInserted = 22
 
     for (int i = 3; i <= numberOfUsersInserted; i++) {
 
@@ -124,20 +124,22 @@ def generateTransactions() {
     def transactionsMap = [0:"INCOME", 1:"OUTCOME"]
 
     def numberOfUsers = 22
-    for (int i = 1; i <= 200; i++) {
+    for (int i = 1; i <= 40000; i++) {
         def exampleTimestamp = LocalDateTime.now().minusDays(i)
 
         def randomId = Math.abs(new Random().nextInt() % 2)
+        def value = i + i + (i % 10) * 10 + i % 2
+        def quantity = (i % 9) + 1
+        def category = (i % 200) + 1
+        def user = (i % numberOfUsers) + 1
 
         def categoryInsert = "INSERT INTO transaction (transaction_type, value, quantity, title, description, category_id, appuser_id, created, updated) VALUES " +
-                "('" + transactionsMap[randomId] + "', ${i + i + (i % 10) * 10 + i % 2}, ${(i % 9) + 1}, 'Title ${i}', 'Description ${i}', ${(i % 20) + 1}, '${(i % numberOfUsers) + 1}' ,'" + exampleTimestamp + "','" + exampleTimestamp + "');\n"
+                "('" + transactionsMap[randomId] + "', ${value}, ${quantity}, 'Title ${i}', 'Description ${i}', ${category}, '${user}' ,'" + exampleTimestamp + "','" + exampleTimestamp + "');\n"
 
         categories.append(categoryInsert)
     }
 
 }
-
-//unauthorized, sprawdzanie roli user na wejsciu preauthorized controller vs security check ok ok
 
 generateRoles()
 generateUsers()
