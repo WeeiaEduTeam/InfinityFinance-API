@@ -1,4 +1,4 @@
-package com.github.WeeiaEduTeam.InfinityFinanceAPI.initializer;
+/*package com.github.WeeiaEduTeam.InfinityFinanceAPI.initializer;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserRepository;
@@ -208,3 +208,4 @@ public class DatabaseInitializer implements CommandLineRunner {
         );
     }
 }
+*/

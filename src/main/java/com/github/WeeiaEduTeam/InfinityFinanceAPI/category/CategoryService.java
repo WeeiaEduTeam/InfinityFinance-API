@@ -3,6 +3,8 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -44,5 +46,9 @@ public class CategoryService {
 
     private void deleteCategoryById(Long id) {
         categoryRepository.deleteById(id);
+    }
+
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll();
     }
 }
