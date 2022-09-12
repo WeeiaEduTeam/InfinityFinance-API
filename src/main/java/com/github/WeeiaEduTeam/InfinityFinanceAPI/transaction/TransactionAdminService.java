@@ -37,7 +37,7 @@ public class TransactionAdminService {
     }
 
     private <T> Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy, Class<T> clazz) {
-        return customPageable.validateAndCreatePageable(pageNumber, sortDirection, sortBy);//, clazz);
+        return customPageable.validateAndCreatePageable(pageNumber, sortDirection, sortBy, clazz);
     }
 
 

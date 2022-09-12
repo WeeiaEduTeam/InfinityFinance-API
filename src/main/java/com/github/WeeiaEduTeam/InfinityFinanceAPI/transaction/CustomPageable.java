@@ -16,10 +16,9 @@ class CustomPageable {
 
     private static final int PAGE_SIZE = 2;
 
-    <T> Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy) {
+    <T> Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy, Class<T> clazz) {
         pageNumber = validateAndReturnPageNumber(pageNumber);
 
-        var clazz = Transaction.class;
         sortBy = validateAndReturnSortString(sortBy, clazz);
 
         return PageRequest.of(pageNumber, PAGE_SIZE,

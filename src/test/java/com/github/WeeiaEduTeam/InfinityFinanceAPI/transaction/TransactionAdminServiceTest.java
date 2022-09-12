@@ -8,10 +8,12 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -206,7 +208,7 @@ class TransactionAdminServiceTest {
     @DisplayName("Should get all transactions for given user and category.")
     void shouldGetAllTransactionsForGivenUserAndCategory() {
         //given
-        given(customPageable.validateAndCreatePageable(anyInt(), any(Sort.Direction.class), anyString() ) ).willReturn(PageRequest.of(1,1));
+        given(customPageable.validateAndCreatePageable(anyInt(), any(Sort.Direction.class), anyString(), ArgumentMatchers.<Class<A>>any())).willReturn(PageRequest.of(1,1));
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
         given(transactionRepository.findAllByAppuserIdAndCategoryId(anyLong(), anyLong(), any(Pageable.class))).willReturn(Collections.singletonList(transactionTest));
 
