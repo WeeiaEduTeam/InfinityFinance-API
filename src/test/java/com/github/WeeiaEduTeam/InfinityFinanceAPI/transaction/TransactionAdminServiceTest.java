@@ -8,10 +8,12 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -23,9 +25,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,6 +57,9 @@ class TransactionAdminServiceTest {
 
     @Mock
     private TransactionUtil transactionUtil;
+
+    @Mock
+    private CustomPageable customPageable;
 
     Transaction transactionTest;
     TransactionDTO transactionDTOTest;
@@ -99,7 +107,7 @@ class TransactionAdminServiceTest {
                 .transactionType(TransactionType.INCOME)
                 .title("title")
                 .description("desc")
-                .userName("name")
+                .username("name")
                 .value(600)
                 .quantity(2)
                 .categoryName("name")
@@ -195,18 +203,20 @@ class TransactionAdminServiceTest {
         assertThat(savedTransaction, hasProperty("categoryName", equalTo("name")));
     }
 
+
     @Test
     @DisplayName("Should get all transactions for given user and category.")
     void shouldGetAllTransactionsForGivenUserAndCategory() {
         //given
+        given(customPageable.validateAndCreatePageable(anyInt(), any(Sort.Direction.class), anyString(), ArgumentMatchers.<Class<A>>any())).willReturn(PageRequest.of(1,1));
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
-        given(transactionRepository.findAllByAppuserIdAndCategoryId(appUserTest.getId(), categoryTest.getId())).willReturn(Collections.singletonList(transactionTest));
+        given(transactionRepository.findAllByAppuserIdAndCategoryId(anyLong(), anyLong(), any(Pageable.class))).willReturn(Collections.singletonList(transactionTest));
 
         //when
-        var transactions = transactionAdminService.getAllTransactionsForGivenUserAndCategory(appUserTest.getId(), categoryTest.getId());
+        var transactions = transactionAdminService.getAllTransactionsForGivenUserAndCategory(appUserTest.getId(), categoryTest.getId(), 0, Sort.Direction.valueOf("ASC"),"id");
 
         //then
-        assertEquals(transactions.size(), 1);
+        assertEquals(1, transactions.size());
 
         var firstTransaction = transactions.get(0);
         assertThat(firstTransaction, instanceOf(TransactionDTO.class));
@@ -221,13 +231,14 @@ class TransactionAdminServiceTest {
     void shouldGetAllTransactionsForGivenUser() {
         //given
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
-        given(transactionRepository.findAllByAppuserId(appUserTest.getId())).willReturn(Collections.singletonList(transactionTest));
+        given(customPageable.validateAndCreatePageable(anyInt(), any(Sort.Direction.class), anyString(), ArgumentMatchers.<Class<A>>any())).willReturn(PageRequest.of(1,1));
+        given(transactionRepository.findAllByAppuserId(anyLong(), any(Pageable.class))).willReturn(Collections.singletonList(transactionTest));
 
         //when
-        var transactions = transactionAdminService.getAllTransactionsForGivenUser(appUserTest.getId());
+        var transactions = transactionAdminService.getAllTransactionsForGivenUser(appUserTest.getId(), 1, Sort.Direction.valueOf("ASC"), "id");
 
         //then
-        assertEquals(transactions.size(), 1);
+        assertEquals(1, transactions.size());
 
         var firstTransaction = transactions.get(0);
         assertThat(firstTransaction, instanceOf(TransactionDTO.class));

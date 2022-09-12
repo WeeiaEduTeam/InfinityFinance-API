@@ -8,6 +8,8 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransact
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,25 +24,38 @@ public class TransactionAdminService {
     private final CategoryService categoryService;
 
     private final TransactionUtil transactionUtil;
+    private final CustomPageable customPageable;
 
-    public List<TransactionDTO> getAllTransactionsForGivenUserAndCategory(long userId, long categoryId) {
-        var foundTransactions = getTransactionsByAppuserIdAndCategoryId(userId, categoryId);
+    public List<TransactionDTO> getAllTransactionsForGivenUserAndCategory(long userId, long categoryId, int pageNumber,
+                                                                          Sort.Direction sortDirection, String sortBy) {
 
-        return foundTransactions.stream().map(transactionUtil::mapTransactionToTransactionDTO).toList();
-    }
+        Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy, Transaction.class);
 
-    private List<Transaction> getTransactionsByAppuserIdAndCategoryId(long userId, long categoryId) {
-        return transactionRepository.findAllByAppuserIdAndCategoryId(userId, categoryId);
-    }
-
-    public List<TransactionDTO> getAllTransactionsForGivenUser(long userId) {
-        var foundTransactions = getTransactionsByAppuserId(userId);
+        var foundTransactions = getTransactionsByAppuserIdAndCategoryId(userId, categoryId, page);
 
         return foundTransactions.stream().map(transactionUtil::mapTransactionToTransactionDTO).toList();
     }
 
-    private List<Transaction> getTransactionsByAppuserId(long userId) {
-        return transactionRepository.findAllByAppuserId(userId);
+    private <T> Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy, Class<T> clazz) {
+        return customPageable.validateAndCreatePageable(pageNumber, sortDirection, sortBy, clazz);
+    }
+
+
+    private List<Transaction> getTransactionsByAppuserIdAndCategoryId(long userId, long categoryId, Pageable page) {
+        return transactionRepository.findAllByAppuserIdAndCategoryId(userId, categoryId, page);
+    }
+
+    public List<TransactionDTO> getAllTransactionsForGivenUser(long userId, int pageNumber,
+                                                               Sort.Direction sortDirection, String sortBy) {
+        Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy, Transaction.class);
+
+        var foundTransactions = getTransactionsByAppuserId(userId, page);
+
+        return foundTransactions.stream().map(transactionUtil::mapTransactionToTransactionDTO).toList();
+    }
+
+    private List<Transaction> getTransactionsByAppuserId(long userId, Pageable page) {
+        return transactionRepository.findAllByAppuserId(userId, page);
     }
 
     public TransactionDTO createTransactionForGivenUser(long userId, CreateTransactionDTO createTransactionDTO) {
@@ -92,6 +107,9 @@ public class TransactionAdminService {
         validateArgumentsArePositive(createTransactionDTO.getQuantity(), createTransactionDTO.getValue());
 
         var foundTransaction = getTransactionByIdAndByAppuserId(transactionId, userId);
+
+        if(foundTransaction == null)
+            throw new RuntimeException("Transaction not found or is transaction id is not related with user id");
 
         var overwrittenTransaction = transactionUtil.overwriteTransactionByCreateTransactionDTO(foundTransaction, createTransactionDTO);
 

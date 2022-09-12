@@ -18,13 +18,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -96,7 +96,7 @@ class TransactionUserServiceTest {
                 .transactionType(TransactionType.INCOME)
                 .title("title")
                 .description("desc")
-                .userName("name")
+                .username("name")
                 .value(600)
                 .quantity(2)
                 .categoryName("name")
@@ -122,9 +122,9 @@ class TransactionUserServiceTest {
     void shouldGetAllTransactionsForLoggedUser() {
         //given
         given(appUserService.getLoggedInUserId()).willReturn(1L);
-        given(transactionAdminService.getAllTransactionsForGivenUser(anyLong())).willReturn(Collections.singletonList(transactionDTOTest));
+        given(transactionAdminService.getAllTransactionsForGivenUser(anyLong(),anyInt(), any(Sort.Direction.class), anyString())).willReturn(Collections.singletonList(transactionDTOTest));
         //when
-        var transactions = transactionUserService.getAllTransactionsForLoggedUser();
+        var transactions = transactionUserService.getAllTransactionsForLoggedUser(1, Sort.Direction.valueOf("ASC"), "id");
 
         //then
         var firstTransaction = transactions.get(0);
@@ -140,9 +140,9 @@ class TransactionUserServiceTest {
     void shouldGetAllTransactionsWithCategoryForLoggedUser() {
         //given
         given(appUserService.getLoggedInUserId()).willReturn(1L);
-        given(transactionAdminService.getAllTransactionsForGivenUserAndCategory(anyLong(), anyLong())).willReturn(Collections.singletonList(transactionDTOTest));
+        given(transactionAdminService.getAllTransactionsForGivenUserAndCategory(anyLong(), anyLong(), anyInt(), any(Sort.Direction.class), anyString())).willReturn(Collections.singletonList(transactionDTOTest));
         //when
-        var transactions = transactionUserService.getAllTransactionsForLoggedUserAndGivenCategory(1L);
+        var transactions = transactionUserService.getAllTransactionsForLoggedUserAndGivenCategory(1, 1, Sort.Direction.valueOf("ASC"), "id");
 
         //then
         var firstTransaction = transactions.get(0);
@@ -159,7 +159,6 @@ class TransactionUserServiceTest {
         // given
         given(transactionAdminService.getTransactionByIdAndByAppuserId(anyLong(), anyLong())).willReturn(transactionTest);
         given(appUserService.getLoggedInUserId()).willReturn(1L);
-
 
         //when
         transactionUserService.deleteSingleTransactionForLoggedUser(transactionTest.getId());

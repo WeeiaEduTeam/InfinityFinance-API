@@ -26,6 +26,7 @@ public class Role {
     private String name;
 
     @JsonIgnoreProperties("roles")
+
     @ManyToMany(mappedBy = "roles")
     private List<AppUser> users = new ArrayList<>();
 }

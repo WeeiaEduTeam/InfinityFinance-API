@@ -5,6 +5,7 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransact
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,16 +18,16 @@ public class TransactionUserService {
 
     private final TransactionAdminService transactionAdminService;
 
-    public List<TransactionDTO> getAllTransactionsForLoggedUser() {
+    public List<TransactionDTO> getAllTransactionsForLoggedUser(int pageNumber, Sort.Direction sortDirection, String sortBy) {
         long loggedInUserId = getLoggedUserId();
 
-        return transactionAdminService.getAllTransactionsForGivenUser(loggedInUserId);
+        return transactionAdminService.getAllTransactionsForGivenUser(loggedInUserId, pageNumber, sortDirection, sortBy);
     }
 
-    public List<TransactionDTO> getAllTransactionsForLoggedUserAndGivenCategory(long categoryId) {
+    public List<TransactionDTO> getAllTransactionsForLoggedUserAndGivenCategory(long categoryId, int pageNumber, Sort.Direction sortDirection, String sortBy) {
         long loggedInUserId = getLoggedUserId();
 
-        return transactionAdminService.getAllTransactionsForGivenUserAndCategory(loggedInUserId, categoryId);
+        return transactionAdminService.getAllTransactionsForGivenUserAndCategory(loggedInUserId, categoryId, pageNumber, sortDirection, sortBy);
     }
     public void deleteSingleTransactionForLoggedUser(long transactionId) {
         long loggedInUserId = getLoggedUserId();

@@ -25,11 +25,10 @@ public class Category {
     @Column(name = "category_id")
     private Long id;
 
-    //@Column(unique = true)
     private String name;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "category", orphanRemoval = true)
+    @OneToMany(mappedBy = "category", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Transaction> transactions = new ArrayList<>();
 
     @CreationTimestamp
