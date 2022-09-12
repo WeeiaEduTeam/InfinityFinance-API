@@ -23,8 +23,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,6 +55,9 @@ class TransactionAdminServiceTest {
 
     @Mock
     private TransactionUtil transactionUtil;
+
+    @Mock
+    private CustomPageable customPageable;
 
     Transaction transactionTest;
     TransactionDTO transactionDTOTest;
@@ -194,18 +201,20 @@ class TransactionAdminServiceTest {
         assertThat(savedTransaction, hasProperty("categoryName", equalTo("name")));
     }
 
+
     @Test
     @DisplayName("Should get all transactions for given user and category.")
     void shouldGetAllTransactionsForGivenUserAndCategory() {
         //given
+        given(customPageable.validateAndCreatePageable(anyInt(), any(Sort.Direction.class), anyString() ) ).willReturn(PageRequest.of(1,1));
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
-        given(transactionRepository.findAllByAppuserIdAndCategoryId(appUserTest.getId(), categoryTest.getId())).willReturn(Collections.singletonList(transactionTest));
+        given(transactionRepository.findAllByAppuserIdAndCategoryId(anyLong(), anyLong(), any(Pageable.class))).willReturn(Collections.singletonList(transactionTest));
 
         //when
-        var transactions = transactionAdminService.getAllTransactionsForGivenUserAndCategory(appUserTest.getId(), categoryTest.getId());
+        var transactions = transactionAdminService.getAllTransactionsForGivenUserAndCategory(appUserTest.getId(), categoryTest.getId(), 0, Sort.Direction.valueOf("ASC"),"id");
 
         //then
-        assertEquals(transactions.size(), 1);
+        assertEquals(1, transactions.size());
 
         var firstTransaction = transactions.get(0);
         assertThat(firstTransaction, instanceOf(TransactionDTO.class));
@@ -226,7 +235,7 @@ class TransactionAdminServiceTest {
         var transactions = transactionAdminService.getAllTransactionsForGivenUser(appUserTest.getId());
 
         //then
-        assertEquals(transactions.size(), 1);
+        assertEquals(1, transactions.size());
 
         var firstTransaction = transactions.get(0);
         assertThat(firstTransaction, instanceOf(TransactionDTO.class));

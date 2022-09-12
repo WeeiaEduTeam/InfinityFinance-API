@@ -29,13 +29,15 @@ public class TransactionAdminService {
     public List<TransactionDTO> getAllTransactionsForGivenUserAndCategory(long userId, long categoryId, int pageNumber,
                                                                           Sort.Direction sortDirection, String sortBy) {
 
-        Pageable page = customPageable.validateAndCreatePageable(pageNumber, sortDirection, sortBy, new Transaction());
-
-        log.info(page.toString());
+        Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy, Transaction.class);
 
         var foundTransactions = getTransactionsByAppuserIdAndCategoryId(userId, categoryId, page);
 
         return foundTransactions.stream().map(transactionUtil::mapTransactionToTransactionDTO).toList();
+    }
+
+    private <T> Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy, Class<T> clazz) {
+        return customPageable.validateAndCreatePageable(pageNumber, sortDirection, sortBy);//, clazz);
     }
 
 

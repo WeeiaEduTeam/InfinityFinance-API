@@ -17,6 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
 
@@ -138,7 +140,7 @@ class TransactionUserServiceTest {
     void shouldGetAllTransactionsWithCategoryForLoggedUser() {
         //given
         given(appUserService.getLoggedInUserId()).willReturn(1L);
-        given(transactionAdminService.getAllTransactionsForGivenUserAndCategory(anyLong(), anyLong())).willReturn(Collections.singletonList(transactionDTOTest));
+        given(transactionAdminService.getAllTransactionsForGivenUserAndCategory(anyLong(), anyLong(), anyInt(), any(Sort.Direction.class), anyString())).willReturn(Collections.singletonList(transactionDTOTest));
         //when
         var transactions = transactionUserService.getAllTransactionsForLoggedUserAndGivenCategory(1L);
 

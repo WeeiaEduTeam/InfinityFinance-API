@@ -16,19 +16,21 @@ class CustomPageable {
 
     private static final int PAGE_SIZE = 2;
 
-    <T> Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy, T object) {
+    <T> Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy) {
         pageNumber = validateAndReturnPageNumber(pageNumber);
-        sortBy = validateAndReturnSortString(sortBy, object);
+
+        var clazz = Transaction.class;
+        sortBy = validateAndReturnSortString(sortBy, clazz);
 
         return PageRequest.of(pageNumber, PAGE_SIZE,
                 Sort.by(sortDirection, sortBy)
         );
     }
 
-    private <T> String validateAndReturnSortString(String sortBy, T object) {
+    private <T> String validateAndReturnSortString(String sortBy, Class<T> clazz) {
         String sortByToLower = sortBy.toLowerCase();
 
-        var output = Arrays.stream(object.getClass().getDeclaredFields())
+        var output = Arrays.stream(clazz.getDeclaredFields())
                 .map(e -> e.getName().toLowerCase())
                 .filter(item -> item.equals(sortByToLower))
                 .findAny();
