@@ -14,7 +14,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 class CustomPageable {
 
-    private static final int PAGE_SIZE = 2;
+    private static final int PAGE_SIZE = 6;
 
     <T> Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy, Class<T> clazz) {
         pageNumber = validateAndReturnPageNumber(pageNumber);

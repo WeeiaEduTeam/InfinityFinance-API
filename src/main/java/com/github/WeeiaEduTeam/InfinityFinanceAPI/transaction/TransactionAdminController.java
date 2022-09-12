@@ -37,8 +37,13 @@ public class TransactionAdminController {
     }
 
     @GetMapping("/admin/users/{userId:[0-9]+}/transactions")
-    public ResponseEntity<List<TransactionDTO>> getAllTransactionsForGivenUser(@PathVariable long userId) {
-        var transactions = transactionAdminService.getAllTransactionsForGivenUser(userId);
+    public ResponseEntity<List<TransactionDTO>> getAllTransactionsForGivenUser(
+            @PathVariable long userId,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "ASC") Sort.Direction direction,
+            @RequestParam(defaultValue = "id") String by) {
+
+        var transactions = transactionAdminService.getAllTransactionsForGivenUser(userId, page, direction, by);
 
         return ResponseEntity.ok(transactions);
     }

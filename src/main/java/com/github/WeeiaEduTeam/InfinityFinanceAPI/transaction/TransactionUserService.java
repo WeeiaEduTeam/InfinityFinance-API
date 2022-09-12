@@ -18,16 +18,16 @@ public class TransactionUserService {
 
     private final TransactionAdminService transactionAdminService;
 
-    public List<TransactionDTO> getAllTransactionsForLoggedUser() {
+    public List<TransactionDTO> getAllTransactionsForLoggedUser(int pageNumber, Sort.Direction sortDirection, String sortBy) {
         long loggedInUserId = getLoggedUserId();
 
-        return transactionAdminService.getAllTransactionsForGivenUser(loggedInUserId);
+        return transactionAdminService.getAllTransactionsForGivenUser(loggedInUserId, pageNumber, sortDirection, sortBy);
     }
 
-    public List<TransactionDTO> getAllTransactionsForLoggedUserAndGivenCategory(long categoryId) {
+    public List<TransactionDTO> getAllTransactionsForLoggedUserAndGivenCategory(long categoryId, int pageNumber, Sort.Direction sortDirection, String sortBy) {
         long loggedInUserId = getLoggedUserId();
 
-        return transactionAdminService.getAllTransactionsForGivenUserAndCategory(loggedInUserId, categoryId, 1, Sort.Direction.valueOf("ASC"), "id");
+        return transactionAdminService.getAllTransactionsForGivenUserAndCategory(loggedInUserId, categoryId, pageNumber, sortDirection, sortBy);
     }
     public void deleteSingleTransactionForLoggedUser(long transactionId) {
         long loggedInUserId = getLoggedUserId();

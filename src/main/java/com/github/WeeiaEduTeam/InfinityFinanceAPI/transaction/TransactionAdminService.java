@@ -45,14 +45,17 @@ public class TransactionAdminService {
         return transactionRepository.findAllByAppuserIdAndCategoryId(userId, categoryId, page);
     }
 
-    public List<TransactionDTO> getAllTransactionsForGivenUser(long userId) {
-        var foundTransactions = getTransactionsByAppuserId(userId);
+    public List<TransactionDTO> getAllTransactionsForGivenUser(long userId, int pageNumber,
+                                                               Sort.Direction sortDirection, String sortBy) {
+        Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy, Transaction.class);
+
+        var foundTransactions = getTransactionsByAppuserId(userId, page);
 
         return foundTransactions.stream().map(transactionUtil::mapTransactionToTransactionDTO).toList();
     }
 
-    private List<Transaction> getTransactionsByAppuserId(long userId) {
-        return transactionRepository.findAllByAppuserId(userId);
+    private List<Transaction> getTransactionsByAppuserId(long userId, Pageable page) {
+        return transactionRepository.findAllByAppuserId(userId, page);
     }
 
     public TransactionDTO createTransactionForGivenUser(long userId, CreateTransactionDTO createTransactionDTO) {

@@ -3,6 +3,7 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,16 +21,25 @@ public class TransactionUserController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/users/transactions")
-    public ResponseEntity<List<TransactionDTO>> getAllTransactionsForLoggedUser() {
-        var transactions = transactionUserService.getAllTransactionsForLoggedUser();
+    public ResponseEntity<List<TransactionDTO>> getAllTransactionsForLoggedUser(
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "ASC") Sort.Direction direction,
+            @RequestParam(defaultValue = "id") String by) {
+
+        var transactions = transactionUserService.getAllTransactionsForLoggedUser(page, direction, by);
 
         return ResponseEntity.ok(transactions);
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/users/transactions/category/{categoryId:[0-9]+}")
-    public ResponseEntity<List<TransactionDTO>> getAllTransactionsForLoggedUserAndGivenCategory(@PathVariable long categoryId) {
-        var transactions = transactionUserService.getAllTransactionsForLoggedUserAndGivenCategory(categoryId);
+    public ResponseEntity<List<TransactionDTO>> getAllTransactionsForLoggedUserAndGivenCategory(
+            @PathVariable long categoryId,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "ASC") Sort.Direction direction,
+            @RequestParam(defaultValue = "id") String by) {
+
+        var transactions = transactionUserService.getAllTransactionsForLoggedUserAndGivenCategory(categoryId, page, direction, by);
 
         return ResponseEntity.ok(transactions);
     }
