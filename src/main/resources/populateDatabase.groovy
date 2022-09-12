@@ -129,7 +129,7 @@ def generateTransactions() {
 
         def randomId = Math.abs(new Random().nextInt() % 2)
         def value = i + i + (i % 10) * 10 + i % 2
-        def quantity = (i % 9) + 1
+        def quantity = 100 - (i % 9) + 1
         def category = (i % 200) + 1
         def user = (i % numberOfUsers) + 1
 

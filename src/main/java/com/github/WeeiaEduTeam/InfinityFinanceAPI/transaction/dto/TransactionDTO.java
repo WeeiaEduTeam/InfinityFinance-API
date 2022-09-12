@@ -1,21 +1,15 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.Category;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionType;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import javax.persistence.*;
-import java.util.Date;
+import lombok.experimental.FieldNameConstants;
 
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 public class TransactionDTO {
     long id;
 
@@ -27,5 +21,5 @@ public class TransactionDTO {
     private String title;
     private String description;
     private String categoryName;
-    private String userName;
+    private String username;
 }

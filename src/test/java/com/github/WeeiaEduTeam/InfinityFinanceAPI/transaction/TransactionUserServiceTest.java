@@ -17,14 +17,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -96,7 +94,7 @@ class TransactionUserServiceTest {
                 .transactionType(TransactionType.INCOME)
                 .title("title")
                 .description("desc")
-                .userName("name")
+                .username("name")
                 .value(600)
                 .quantity(2)
                 .categoryName("name")

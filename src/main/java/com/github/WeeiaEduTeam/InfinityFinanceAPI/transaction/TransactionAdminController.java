@@ -3,6 +3,7 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,10 +25,13 @@ public class TransactionAdminController {
      */
     @GetMapping("/admin/users/{userId:[0-9]+}/transactions/category/{categoryId:[0-9]+}")
     public ResponseEntity<List<TransactionDTO>> getAllTransactionsForGivenUserAndCategory(
-            @PathVariable long userId, @PathVariable long categoryId){
+            @PathVariable long userId, @PathVariable long categoryId,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "ASC") Sort.Direction direction,
+            @RequestParam(defaultValue = "id") String by) {
 
         var transactions = transactionAdminService.getAllTransactionsForGivenUserAndCategory(
-                userId, categoryId);
+                userId, categoryId, page, direction, by);
 
         return ResponseEntity.ok(transactions);
     }

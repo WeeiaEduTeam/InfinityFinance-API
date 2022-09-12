@@ -8,6 +8,8 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransact
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,15 +24,23 @@ public class TransactionAdminService {
     private final CategoryService categoryService;
 
     private final TransactionUtil transactionUtil;
+    private final CustomPageable customPageable;
 
-    public List<TransactionDTO> getAllTransactionsForGivenUserAndCategory(long userId, long categoryId) {
-        var foundTransactions = getTransactionsByAppuserIdAndCategoryId(userId, categoryId);
+    public List<TransactionDTO> getAllTransactionsForGivenUserAndCategory(long userId, long categoryId, int pageNumber,
+                                                                          Sort.Direction sortDirection, String sortBy) {
+
+        Pageable page = customPageable.validateAndCreatePageable(pageNumber, sortDirection, sortBy, new Transaction());
+
+        log.info(page.toString());
+
+        var foundTransactions = getTransactionsByAppuserIdAndCategoryId(userId, categoryId, page);
 
         return foundTransactions.stream().map(transactionUtil::mapTransactionToTransactionDTO).toList();
     }
 
-    private List<Transaction> getTransactionsByAppuserIdAndCategoryId(long userId, long categoryId) {
-        return transactionRepository.findAllByAppuserIdAndCategoryId(userId, categoryId);
+
+    private List<Transaction> getTransactionsByAppuserIdAndCategoryId(long userId, long categoryId, Pageable page) {
+        return transactionRepository.findAllByAppuserIdAndCategoryId(userId, categoryId, page);
     }
 
     public List<TransactionDTO> getAllTransactionsForGivenUser(long userId) {
