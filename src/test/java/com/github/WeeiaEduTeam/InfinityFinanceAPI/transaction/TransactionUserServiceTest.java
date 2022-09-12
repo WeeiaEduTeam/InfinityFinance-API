@@ -122,9 +122,9 @@ class TransactionUserServiceTest {
     void shouldGetAllTransactionsForLoggedUser() {
         //given
         given(appUserService.getLoggedInUserId()).willReturn(1L);
-        given(transactionAdminService.getAllTransactionsForGivenUser(anyLong())).willReturn(Collections.singletonList(transactionDTOTest));
+        given(transactionAdminService.getAllTransactionsForGivenUser(anyLong(),anyInt(), any(Sort.Direction.class), anyString())).willReturn(Collections.singletonList(transactionDTOTest));
         //when
-        var transactions = transactionUserService.getAllTransactionsForLoggedUser();
+        var transactions = transactionUserService.getAllTransactionsForLoggedUser(1, Sort.Direction.valueOf("ASC"), "id");
 
         //then
         var firstTransaction = transactions.get(0);
@@ -142,7 +142,7 @@ class TransactionUserServiceTest {
         given(appUserService.getLoggedInUserId()).willReturn(1L);
         given(transactionAdminService.getAllTransactionsForGivenUserAndCategory(anyLong(), anyLong(), anyInt(), any(Sort.Direction.class), anyString())).willReturn(Collections.singletonList(transactionDTOTest));
         //when
-        var transactions = transactionUserService.getAllTransactionsForLoggedUserAndGivenCategory(1L);
+        var transactions = transactionUserService.getAllTransactionsForLoggedUserAndGivenCategory(1, 1, Sort.Direction.valueOf("ASC"), "id");
 
         //then
         var firstTransaction = transactions.get(0);
@@ -159,7 +159,6 @@ class TransactionUserServiceTest {
         // given
         given(transactionAdminService.getTransactionByIdAndByAppuserId(anyLong(), anyLong())).willReturn(transactionTest);
         given(appUserService.getLoggedInUserId()).willReturn(1L);
-
 
         //when
         transactionUserService.deleteSingleTransactionForLoggedUser(transactionTest.getId());

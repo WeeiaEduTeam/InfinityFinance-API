@@ -231,10 +231,11 @@ class TransactionAdminServiceTest {
     void shouldGetAllTransactionsForGivenUser() {
         //given
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
-        given(transactionRepository.findAllByAppuserId(appUserTest.getId())).willReturn(Collections.singletonList(transactionTest));
+        given(customPageable.validateAndCreatePageable(anyInt(), any(Sort.Direction.class), anyString(), ArgumentMatchers.<Class<A>>any())).willReturn(PageRequest.of(1,1));
+        given(transactionRepository.findAllByAppuserId(anyLong(), any(Pageable.class))).willReturn(Collections.singletonList(transactionTest));
 
         //when
-        var transactions = transactionAdminService.getAllTransactionsForGivenUser(appUserTest.getId());
+        var transactions = transactionAdminService.getAllTransactionsForGivenUser(appUserTest.getId(), 1, Sort.Direction.valueOf("ASC"), "id");
 
         //then
         assertEquals(1, transactions.size());
