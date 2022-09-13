@@ -35,8 +35,7 @@ public class AppUser implements UserDetails {
 
     private String firstName;
     private String secondName;
-
-
+    
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -44,6 +43,7 @@ public class AppUser implements UserDetails {
     )
     private List<Role> roles =  new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "appuser")
     private List<Transaction> transactions = new ArrayList<>();
 

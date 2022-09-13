@@ -71,7 +71,7 @@ public class TransactionAdminService {
     }
 
     private Transaction createTransactionFromCreateTransactionDTOAndUserId(CreateTransactionDTO createTransactionDTO, long userId) {
-        var transaction = transactionUtil.mapCreateTransactionDTOToTransaction(createTransactionDTO, userId);
+        var transaction = transactionUtil.mapCreateTransactionDTOToTransaction(createTransactionDTO);
 
         var appUser = getUserById(userId);
 

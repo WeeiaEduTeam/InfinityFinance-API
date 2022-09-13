@@ -146,7 +146,7 @@ class TransactionAdminServiceTest {
     @DisplayName("Should create transaction for given user with known category.")
     void shouldCreateTransactionForGivenUserWithKnownCategory() {
         //given
-        given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class), eq(1L))).willReturn(transactionTest);
+        given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class))).willReturn(transactionTest);
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
         given(appUserService.getUserById(anyLong())).willReturn(appUserTest);
         given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
@@ -166,7 +166,7 @@ class TransactionAdminServiceTest {
     @DisplayName("Should save transaction for given user and found category.")
     void shouldCreateTransactionForGivenUser() {
         //given
-        given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class), eq(1L))).willReturn(transactionTest);
+        given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class))).willReturn(transactionTest);
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
         given(appUserService.getUserById(anyLong())).willReturn(appUserTest);
         given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
@@ -258,7 +258,7 @@ class TransactionAdminServiceTest {
         given(categoryService.createCategory(anyString())).willReturn(categoryTest);
         given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
         given(appUserService.getUserById(anyLong())).willReturn(appUserTest);
-        given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class), anyLong()))
+        given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class)))
                 .willReturn(transactionNullCategoryAndUserTest);
 
         //when
