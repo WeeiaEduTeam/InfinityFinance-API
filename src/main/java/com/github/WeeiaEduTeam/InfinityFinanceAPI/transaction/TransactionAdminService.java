@@ -78,7 +78,7 @@ public class TransactionAdminService {
     }
 
     private List<Transaction> getTransactionsByAppuserId(long userId, Pageable page) {
-        return transactionRepository.findAllByAppuserId(userId, page);
+        return transactionRepository.findAllByAppuserId(userId);//, page);
     }
 
     public TransactionDTO createTransactionForGivenUser(long userId, CreateTransactionDTO createTransactionDTO) {

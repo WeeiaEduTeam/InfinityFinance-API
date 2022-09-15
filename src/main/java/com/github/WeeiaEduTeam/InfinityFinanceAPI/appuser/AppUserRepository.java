@@ -27,6 +27,12 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     @Query("SELECT u.id FROM AppUser u WHERE u.username = :username")
     Optional<Long> getIdByUsername(String username);
 
+    @Query("SELECT u FROM AppUser u JOIN FETCH u.roles WHERE u.username = :username")
     AppUser findByUsername(String username);
+
+    @Override
+    @NotNull
+    @Query("SELECT u FROM AppUser u JOIN FETCH u.roles")
+    List<AppUser> findAll();
 
 }
