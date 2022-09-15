@@ -1,11 +1,12 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserCredentialsDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.CreateAppUserDTO;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.ReplaceAppUserByUserDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionAdminService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -53,7 +55,7 @@ public class AppUserService implements UserDetailsService {
     public List<AppUserDTO> getAllUsers() {
         var foundUsers = appUserRepository.findAll();
 
-        return foundUsers.stream().map(appUserUtil::mapAppUserToAppUserDTO).toList();
+        return foundUsers.stream().map(appUserUtil::mapToAppUserDTO).toList();
     }
 
     public AppUserDTO createUser(CreateAppUserDTO createAppUserDTO) {
@@ -61,9 +63,9 @@ public class AppUserService implements UserDetailsService {
 
         user.setRoles(getUserRoleList());
 
-        user = appUserRepository.save(user);
+        user = saveUser(user);
 
-        return appUserUtil.mapAppUserDTOToAppUser(user);
+        return appUserUtil.mapToAppUserDTO(user);
     }
 
     private List<Role> getUserRoleList() {
@@ -71,10 +73,10 @@ public class AppUserService implements UserDetailsService {
     }
 
     private AppUser createAppUserFromCreateAppUserDTOAndHashPassword(CreateAppUserDTO createAppUserDTO) {
-        return appUserUtil.mapCreateAppUserDTOToAppUserAndHashPassword(createAppUserDTO);
+        return appUserUtil.mapToAppUserFactory(createAppUserDTO);
     }
-
-    public void findAndDeleteUserWithRoles(long userId) {
+    @Transactional
+    public void findAndDeleteUserWithRolesAndTransactions(long userId) {
         deleteTransactionsRelatedWithUser(userId);
         deleteUserWithRoles(userId);
     }
@@ -95,5 +97,39 @@ public class AppUserService implements UserDetailsService {
 
     private void deleteUser(AppUser user) {
         appUserRepository.delete(user);
+    }
+
+    public AppUserDTO replaceUserDetails(Long userId, ReplaceAppUserByUserDTO replaceAppUserByUserDTO) {
+        var foundUser = getUserById(userId);
+        var overwrittenUser = overwriteAppUserDetails(foundUser, replaceAppUserByUserDTO);
+
+        overwrittenUser = saveUser(overwrittenUser);
+
+        return mapAppUserToAppUserDTO(overwrittenUser);
+    }
+
+    private AppUserDTO mapAppUserToAppUserDTO(AppUser user) {
+        return appUserUtil.mapToAppUserDTO(user);
+    }
+
+    private AppUser saveUser(AppUser user) {
+        return appUserRepository.save(user);
+    }
+
+    public AppUser overwriteAppUserDetails(AppUser foundUser, ReplaceAppUserByUserDTO replaceAppUserByUserDTO) {
+        return appUserUtil.overwriteAppUserDetails(foundUser, replaceAppUserByUserDTO);
+    }
+
+    public AppUserDTO replaceUserCredentials(Long userId, AppUserCredentialsDTO appUserCredentialsDTO) {
+        var foundUser = getUserById(userId);
+        var overwrittenUser = overwriteAppUserCredentials(foundUser, appUserCredentialsDTO);
+
+        overwrittenUser = saveUser(overwrittenUser);
+
+        return mapAppUserToAppUserDTO(overwrittenUser);
+    }
+
+    private AppUser overwriteAppUserCredentials(AppUser foundUser, AppUserCredentialsDTO appUserCredentialsDTO) {
+        return appUserUtil.overwriteAppUserCredentials(foundUser, appUserCredentialsDTO);
     }
 }

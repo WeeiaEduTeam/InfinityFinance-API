@@ -39,7 +39,7 @@ public class RoleService {
         return roleRepository.save(role);
     }
 
-    public RoleDTO mapRoleToRoleDTO(Role role) {
+    public RoleDTO mapToRoleDTO(Role role) {
         return roleUtil.mapRoleToRoleDTO(role);
     }
 

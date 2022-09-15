@@ -168,7 +168,7 @@ public class TransactionAdminService {
 
     void deleteTransactionWithCategory(Transaction transaction) {
         transactionRepository.delete(transaction);
-        categoryService.checkAndDeleteCategoryIfNotRelated(transaction.getCategory().getId());
+        categoryService.checkAndDeleteCategoryIfNotRelated(transaction.getCategory().getId()); // N + 1
     }
 
     Transaction getTransactionByIdAndByAppuserId(long transactionId, long loggedInUserId) {
