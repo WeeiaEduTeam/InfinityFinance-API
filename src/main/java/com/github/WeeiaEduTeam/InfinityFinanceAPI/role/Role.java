@@ -25,8 +25,7 @@ public class Role {
     @Column(unique = true)
     private String name;
 
-    //@JsonIgnoreProperties("roles")
     @JsonIgnore
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private List<AppUser> users = new ArrayList<>();
 }

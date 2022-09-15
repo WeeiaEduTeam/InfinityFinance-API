@@ -2,12 +2,9 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.CreateAppUserDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -34,5 +31,12 @@ public class AppUserController {
         var user = appUserService.createUser(createAppUserDTO);
 
         return ResponseEntity.created(URI.create("/users/" + user.getId())).body(user);
+    }
+
+    @DeleteMapping("/users/{userId:[0-9]+}")
+    ResponseEntity<Void> deleteSingleTransaction(@PathVariable long userId) {
+        appUserService.findAndDeleteUserWithRoles(userId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
