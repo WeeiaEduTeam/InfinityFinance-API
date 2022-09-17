@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TransactionUtil extends BaseUtil {
 
-    public Transaction mapCreateTransactionDTOToTransaction(CreateTransactionDTO createTransactionDTO, long userId) {
+    public Transaction mapCreateTransactionDTOToTransaction(CreateTransactionDTO createTransactionDTO) {
         return Transaction.builder()
                 .transactionType(createTransactionDTO.getTransactionType())
                 .value(createTransactionDTO.getValue())
@@ -38,7 +38,7 @@ public class TransactionUtil extends BaseUtil {
     }
 
     public Transaction overwriteTransactionByCreateTransactionDTO(Transaction main, CreateTransactionDTO toConvert) {
-       var convertedTransaction = mapCreateTransactionDTOToTransaction(toConvert, -1);
+       var convertedTransaction = mapCreateTransactionDTOToTransaction(toConvert);
 
        main.setTransactionType(convertedTransaction.getTransactionType());
        main.setCategory(convertedTransaction.getCategory());

@@ -11,7 +11,7 @@ import lombok.experimental.FieldNameConstants;
 @AllArgsConstructor
 @FieldNameConstants
 public class TransactionDTO {
-    long id;
+    private long id;
 
     private TransactionType transactionType;
 

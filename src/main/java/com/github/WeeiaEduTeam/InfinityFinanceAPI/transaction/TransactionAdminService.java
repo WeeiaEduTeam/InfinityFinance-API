@@ -8,23 +8,46 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransact
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class TransactionAdminService {
 
-    private final TransactionRepository transactionRepository;
-    private final AppUserService appUserService;
-    private final CategoryService categoryService;
+    @Autowired
+    private TransactionRepository transactionRepository;
+    @Autowired
+    private CategoryService categoryService;
 
-    private final TransactionUtil transactionUtil;
-    private final CustomPageable customPageable;
+    @Autowired
+    private TransactionUtil transactionUtil;
+    @Autowired
+    private CustomPageable customPageable;
+
+    @Autowired
+    private AppUserService appUserService;
+
+    /*
+    *   Circular dependency between appUserService
+    *   and transactionAdminService is avoided
+    *   by lazy loading beans using @PostConstruct
+    *   annotion and getters & setters.
+    */
+
+    @PostConstruct
+    public void init() {
+        appUserService.setTransactionAdminService(this);
+    }
+
+    public AppUserService getAppUserService() {
+        return appUserService;
+    }
 
     public List<TransactionDTO> getAllTransactionsForGivenUserAndCategory(long userId, long categoryId, int pageNumber,
                                                                           Sort.Direction sortDirection, String sortBy) {
@@ -71,7 +94,7 @@ public class TransactionAdminService {
     }
 
     private Transaction createTransactionFromCreateTransactionDTOAndUserId(CreateTransactionDTO createTransactionDTO, long userId) {
-        var transaction = transactionUtil.mapCreateTransactionDTOToTransaction(createTransactionDTO, userId);
+        var transaction = transactionUtil.mapCreateTransactionDTOToTransaction(createTransactionDTO);
 
         var appUser = getUserById(userId);
 
@@ -88,7 +111,7 @@ public class TransactionAdminService {
     }
 
     private AppUser getUserById(long userId) {
-        return appUserService.getUserById(userId);
+        return getAppUserService().getUserById(userId);
     }
 
     private void ifCategoryDoesNotExistsCreate(Transaction transaction, String categoryName) {
@@ -145,10 +168,17 @@ public class TransactionAdminService {
 
     void deleteTransactionWithCategory(Transaction transaction) {
         transactionRepository.delete(transaction);
-        categoryService.checkAndDeleteCategoryIfNotRelated(transaction.getCategory().getId());
+        categoryService.checkAndDeleteCategoryIfNotRelated(transaction.getCategory().getId()); // N + 1
     }
 
     Transaction getTransactionByIdAndByAppuserId(long transactionId, long loggedInUserId) {
         return transactionRepository.findByIdAndAppuserId(transactionId, loggedInUserId);
+    }
+
+    public void deleteTransactionsRelatedWithUser(long userId) {
+        var transactions = getTransactionsByAppuserId(userId, null);
+
+        transactions
+                .forEach(this::deleteTransactionWithCategory);
     }
 }
