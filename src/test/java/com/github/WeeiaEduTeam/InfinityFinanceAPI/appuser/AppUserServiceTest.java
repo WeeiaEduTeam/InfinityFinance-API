@@ -31,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -106,18 +105,6 @@ class AppUserServiceTest {
                 .firstName("example")
                 .secondName("example")
                 .build();
-    }
-
-    @Test
-    @DisplayName("Should throw UsernameNotFoundException when logged in user does not exist")
-    void shouldThrowExceptionWhenLoggedInUserDoesNotExist() {
-        //given
-        given(appUserRepository.getIdByUsername(anyString())).willReturn(null);
-
-        // when
-        assertThatThrownBy(() -> appUserService.getLoggedInUserId())
-                .isInstanceOf(UsernameNotFoundException.class)
-                .hasMessage("User not found in the database");
     }
 
     @Test
@@ -228,6 +215,31 @@ class AppUserServiceTest {
         assertThat(user, hasProperty("username", equalTo("smith123")));
         assertEquals(1, user.getRoles().size());
         assertThat(user.getRoles().get(0), hasProperty("name", equalTo("TEST_ROLE")));
+    }
+
+    @Test
+    @DisplayName("Should throw when logged in user does not exist")
+    void shouldThrowExceptionWhenLoggedInUserDoesNotExist() {
+        //given
+        given(appUserRepository.getIdByUsername(anyString())).willReturn(null);
+
+        // when
+        assertThatThrownBy(() -> appUserService.getLoggedInUserId())
+                .isInstanceOf(UsernameNotFoundException.class)
+                .hasMessage("User not found in the database");
+    }
+
+    @Test
+    @DisplayName("Should throw when user does not exist in db")
+    void shouldThrowWhenUserDoesNotExist() {
+        //given
+        given(appUserRepository.findById(anyLong())).willReturn(Optional.ofNullable(null));
+
+        // when
+        assertThatThrownBy(() -> appUserService.getUserById(1L))
+                .isInstanceOf(UsernameNotFoundException.class)
+                .hasMessage("User not found in the database");
+
     }
 
 }
