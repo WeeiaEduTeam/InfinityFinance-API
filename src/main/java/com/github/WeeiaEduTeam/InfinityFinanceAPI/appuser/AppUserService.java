@@ -65,7 +65,7 @@ public class AppUserService implements UserDetailsService {
 
         user = saveUser(user);
 
-        return appUserUtil.mapToAppUserDTO(user);
+        return appUserUtil.mapToAppUserDTO(user); //TODO: new abstract layer
     }
 
     private List<Role> getUserRoleList() {

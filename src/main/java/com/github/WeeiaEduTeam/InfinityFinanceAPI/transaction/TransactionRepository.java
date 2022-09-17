@@ -16,7 +16,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             " LEFT JOIN FETCH t.appuser user" +
             " LEFT JOIN t.appuser.roles" +
             " WHERE user.id = :appUserId")
-    List<Transaction> findAllByAppuserId(long appUserId);/*, Pageable pageable);*/
+    List<Transaction> findAllByAppuserId(long appUserId, Pageable pageable);
 
     Transaction findByIdAndAppuserId(long transactionId, long AppuserId);
 

@@ -66,6 +66,7 @@ public class AppUserUtil {
                 .build();
     }
 
+    //TODO: move all mappers and factory into AppUserFactory
     public <T> AppUser mapToAppUserFactory(T dto) {
         AppUser user = null;
 
