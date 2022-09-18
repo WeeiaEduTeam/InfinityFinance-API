@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import static com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleUtil.ROLE_ADMIN;
 import static com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleUtil.ROLE_USER;
 
 @Service
@@ -21,6 +22,15 @@ public class RoleService {
 
         if(role == null)
             role = createRole(ROLE_USER);
+
+        return role;
+    }
+
+    public Role getAdminRoleOrCreate() {
+        var role = getRole(ROLE_ADMIN);
+
+        if(role == null)
+            role = createRole(ROLE_ADMIN);
 
         return role;
     }

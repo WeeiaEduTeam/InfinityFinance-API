@@ -1,9 +1,6 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserCredentialsDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.CreateAppUserDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.ReplaceAppUserByUserDTO;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionAdminService;
@@ -19,7 +16,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class AppUserService implements UserDetailsService {
+public class AppUserAdminService implements UserDetailsService {
 
     @Autowired
     private AppUserRepository appUserRepository;
@@ -58,21 +55,37 @@ public class AppUserService implements UserDetailsService {
         return foundUsers.stream().map(appUserUtil::mapToAppUserDTO).toList();
     }
 
-    public AppUserDTO createUser(CreateAppUserDTO createAppUserDTO) {
-        AppUser user = createAppUserFromCreateAppUserDTOAndHashPassword(createAppUserDTO);
+    public <T> AppUserDTO createAccount(T dto) {
+        AppUser user = createAppUserFromCreateAppUserDTOAndHashPassword(dto);
 
-        user.setRoles(getUserRoleList());
+        setRolesForUser(user, dto);
 
         user = saveUser(user);
 
         return appUserUtil.mapToAppUserDTO(user); //TODO: new abstract layer
     }
 
+    private <T> void setRolesForUser(AppUser user, T dto) { // design pattern!!!!!!!
+        if(dto instanceof CreateAppUserAdminDTO) {
+            if(((CreateAppUserAdminDTO) dto).isAdmin()) {
+                user.setRoles(getAdminRoleList());
+            } else {
+                user.setRoles(getUserRoleList());
+            }
+        } else if(dto instanceof CreateAppUserUserDTO) {
+            user.setRoles(getUserRoleList());
+        }
+    }
+
+    private List<Role> getAdminRoleList() {
+        return List.of(roleService.getUserRoleOrCreate(), roleService.getAdminRoleOrCreate());
+    }
+
     private List<Role> getUserRoleList() {
         return List.of(roleService.getUserRoleOrCreate());
     }
 
-    private AppUser createAppUserFromCreateAppUserDTOAndHashPassword(CreateAppUserDTO createAppUserDTO) {
+    private <T> AppUser createAppUserFromCreateAppUserDTOAndHashPassword(T createAppUserDTO) {
         return appUserUtil.mapToAppUserFactory(createAppUserDTO);
     }
     @Transactional

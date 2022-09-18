@@ -1,6 +1,6 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserService;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserAdminService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class TransactionUserService {
-    private final AppUserService appUserService;
+    private final AppUserAdminService appUserAdminService;
 
     private final TransactionAdminService transactionAdminService;
 
@@ -50,6 +50,6 @@ public class TransactionUserService {
     }
 
     private long getLoggedUserId() {
-        return appUserService.getLoggedInUserId();
+        return appUserAdminService.getLoggedInUserId();
     }
 }

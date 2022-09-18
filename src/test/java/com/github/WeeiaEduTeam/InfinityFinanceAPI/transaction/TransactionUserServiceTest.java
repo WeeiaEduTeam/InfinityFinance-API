@@ -1,7 +1,7 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserService;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserAdminService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.Category;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.CategoryService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
@@ -42,7 +41,7 @@ class TransactionUserServiceTest {
     private TransactionAdminService transactionAdminService;
 
     @Mock
-    private AppUserService appUserService;
+    private AppUserAdminService appUserAdminService;
 
     @Mock
     private TransactionRepository transactionRepository;
@@ -121,7 +120,7 @@ class TransactionUserServiceTest {
     @DisplayName("Should get all transactions for current logged user.")
     void shouldGetAllTransactionsForLoggedUser() {
         //given
-        given(appUserService.getLoggedInUserId()).willReturn(1L);
+        given(appUserAdminService.getLoggedInUserId()).willReturn(1L);
         given(transactionAdminService.getAllTransactionsForGivenUser(anyLong(),anyInt(), any(Sort.Direction.class), anyString())).willReturn(Collections.singletonList(transactionDTOTest));
         //when
         var transactions = transactionUserService.getAllTransactionsForLoggedUser(1, Sort.Direction.valueOf("ASC"), "id");
@@ -139,7 +138,7 @@ class TransactionUserServiceTest {
     @DisplayName("Should get all transactions with given category for current logged user.")
     void shouldGetAllTransactionsWithCategoryForLoggedUser() {
         //given
-        given(appUserService.getLoggedInUserId()).willReturn(1L);
+        given(appUserAdminService.getLoggedInUserId()).willReturn(1L);
         given(transactionAdminService.getAllTransactionsForGivenUserAndCategory(anyLong(), anyLong(), anyInt(), any(Sort.Direction.class), anyString())).willReturn(Collections.singletonList(transactionDTOTest));
         //when
         var transactions = transactionUserService.getAllTransactionsForLoggedUserAndGivenCategory(1, 1, Sort.Direction.valueOf("ASC"), "id");
@@ -158,7 +157,7 @@ class TransactionUserServiceTest {
     void shouldDeleteTransactionByIdAndCategoryForLoggedUser() {
         // given
         given(transactionAdminService.getTransactionByIdAndByAppuserId(anyLong(), anyLong())).willReturn(transactionTest);
-        given(appUserService.getLoggedInUserId()).willReturn(1L);
+        given(appUserAdminService.getLoggedInUserId()).willReturn(1L);
 
         //when
         transactionUserService.deleteSingleTransactionForLoggedUser(transactionTest.getId());
@@ -171,7 +170,7 @@ class TransactionUserServiceTest {
     @DisplayName("Should create transaction for logged user with known category.")
     void shouldCreateTransactionForLoggedUserWithKnownCategory() {
         //given
-        given(appUserService.getLoggedInUserId()).willReturn(1L);
+        given(appUserAdminService.getLoggedInUserId()).willReturn(1L);
         given(transactionAdminService.createTransactionForGivenUser(anyLong(), any(CreateTransactionDTO.class))).willReturn(transactionDTOTest);
 
         //when
@@ -189,7 +188,7 @@ class TransactionUserServiceTest {
     @DisplayName("Should replace transaction content for logged user.")
     void shouldReplaceTransactionForLoggedUser() {
         //given
-        given(appUserService.getLoggedInUserId()).willReturn(1L);
+        given(appUserAdminService.getLoggedInUserId()).willReturn(1L);
         given(transactionAdminService.replaceTransaction(anyLong(), anyLong(), any(CreateTransactionDTO.class))).willReturn(transactionDTOTest);
 
         //when

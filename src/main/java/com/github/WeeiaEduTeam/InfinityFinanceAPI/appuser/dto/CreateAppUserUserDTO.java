@@ -9,7 +9,7 @@ import lombok.experimental.FieldNameConstants;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldNameConstants
-public class CreateAppUserDTO {
+public class CreateAppUserUserDTO {
     private String username;
     private String password;
     private String email;

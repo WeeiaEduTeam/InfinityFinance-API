@@ -1,9 +1,6 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserCredentialsDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.CreateAppUserDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.ReplaceAppUserByUserDTO;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.role.RoleDTO;
@@ -35,10 +32,10 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class AppUserServiceTest {
+class AppUserAdminServiceTest {
 
     @InjectMocks
-    private AppUserService appUserService;
+    private AppUserAdminService appUserAdminService;
 
     @Mock
     private AppUserRepository appUserRepository;
@@ -54,7 +51,7 @@ class AppUserServiceTest {
     private AppUserDTO appUserDTOTest;
     private Role roleTest;
     private RoleDTO roleDTOTest;
-    private CreateAppUserDTO createAppUserDTOTest;
+    private CreateAppUserAdminDTO createAppUserAdminDTOTest;
     private AppUserCredentialsDTO appUserCredentialsDTO;
     private ReplaceAppUserByUserDTO replaceAppUserByUserDTO;
 
@@ -89,7 +86,7 @@ class AppUserServiceTest {
                 .roles(Collections.singletonList(roleDTOTest))
                 .build();
 
-        createAppUserDTOTest = CreateAppUserDTO.builder()
+        createAppUserAdminDTOTest = (CreateAppUserAdminDTO) CreateAppUserAdminDTO.builder()
                 .email("example@wp.pl")
                 .username("example")
                 .password("{noop}example")
@@ -115,7 +112,7 @@ class AppUserServiceTest {
         given(appUserUtil.mapToAppUserDTO(Mockito.any(AppUser.class))).willReturn(appUserDTOTest);
 
         // when
-        var users = appUserService.getAllUsers();
+        var users = appUserAdminService.getAllUsers();
 
         //then
         assertEquals(1, users.size());
@@ -135,14 +132,14 @@ class AppUserServiceTest {
     @DisplayName("Should create user")
     void shouldCreateUser() {
         //given
-        given(appUserUtil.mapToAppUserFactory(Mockito.any(CreateAppUserDTO.class))).willReturn(appUserTest);
+        given(appUserUtil.mapToAppUserFactory(Mockito.any(CreateAppUserAdminDTO.class))).willReturn(appUserTest);
         given(roleService.getUserRoleOrCreate()).willReturn(roleTest);
         given(appUserRepository.save(Mockito.any(AppUser.class))).willReturn(appUserTest);
         given(appUserUtil.mapToAppUserDTO(Mockito.any(AppUser.class))).willReturn(appUserDTOTest);
 
 
         // when
-        var user = appUserService.createUser(createAppUserDTOTest);
+        var user = appUserAdminService.createAccount(createAppUserAdminDTOTest);
 
         //then
         assertThat(user, instanceOf(AppUserDTO.class));
@@ -162,7 +159,7 @@ class AppUserServiceTest {
         given(appUserRepository.findById(anyLong())).willReturn(Optional.ofNullable(appUserTest));
 
         // when
-        appUserService.findAndDeleteUserWithRolesAndTransactions(1L);
+        appUserAdminService.findAndDeleteUserWithRolesAndTransactions(1L);
 
         //then
         verify(transactionAdminService).deleteTransactionsRelatedWithUser(1L);
@@ -181,7 +178,7 @@ class AppUserServiceTest {
         given(appUserUtil.mapToAppUserDTO(Mockito.any(AppUser.class))).willReturn(appUserDTOTest);
 
         // when
-        var user = appUserService.replaceUserCredentials(1L, appUserCredentialsDTO);
+        var user = appUserAdminService.replaceUserCredentials(1L, appUserCredentialsDTO);
 
         //then
         assertThat(user, instanceOf(AppUserDTO.class));
@@ -204,7 +201,7 @@ class AppUserServiceTest {
         given(appUserUtil.mapToAppUserDTO(Mockito.any(AppUser.class))).willReturn(appUserDTOTest);
 
         // when
-        var user = appUserService.replaceUserDetails(1L, replaceAppUserByUserDTO);
+        var user = appUserAdminService.replaceUserDetails(1L, replaceAppUserByUserDTO);
 
         //then
         assertThat(user, instanceOf(AppUserDTO.class));
@@ -224,7 +221,7 @@ class AppUserServiceTest {
         given(appUserRepository.getIdByUsername(anyString())).willReturn(null);
 
         // when
-        assertThatThrownBy(() -> appUserService.getLoggedInUserId())
+        assertThatThrownBy(() -> appUserAdminService.getLoggedInUserId())
                 .isInstanceOf(UsernameNotFoundException.class)
                 .hasMessage("User not found in the database");
     }
@@ -236,7 +233,7 @@ class AppUserServiceTest {
         given(appUserRepository.findById(anyLong())).willReturn(Optional.ofNullable(null));
 
         // when
-        assertThatThrownBy(() -> appUserService.getUserById(1L))
+        assertThatThrownBy(() -> appUserAdminService.getUserById(1L))
                 .isInstanceOf(UsernameNotFoundException.class)
                 .hasMessage("User not found in the database");
 

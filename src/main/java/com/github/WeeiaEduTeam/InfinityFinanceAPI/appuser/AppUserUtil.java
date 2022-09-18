@@ -1,10 +1,7 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserCredentialsDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.CreateAppUserDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.ReplaceAppUserByUserDTO;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.role.RoleDTO;
@@ -40,12 +37,12 @@ public class AppUserUtil {
                 .toList();
     }
 
-    private AppUser mapToAppUser(CreateAppUserDTO createAppUserDTO) {
+    private AppUser mapToAppUser(CreateAppUserAdminDTO createAppUserAdminDTO) {
 
         return AppUser.builder()
-                .username(createAppUserDTO.getUsername())
-                .email(createAppUserDTO.getEmail())
-                .password(createAppUserDTO.getPassword())
+                .username(createAppUserAdminDTO.getUsername())
+                .email(createAppUserAdminDTO.getEmail())
+                .password(createAppUserAdminDTO.getPassword())
                 .build();
     }
 
@@ -66,13 +63,25 @@ public class AppUserUtil {
                 .build();
     }
 
+    private AppUser mapToAppUser(CreateAppUserUserDTO createAppUserUserDTO) {
+
+        return AppUser.builder()
+                .username(createAppUserUserDTO.getUsername())
+                .password(createAppUserUserDTO.getPassword())
+                .email(createAppUserUserDTO.getEmail())
+                .build();
+    }
+
     //TODO: move all mappers and factory into AppUserFactory
     public <T> AppUser mapToAppUserFactory(T dto) {
         AppUser user = null;
 
-        if(dto instanceof CreateAppUserDTO) {
-            user = mapToAppUser((CreateAppUserDTO) dto);
-            user.setPassword(hashPassword(((CreateAppUserDTO) dto).getPassword()));
+        if(dto instanceof CreateAppUserAdminDTO) {
+            user = mapToAppUser((CreateAppUserAdminDTO) dto);
+            user.setPassword(hashPassword(((CreateAppUserAdminDTO) dto).getPassword()));
+        } else if(dto instanceof CreateAppUserUserDTO) {
+            user = mapToAppUser((CreateAppUserUserDTO) dto);
+            user.setPassword(hashPassword(((CreateAppUserUserDTO) dto).getPassword()));
         } else if(dto instanceof ReplaceAppUserByUserDTO) {
             user = mapToAppUser((ReplaceAppUserByUserDTO) dto);
         } else if(dto instanceof AppUserCredentialsDTO) {

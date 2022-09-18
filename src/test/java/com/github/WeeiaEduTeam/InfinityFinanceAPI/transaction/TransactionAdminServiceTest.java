@@ -1,7 +1,7 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserService;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserAdminService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.Category;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.CategoryService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
@@ -30,7 +30,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,7 +52,7 @@ class TransactionAdminServiceTest {
     private CategoryService categoryService;
 
     @Mock
-    private AppUserService appUserService;
+    private AppUserAdminService appUserAdminService;
 
     @Mock
     private TransactionUtil transactionUtil;
@@ -148,7 +147,7 @@ class TransactionAdminServiceTest {
         //given
         given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class))).willReturn(transactionTest);
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
-        given(appUserService.getUserById(anyLong())).willReturn(appUserTest);
+        given(appUserAdminService.getUserById(anyLong())).willReturn(appUserTest);
         given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
 
         //when
@@ -168,7 +167,7 @@ class TransactionAdminServiceTest {
         //given
         given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class))).willReturn(transactionTest);
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
-        given(appUserService.getUserById(anyLong())).willReturn(appUserTest);
+        given(appUserAdminService.getUserById(anyLong())).willReturn(appUserTest);
         given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
 
         //when
@@ -257,7 +256,7 @@ class TransactionAdminServiceTest {
         given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
         given(categoryService.createCategory(anyString())).willReturn(categoryTest);
         given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
-        given(appUserService.getUserById(anyLong())).willReturn(appUserTest);
+        given(appUserAdminService.getUserById(anyLong())).willReturn(appUserTest);
         given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class)))
                 .willReturn(transactionNullCategoryAndUserTest);
 
