@@ -3,6 +3,7 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.role.RoleDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionAdminService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+
+import static com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleUtil.ROLE_ADMIN;
 
 @Service
 @Slf4j
@@ -66,8 +69,9 @@ public class AppUserAdminService implements UserDetailsService {
     }
 
     private <T> void setRolesForUser(AppUser user, T dto) { // design pattern!!!!!!!
+
         if(dto instanceof CreateAppUserAdminDTO) {
-            if(((CreateAppUserAdminDTO) dto).isAdmin()) {
+            if(((CreateAppUserAdminDTO) dto).hasRole(ROLE_ADMIN)) {
                 user.setRoles(getAdminRoleList());
             } else {
                 user.setRoles(getUserRoleList());
