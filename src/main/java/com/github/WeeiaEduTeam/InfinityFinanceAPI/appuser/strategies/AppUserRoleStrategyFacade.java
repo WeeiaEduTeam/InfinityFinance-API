@@ -53,4 +53,8 @@ public class AppUserRoleStrategyFacade {
     private <T> boolean isCreateAppUserAdminDTO(T objectDTO) {
         return objectDTO instanceof CreateAppUserAdminDTO;
     }
+
+    public void removeRoles(AppUser user) {
+        new AppUserRoleRemover(roleService).deleteRolesForUser(user);
+    }
 }

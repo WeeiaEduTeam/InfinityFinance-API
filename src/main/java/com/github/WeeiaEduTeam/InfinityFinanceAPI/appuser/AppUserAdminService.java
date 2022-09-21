@@ -96,7 +96,7 @@ public class AppUserAdminService implements UserDetailsService {
     }
 
     private void deleteRoleFromUser(AppUser user) {
-        roleService.deleteRoleFromUser(user);
+        appUserRoleStrategyFacade.removeRoles(user);
     }
 
     private void deleteUser(AppUser user) {
