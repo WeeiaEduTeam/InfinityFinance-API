@@ -9,6 +9,20 @@ import org.springframework.stereotype.Component;
 
 import static com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleUtil.ROLE_ADMIN;
 
+
+/*
+ * Class adds roles based on JSON input
+ * the highest role is taken and the rest
+ * of the roles are added for example:
+ * - if we have ROLE_ADMIN in name of the
+ *  json request it adds also ROLE_USER
+ * - if we have ROLE_USER it adds just
+ *  ROLE_USER.
+ *
+ *  If you want to add new roles just add
+ *  another object cast in factory
+ *  and add create new strategy file.
+ */
 @Component
 @Slf4j
 public class AppUserRoleStrategyFacade {
@@ -25,9 +39,9 @@ public class AppUserRoleStrategyFacade {
 
     private <T> AppUserRoleStrategy createStrategy(T objectDTO) {
         if(isAdmin(objectDTO)) {
-            return new AppUserAddAdminRole(roleService);
+            return AppUserAddAdminRole.getInstance(roleService);
         } else if(isDefaultUser(objectDTO)) {
-            return new AppUserAddUserRole(roleService);
+            return AppUserAddUserRole.getInstance(roleService);
         }
 
         throw new IllegalArgumentException("Error during create strategy occurred.");
@@ -55,6 +69,6 @@ public class AppUserRoleStrategyFacade {
     }
 
     public void removeRoles(AppUser user) {
-        new AppUserRoleRemover(roleService).deleteRolesForUser(user);
+        AppUserRoleRemover.getInstance(roleService).deleteRolesForUser(user);
     }
 }

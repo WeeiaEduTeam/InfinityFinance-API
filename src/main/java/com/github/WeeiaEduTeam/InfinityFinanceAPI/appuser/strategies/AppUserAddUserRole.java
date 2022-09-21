@@ -15,10 +15,19 @@ import static com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleUtil.ROLE_USER
 @Component
 public class AppUserAddUserRole implements AppUserRoleStrategy {
 
+    private static AppUserAddUserRole instance = null;
     private final RoleService roleService;
 
-    public AppUserAddUserRole(RoleService roleService) {
+    private AppUserAddUserRole(RoleService roleService) {
         this.roleService = roleService;
+    }
+
+    public static AppUserAddUserRole getInstance(RoleService roleService) {
+        if (instance == null) {
+            instance = new AppUserAddUserRole(roleService);
+        }
+
+        return instance;
     }
 
     @Override
