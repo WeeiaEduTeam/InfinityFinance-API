@@ -37,38 +37,49 @@ public class AppUserUtil {
                 .toList();
     }
 
-    private AppUser mapToAppUser(CreateAppUserAdminDTO createAppUserAdminDTO) {
+    private AppUser mapToAppUser(CreateAppUserAdminDTO dto) {
 
         return AppUser.builder()
-                .username(createAppUserAdminDTO.getUsername())
-                .email(createAppUserAdminDTO.getEmail())
-                .password(createAppUserAdminDTO.getPassword())
+                .username(dto.getUsername())
+                .email(dto.getEmail())
+                .password(dto.getPassword())
                 .build();
     }
 
-    private AppUser mapToAppUser(ReplaceAppUserByUserDTO replaceAppUserByUserDTO) {
+    private AppUser mapToAppUser(ReplaceAppUserByUserDTO dto) {
 
         return AppUser.builder()
-                .firstName(replaceAppUserByUserDTO.getFirstName())
-                .email(replaceAppUserByUserDTO.getEmail())
-                .secondName(replaceAppUserByUserDTO.getSecondName())
+                .firstName(dto.getFirstName())
+                .email(dto.getEmail())
+                .secondName(dto.getSecondName())
                 .build();
     }
 
-    private AppUser mapToAppUser(AppUserCredentialsDTO appUserCredentialsDTO) {
+    private AppUser mapToAppUser(AppUserCredentialsDTO dto) {
 
         return AppUser.builder()
-                .username(appUserCredentialsDTO.getUsername())
-                .password(appUserCredentialsDTO.getPassword())
+                .username(dto.getUsername())
+                .password(dto.getPassword())
                 .build();
     }
 
-    private AppUser mapToAppUser(CreateAppUserUserDTO createAppUserUserDTO) {
+    private AppUser mapToAppUser(CreateAppUserUserDTO dto) {
 
         return AppUser.builder()
-                .username(createAppUserUserDTO.getUsername())
-                .password(createAppUserUserDTO.getPassword())
-                .email(createAppUserUserDTO.getEmail())
+                .username(dto.getUsername())
+                .password(dto.getPassword())
+                .email(dto.getEmail())
+                .build();
+    }
+
+    private AppUser mapToAppUser(ReplaceAppUserAllDetailsDTO dto) {
+
+        return AppUser.builder()
+                .username(dto.getUsername())
+                .password(dto.getPassword())
+                .email(dto.getEmail())
+                .secondName(dto.getSecondName())
+                .firstName(dto.getFirstName())
                 .build();
     }
 
@@ -87,6 +98,9 @@ public class AppUserUtil {
         } else if(dto instanceof AppUserCredentialsDTO) {
             user = mapToAppUser((AppUserCredentialsDTO) dto);
             user.setPassword(hashPassword(((AppUserCredentialsDTO) dto).getPassword()));
+        } else if(dto instanceof ReplaceAppUserAllDetailsDTO) {
+            user = mapToAppUser((ReplaceAppUserAllDetailsDTO) dto);
+            user.setPassword(hashPassword(((ReplaceAppUserAllDetailsDTO) dto).getPassword()));
         }
 
         return user;
@@ -112,6 +126,22 @@ public class AppUserUtil {
 
         foundUser.setPassword(convertedUser.getPassword());
         foundUser.setUsername(convertedUser.getUsername());
+
+        return foundUser;
+    }
+
+    public AppUser overwriteAppUserAllDetails(AppUser foundUser, ReplaceAppUserAllDetailsDTO replaceAppUserAllDetailsDTO) {
+        var convertedUser = mapToAppUserFactory(replaceAppUserAllDetailsDTO);
+
+        foundUser.setPassword(convertedUser.getPassword());
+        foundUser.setUsername(convertedUser.getUsername());
+        foundUser.setEmail(convertedUser.getEmail());
+        foundUser.setSecondName(convertedUser.getSecondName());
+        foundUser.setFirstName(convertedUser.getFirstName());
+
+        // USTAWIC ROLE I WYWALIC ROLE SERVICE KONTAKT Z FASADA
+        foundUser.setRoles(convertedUser.getRoles());
+
 
         return foundUser;
     }

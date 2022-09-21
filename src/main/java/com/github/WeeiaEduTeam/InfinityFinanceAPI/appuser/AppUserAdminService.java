@@ -2,8 +2,6 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategies.AppUserRoleStrategyFacade;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionAdminService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,4 +100,17 @@ public class AppUserAdminService implements UserDetailsService {
         return appUserRepository.save(user);
     }
 
+    public AppUser replaceUserAllDetails(long userId, ReplaceAppUserAllDetailsDTO replaceAppUserAllDetailsDTO) {
+        var foundUser = getUserById(userId);
+
+        var overwrittenUser = overwriteAppUserAllDetails(foundUser, replaceAppUserAllDetailsDTO);
+
+        overwrittenUser = saveUser(overwrittenUser);
+
+        return mapAppUserToAppUserDTO(overwrittenUser);
+    }
+
+    private AppUser overwriteAppUserAllDetails(AppUser foundUser, ReplaceAppUserAllDetailsDTO replaceAppUserAllDetailsDTO) {
+        return appUserUtil.overwriteAppUserAllDetails(foundUser, replaceAppUserAllDetailsDTO);
+    }
 }

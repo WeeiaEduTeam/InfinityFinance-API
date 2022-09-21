@@ -1,9 +1,6 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserCredentialsDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.CreateAppUserAdminDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.ReplaceAppUserByUserDTO;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +39,14 @@ public class AppUserAdminController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    // admin zmienia calego uzytkownika przez createAppUserAdminDTO
+    @PutMapping("/admin/users/{userId:[0-9]+}")
+    ResponseEntity<AppUserDTO> replaceUserAllDetails(
+            @PathVariable long userId,
+            @RequestBody ReplaceAppUserAllDetailsDTO replaceAppUserAllDetailsDTO) {
+
+        var replacedUser = appUserAdminService.replaceUserAllDetails(userId, replaceAppUserAllDetailsDTO);
+
+        return ResponseEntity.ok(replacedUser);
+    }
 
 }
