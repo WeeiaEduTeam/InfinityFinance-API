@@ -1,6 +1,7 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategies.AppUserRoleStrategyFacade;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.role.RoleDTO;
@@ -9,14 +10,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.mockito.stubbing.Answer;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,6 +52,8 @@ class AppUserAdminServiceTest {
     private RoleService roleService;
     @Mock
     private TransactionAdminService transactionAdminService;
+    @Mock
+    private AppUserRoleStrategyFacade appUserRoleStrategyFacade;
 
     private AppUser appUserTest;
     private AppUserDTO appUserDTOTest;
@@ -86,11 +94,10 @@ class AppUserAdminServiceTest {
                 .roles(Collections.singletonList(roleDTOTest))
                 .build();
 
-        createAppUserAdminDTOTest = (CreateAppUserAdminDTO) CreateAppUserAdminDTO.builder()
-                .email("example@wp.pl")
-                .username("example")
-                .password("{noop}example")
-                .build();
+        createAppUserAdminDTOTest = new CreateAppUserAdminDTO();
+        createAppUserAdminDTOTest.setPassword("{noop}example");
+        createAppUserAdminDTOTest.setEmail("example@wp.pl");
+        createAppUserAdminDTOTest.setUsername("example");
 
         appUserCredentialsDTO = AppUserCredentialsDTO.builder()
                 .password("{noop}example")
@@ -137,7 +144,6 @@ class AppUserAdminServiceTest {
         given(appUserRepository.save(Mockito.any(AppUser.class))).willReturn(appUserTest);
         given(appUserUtil.mapToAppUserDTO(Mockito.any(AppUser.class))).willReturn(appUserDTOTest);
 
-
         // when
         var user = appUserAdminService.createAccount(createAppUserAdminDTOTest);
 
@@ -163,8 +169,8 @@ class AppUserAdminServiceTest {
 
         //then
         verify(transactionAdminService).deleteTransactionsRelatedWithUser(1L);
-        verify(roleService).deleteRoleFromUser(appUserTest);
         verify(appUserRepository).delete(appUserTest);
+        verify(appUserRoleStrategyFacade).removeRoles(appUserTest);
     }
 
 
