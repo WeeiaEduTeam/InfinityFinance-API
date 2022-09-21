@@ -26,10 +26,6 @@ public class AppUserAdminService implements UserDetailsService {
     @Autowired
     private AppUserRoleStrategyFacade appUserRoleStrategyFacade;
 
-    // TODO: delete roleservice and create AppUserRoleRemover strategy file
-    @Autowired
-    private RoleService roleService;
-
     private TransactionAdminService transactionAdminService;
 
     public void setTransactionAdminService(TransactionAdminService transactionAdminService) {
@@ -53,7 +49,6 @@ public class AppUserAdminService implements UserDetailsService {
     public Long getLoggedInUserId() {
         return appUserRepository.getLoggedInUserId().orElseThrow(() -> new UsernameNotFoundException("User not found in the database"));
     }
-
 
     public List<AppUserDTO> getAllUsers() {
         var foundUsers = appUserRepository.findAll();
@@ -103,37 +98,8 @@ public class AppUserAdminService implements UserDetailsService {
         appUserRepository.delete(user);
     }
 
-    public AppUserDTO replaceUserDetails(Long userId, ReplaceAppUserByUserDTO replaceAppUserByUserDTO) {
-        var foundUser = getUserById(userId);
-        var overwrittenUser = overwriteAppUserDetails(foundUser, replaceAppUserByUserDTO);
-
-        overwrittenUser = saveUser(overwrittenUser);
-
-        return mapAppUserToAppUserDTO(overwrittenUser);
-    }
-
-    private AppUserDTO mapAppUserToAppUserDTO(AppUser user) {
-        return appUserUtil.mapToAppUserDTO(user);
-    }
-
     private AppUser saveUser(AppUser user) {
         return appUserRepository.save(user);
     }
 
-    public AppUser overwriteAppUserDetails(AppUser foundUser, ReplaceAppUserByUserDTO replaceAppUserByUserDTO) {
-        return appUserUtil.overwriteAppUserDetails(foundUser, replaceAppUserByUserDTO);
-    }
-
-    public AppUserDTO replaceUserCredentials(Long userId, AppUserCredentialsDTO appUserCredentialsDTO) {
-        var foundUser = getUserById(userId);
-        var overwrittenUser = overwriteAppUserCredentials(foundUser, appUserCredentialsDTO);
-
-        overwrittenUser = saveUser(overwrittenUser);
-
-        return mapAppUserToAppUserDTO(overwrittenUser);
-    }
-
-    private AppUser overwriteAppUserCredentials(AppUser foundUser, AppUserCredentialsDTO appUserCredentialsDTO) {
-        return appUserUtil.overwriteAppUserCredentials(foundUser, appUserCredentialsDTO);
-    }
 }

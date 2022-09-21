@@ -42,23 +42,6 @@ public class AppUserAdminController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PutMapping("/admin/users/{userId:[0-9]+}/credentials")
-    ResponseEntity<AppUserDTO> replaceUserCredentials(
-            @PathVariable Long userId,
-            @RequestBody AppUserCredentialsDTO appUserCredentialsDTO) {
+    // admin zmienia calego uzytkownika przez createAppUserAdminDTO
 
-        var replacedUser = appUserAdminService.replaceUserCredentials(userId, appUserCredentialsDTO);
-
-        return ResponseEntity.ok(replacedUser);
-    }
-
-    @PutMapping("/admin/users/{userId:[0-9]+}/details")
-    ResponseEntity<AppUserDTO> replaceUserDetails(
-            @PathVariable Long userId,
-            @RequestBody ReplaceAppUserByUserDTO replaceAppUserByUserDTO) {
-
-        var replacedUser = appUserAdminService.replaceUserDetails(userId, replaceAppUserByUserDTO);
-
-        return ResponseEntity.ok(replacedUser);
-    }
 }

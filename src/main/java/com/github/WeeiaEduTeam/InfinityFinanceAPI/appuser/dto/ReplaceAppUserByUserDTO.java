@@ -17,5 +17,4 @@ public class ReplaceAppUserByUserDTO {
     private String email;
     private String firstName;
     private String secondName;
-    private List<RoleDTO> roles;
 }
