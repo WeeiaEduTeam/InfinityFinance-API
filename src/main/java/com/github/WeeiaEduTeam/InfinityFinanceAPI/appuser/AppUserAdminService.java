@@ -1,9 +1,9 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategies.AppUserRoleStrategyFacade;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.role.RoleDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionAdminService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 
-import static com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleUtil.ROLE_ADMIN;
-
 @Service
 @Slf4j
 public class AppUserAdminService implements UserDetailsService {
@@ -26,7 +24,12 @@ public class AppUserAdminService implements UserDetailsService {
     @Autowired
     private AppUserUtil appUserUtil;
     @Autowired
+    private AppUserRoleStrategyFacade appUserRoleStrategyFacade;
+
+    // TODO: delete roleservice and create AppUserRoleRemover strategy file
+    @Autowired
     private RoleService roleService;
+
     private TransactionAdminService transactionAdminService;
 
     public void setTransactionAdminService(TransactionAdminService transactionAdminService) {
@@ -58,36 +61,20 @@ public class AppUserAdminService implements UserDetailsService {
         return foundUsers.stream().map(appUserUtil::mapToAppUserDTO).toList();
     }
 
-    public <T> AppUserDTO createAccount(T dto) {
-        AppUser user = createAppUserFromCreateAppUserDTOAndHashPassword(dto);
+    public <T> AppUserDTO createAccount(T objectDTO) {
+        AppUser user = createAppUserFromCreateAppUserDTOAndHashPassword(objectDTO);
 
-        setRolesForUser(user, dto);
+        setRolesForUser(user, objectDTO);
 
         user = saveUser(user);
 
         return appUserUtil.mapToAppUserDTO(user); //TODO: new abstract layer
     }
 
-    private <T> void setRolesForUser(AppUser user, T dto) { // design pattern!!!!!!!
-
-        if(dto instanceof CreateAppUserAdminDTO) {
-            if(((CreateAppUserAdminDTO) dto).hasRole(ROLE_ADMIN)) {
-                user.setRoles(getAdminRoleList());
-            } else {
-                user.setRoles(getUserRoleList());
-            }
-        } else if(dto instanceof CreateAppUserUserDTO) {
-            user.setRoles(getUserRoleList());
-        }
+    private <T> void setRolesForUser(AppUser user, T objectDTO) {
+        appUserRoleStrategyFacade.addRolesForUser(user, objectDTO);
     }
 
-    private List<Role> getAdminRoleList() {
-        return List.of(roleService.getUserRoleOrCreate(), roleService.getAdminRoleOrCreate());
-    }
-
-    private List<Role> getUserRoleList() {
-        return List.of(roleService.getUserRoleOrCreate());
-    }
 
     private <T> AppUser createAppUserFromCreateAppUserDTOAndHashPassword(T createAppUserDTO) {
         return appUserUtil.mapToAppUserFactory(createAppUserDTO);
