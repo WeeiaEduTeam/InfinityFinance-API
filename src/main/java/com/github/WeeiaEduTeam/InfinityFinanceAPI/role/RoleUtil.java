@@ -1,6 +1,6 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.role;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.role.RoleDTO;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.dto.RoleDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

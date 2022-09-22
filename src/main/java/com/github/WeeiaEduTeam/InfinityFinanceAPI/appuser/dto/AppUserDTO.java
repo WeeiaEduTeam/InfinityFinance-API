@@ -1,11 +1,9 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.role.RoleDTO;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.dto.RoleDTO;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;
 
-import javax.persistence.Column;
 import java.util.List;
 
 @Getter

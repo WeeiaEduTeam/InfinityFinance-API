@@ -1,7 +1,7 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategies.AppUserRoleStrategyFacade;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy.AppUserRoleStrategyFacade;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionAdminService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +84,7 @@ public class AppUserAdminService implements UserDetailsService {
 
     private void deleteUserWithRoles(long userId) {
         var user = getUserById(userId);
-        deleteUser(user);
+        //deleteUser(user);
         deleteRoleFromUser(user);
     }
 
@@ -100,14 +100,19 @@ public class AppUserAdminService implements UserDetailsService {
         return appUserRepository.save(user);
     }
 
-    public AppUser replaceUserAllDetails(long userId, ReplaceAppUserAllDetailsDTO replaceAppUserAllDetailsDTO) {
+    @Transactional
+    public AppUserDTO replaceUserAllDetails(long userId, ReplaceAppUserAllDetailsDTO replaceAppUserAllDetailsDTO) {
         var foundUser = getUserById(userId);
 
         var overwrittenUser = overwriteAppUserAllDetails(foundUser, replaceAppUserAllDetailsDTO);
 
-        overwrittenUser = saveUser(overwrittenUser);
+        //appUserRepository.save(overwrittenUser);
 
         return mapAppUserToAppUserDTO(overwrittenUser);
+    }
+
+    private AppUserDTO mapAppUserToAppUserDTO(AppUser user) {
+        return appUserUtil.mapToAppUserDTO(user);
     }
 
     private AppUser overwriteAppUserAllDetails(AppUser foundUser, ReplaceAppUserAllDetailsDTO replaceAppUserAllDetailsDTO) {

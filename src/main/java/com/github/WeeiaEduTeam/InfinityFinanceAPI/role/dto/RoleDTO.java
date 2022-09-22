@@ -1,10 +1,7 @@
-package com.github.WeeiaEduTeam.InfinityFinanceAPI.role.role;
+package com.github.WeeiaEduTeam.InfinityFinanceAPI.role.dto;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.BaseUtil;
 import lombok.*;
-
-import javax.persistence.Entity;
 
 @Getter
 @Setter

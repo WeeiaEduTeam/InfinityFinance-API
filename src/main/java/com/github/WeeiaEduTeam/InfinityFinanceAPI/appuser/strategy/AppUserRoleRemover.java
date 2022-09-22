@@ -1,4 +1,4 @@
-package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategies;
+package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
@@ -21,6 +21,6 @@ public class AppUserRoleRemover {
     }
 
     public void deleteRolesForUser(AppUser user) {
-        roleService.deleteRoleFromUser(user);
+        roleService.deleteRolesFromUser(user);
     }
 }

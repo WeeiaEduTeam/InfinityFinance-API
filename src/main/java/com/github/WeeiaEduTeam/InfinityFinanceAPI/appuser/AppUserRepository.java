@@ -32,7 +32,7 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
     @Override
     @NotNull
-    @Query("SELECT DISTINCT u FROM AppUser u JOIN FETCH u.roles")
+    @Query("SELECT DISTINCT u FROM AppUser u LEFT JOIN FETCH u.roles")
     List<AppUser> findAll();
 
 }

@@ -2,9 +2,10 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy.AppUserRoleStrategyFacade;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.role.RoleDTO;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.dto.RoleDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +19,7 @@ import java.util.List;
 public class AppUserUtil {
     private final PasswordEncoder encoder;
     private final RoleService roleService;
+    private final AppUserRoleStrategyFacade appUserRoleStrategyFacade;
 
     public AppUserDTO mapToAppUserDTO(AppUser appUser) {
 
@@ -87,7 +89,13 @@ public class AppUserUtil {
     public <T> AppUser mapToAppUserFactory(T dto) {
         AppUser user = null;
 
-        if(dto instanceof CreateAppUserAdminDTO) {
+        /* Keep given dtos higher than others
+         * ReplaceAll details > CreateAdminDTO > CreateUserDTO
+         * because of the inheritance */
+        if(dto instanceof ReplaceAppUserAllDetailsDTO) {
+            user = mapToAppUser((ReplaceAppUserAllDetailsDTO) dto);
+            user.setPassword(hashPassword(((ReplaceAppUserAllDetailsDTO) dto).getPassword()));
+        } else if(dto instanceof CreateAppUserAdminDTO) {
             user = mapToAppUser((CreateAppUserAdminDTO) dto);
             user.setPassword(hashPassword(((CreateAppUserAdminDTO) dto).getPassword()));
         } else if(dto instanceof CreateAppUserUserDTO) {
@@ -98,9 +106,6 @@ public class AppUserUtil {
         } else if(dto instanceof AppUserCredentialsDTO) {
             user = mapToAppUser((AppUserCredentialsDTO) dto);
             user.setPassword(hashPassword(((AppUserCredentialsDTO) dto).getPassword()));
-        } else if(dto instanceof ReplaceAppUserAllDetailsDTO) {
-            user = mapToAppUser((ReplaceAppUserAllDetailsDTO) dto);
-            user.setPassword(hashPassword(((ReplaceAppUserAllDetailsDTO) dto).getPassword()));
         }
 
         return user;
@@ -139,8 +144,10 @@ public class AppUserUtil {
         foundUser.setSecondName(convertedUser.getSecondName());
         foundUser.setFirstName(convertedUser.getFirstName());
 
+        appUserRoleStrategyFacade.removeRoles(foundUser);
+
         // USTAWIC ROLE I WYWALIC ROLE SERVICE KONTAKT Z FASADA
-        foundUser.setRoles(convertedUser.getRoles());
+        appUserRoleStrategyFacade.addRolesForUser(foundUser, replaceAppUserAllDetailsDTO);
 
 
         return foundUser;

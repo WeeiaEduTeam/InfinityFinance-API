@@ -1,9 +1,11 @@
-package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategies;
+package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.CreateAppUserAdminDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.CreateAppUserUserDTO;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.ReplaceAppUserAllDetailsDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.dto.RoleDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -53,11 +55,19 @@ public class AppUserRoleStrategyFacade {
 
 
     private <T> boolean isAdmin(T objectDTO) {
-        if(isCreateAppUserAdminDTO(objectDTO)) {
+
+        /* Also catches ReplaceAppUserAllDetailsDTO due to inheritance. */
+        if(isReplaceAppUserAllDetailsDTO(objectDTO)) {
+            return ((ReplaceAppUserAllDetailsDTO) objectDTO).hasRole(ROLE_ADMIN);
+        } else if(isCreateAppUserAdminDTO(objectDTO)) {
             return ((CreateAppUserAdminDTO) objectDTO).hasRole(ROLE_ADMIN);
         }
 
         return false;
+    }
+
+    private <T> boolean isReplaceAppUserAllDetailsDTO(T objectDTO) {
+        return objectDTO instanceof ReplaceAppUserAllDetailsDTO;
     }
 
     private <T> boolean isCreateAppUserUserDTO(T objectDTO) {

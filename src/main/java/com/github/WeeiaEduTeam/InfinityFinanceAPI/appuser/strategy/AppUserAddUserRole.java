@@ -1,4 +1,4 @@
-package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategies;
+package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
@@ -8,21 +8,21 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleUtil.ROLE_ADMIN;
+import static com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleUtil.ROLE_USER;
 
 @Component
-public class AppUserAddAdminRole implements AppUserRoleStrategy {
+public class AppUserAddUserRole implements AppUserRoleStrategy {
 
-    private static AppUserAddAdminRole instance = null;
+    private static AppUserAddUserRole instance = null;
     private final RoleService roleService;
 
-    private AppUserAddAdminRole(RoleService roleService) {
+    private AppUserAddUserRole(RoleService roleService) {
         this.roleService = roleService;
     }
 
-    public static AppUserAddAdminRole getInstance(RoleService roleService) {
+    public static AppUserAddUserRole getInstance(RoleService roleService) {
         if (instance == null) {
-            instance = new AppUserAddAdminRole(roleService);
+            instance = new AppUserAddUserRole(roleService);
         }
 
         return instance;
@@ -32,8 +32,8 @@ public class AppUserAddAdminRole implements AppUserRoleStrategy {
     public void addRolesForUser(AppUser user) {
         var roles = getRoles(user);
 
-        if(!adminRoleExists(roles)) {
-            var userRoles = getAdminRoleList();
+        if(!userRoleExists(roles)) {
+            var userRoles = getUserRoleList();
 
             user.setRoles(userRoles);
         }
@@ -46,16 +46,15 @@ public class AppUserAddAdminRole implements AppUserRoleStrategy {
         return user.getRoles();
     }
 
-    private boolean adminRoleExists(List<Role> roles) {
+    private boolean userRoleExists(List<Role> roles) {
         return roles.stream()
                 .map(Role::getName)
-                .filter(e -> e.equals(ROLE_ADMIN))
+                .filter(e -> e.equals(ROLE_USER))
                 .toList()
                 .size() > 0;
     }
 
-
-    private List<Role> getAdminRoleList() {
-        return List.of(roleService.getUserRoleOrCreate(), roleService.getAdminRoleOrCreate());
+    private List<Role> getUserRoleList() {
+        return List.of(roleService.getUserRoleOrCreate());
     }
 }
