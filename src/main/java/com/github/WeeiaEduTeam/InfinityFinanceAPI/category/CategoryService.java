@@ -1,11 +1,10 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.category;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.dto.CategoryDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -13,14 +12,43 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public Optional<Category> getCategoryByName(String categoryName) {
+    private final CategoryUtil categoryUtil;
 
-        return Optional.ofNullable(categoryRepository.findByName(categoryName));
+    public Category getCategoryByName(String categoryName) {
+
+        return categoryRepository.findByName(categoryName);
     }
 
-    public Category createCategory(Category category) {
-        var savedCategory = categoryRepository.save(category);
+    public Category createCategory(String categoryName) {
+        Category category = new Category(categoryName);
 
-        return savedCategory;
+        return categoryRepository.save(category);
+    }
+
+    public void checkAndDeleteCategoryIfNotRelated(Long id) {
+        var foundCategory = getCategoryById(id);
+
+        deleteCategoryIfNotRelated(foundCategory);
+    }
+
+    private void deleteCategoryIfNotRelated(Category foundCategory) {
+        if (!isNumberPositive(foundCategory.getTransactions().size()))
+            deleteCategoryById(foundCategory.getId());
+    }
+
+    private Category getCategoryById(long id) {
+        return categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found in database"));
+    }
+
+    private boolean isNumberPositive(int value) {
+        return categoryUtil.isNumberPositive(value);
+    }
+
+    private void deleteCategoryById(Long id) {
+        categoryRepository.deleteById(id);
+    }
+
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll();
     }
 }

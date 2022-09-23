@@ -32,7 +32,6 @@ public class SecurityConfiguration {
     private final JwtUtil jwtUtil;
     private final String secret;
 
-
     private static final String[] AUTH_WHITELIST = {
             // -- Swagger UI v2
             "/v2/api-docs",
@@ -75,8 +74,9 @@ public class SecurityConfiguration {
 
         http.authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
-                .antMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/api/v1/**").authenticated()
+                .antMatchers("/**").permitAll()
+                //.antMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
+                //.antMatchers("/api/v1/**").authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(STATELESS)
                 .and()

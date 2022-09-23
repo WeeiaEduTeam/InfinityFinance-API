@@ -25,25 +25,25 @@ public class AppUser implements UserDetails {
     @Column(name = "user_id")
     private Long id;
 
-    //@Column(unique = true)
+    @Column(unique = true)
     private String username;
 
-    //@Column(unique = true)
+    @Column(unique = true)
     private String email;
 
     private String password;
 
     private String firstName;
     private String secondName;
-
-
-    @ManyToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
-    @JoinTable(name="user_roles",
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private List<Role> roles =  new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "appuser")
     private List<Transaction> transactions = new ArrayList<>();
 

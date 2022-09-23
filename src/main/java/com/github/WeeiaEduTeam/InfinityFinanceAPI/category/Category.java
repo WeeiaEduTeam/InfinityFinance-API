@@ -3,6 +3,7 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.category;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.Transaction;
+import junit.runner.Version;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -23,12 +24,10 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
     private Long id;
-
-    //@Column(unique = true)
     private String name;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Transaction> transactions = new ArrayList<>();
 
     @CreationTimestamp
@@ -38,4 +37,8 @@ public class Category {
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
+
+    public Category(String categoryName) {
+        this.name = categoryName;
+    }
 }

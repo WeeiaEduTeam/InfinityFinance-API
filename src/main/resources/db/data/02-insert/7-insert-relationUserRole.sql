@@ -1,0 +1,35 @@
+--liquibase formatted sql
+--changeset pacion:7
+INSERT INTO user_roles (role_id, user_id) VALUES(1,1);
+INSERT INTO user_roles (role_id, user_id) VALUES(2,1);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,2);
+INSERT INTO user_roles (role_id, user_id) VALUES(2,3);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,3);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,4);
+INSERT INTO user_roles (role_id, user_id) VALUES(2,5);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,5);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,6);
+INSERT INTO user_roles (role_id, user_id) VALUES(2,7);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,7);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,8);
+INSERT INTO user_roles (role_id, user_id) VALUES(2,9);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,9);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,10);
+INSERT INTO user_roles (role_id, user_id) VALUES(2,11);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,11);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,12);
+INSERT INTO user_roles (role_id, user_id) VALUES(2,13);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,13);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,14);
+INSERT INTO user_roles (role_id, user_id) VALUES(2,15);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,15);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,16);
+INSERT INTO user_roles (role_id, user_id) VALUES(2,17);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,17);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,18);
+INSERT INTO user_roles (role_id, user_id) VALUES(2,19);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,19);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,20);
+INSERT INTO user_roles (role_id, user_id) VALUES(2,21);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,21);
+INSERT INTO user_roles (role_id, user_id) VALUES(1,22);
