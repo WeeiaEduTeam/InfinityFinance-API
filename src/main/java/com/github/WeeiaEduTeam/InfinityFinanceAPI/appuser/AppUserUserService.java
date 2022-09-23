@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 public class AppUserUserService {
 
     private final AppUserAdminService appUserAdminService;
-    private final AppUserRepository appUserRepository;
     private final AppUserUtil appUserUtil;
 
     public AppUserDTO getCurrentLoggedUserInformation() {
@@ -76,7 +75,7 @@ public class AppUserUserService {
     }
 
     private AppUser saveUser(AppUser user) {
-        return appUserRepository.save(user);
+        return appUserAdminService.saveUser(user);
     }
 
     private AppUserDTO mapAppUserToAppUserDTO(AppUser user) {

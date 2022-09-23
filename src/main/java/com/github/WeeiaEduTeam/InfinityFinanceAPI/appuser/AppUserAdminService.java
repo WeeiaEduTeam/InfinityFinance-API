@@ -102,7 +102,7 @@ public class AppUserAdminService implements UserDetailsService {
         appUserRepository.delete(user);
     }
 
-    private AppUser saveUser(AppUser user) {
+    AppUser saveUser(AppUser user) {
         return appUserRepository.save(user);
     }
 
