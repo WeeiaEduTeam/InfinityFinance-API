@@ -57,6 +57,7 @@ class AppUserAdminServiceTest {
     private CreateAppUserAdminDTO createAppUserAdminDTOTest;
     private AppUserCredentialsDTO appUserCredentialsDTO;
     private ReplaceAppUserByUserDTO replaceAppUserByUserDTO;
+    private ReplaceAppUserAllDetailsDTO replaceAppUserAllDetailsDTO;
 
     @BeforeEach
     void init() {
@@ -104,6 +105,15 @@ class AppUserAdminServiceTest {
                 .firstName("example")
                 .secondName("example")
                 .build();
+
+        replaceAppUserAllDetailsDTO = new ReplaceAppUserAllDetailsDTO();
+        replaceAppUserAllDetailsDTO.setPassword("{noop}example");
+        replaceAppUserAllDetailsDTO.setEmail("example@wp.pl");
+        replaceAppUserAllDetailsDTO.setUsername("example");
+        replaceAppUserAllDetailsDTO.setFirstName("example");
+        replaceAppUserAllDetailsDTO.setSecondName("example");
+        replaceAppUserAllDetailsDTO.setRoles(Collections.singletonList(roleDTOTest));
+
     }
 
     @Test
@@ -170,39 +180,16 @@ class AppUserAdminServiceTest {
 
 
     @Test
-    @DisplayName("Should replace user credentials")
-    void shouldReplaceUserCredentials() {
+    @DisplayName("Should replace user all details")
+    void shouldReplaceAllUserDetails() {
         //given
         given(appUserRepository.findById(anyLong())).willReturn(Optional.ofNullable(appUserTest));
-        given(appUserUtil.overwriteAppUserCredentials(Mockito.any(AppUser.class), Mockito.any(AppUserCredentialsDTO.class))).willReturn(appUserTest);
+        given(appUserUtil.overwriteAppUserAllDetails(Mockito.any(AppUser.class), Mockito.any(ReplaceAppUserAllDetailsDTO.class))).willReturn(appUserTest);
         given(appUserRepository.save(Mockito.any(AppUser.class))).willReturn(appUserTest);
         given(appUserUtil.mapToAppUserDTO(Mockito.any(AppUser.class))).willReturn(appUserDTOTest);
 
         // when
-        var user = appUserAdminService.replaceUserCredentials(1L, appUserCredentialsDTO);
-
-        //then
-        assertThat(user, instanceOf(AppUserDTO.class));
-        assertThat(user, hasProperty("id", equalTo(1L)));
-        assertThat(user, hasProperty("email", equalTo("testemail@wp.pl")));
-        assertThat(user, hasProperty("firstName", equalTo("John")));
-        assertThat(user, hasProperty("secondName", equalTo("Smith")));
-        assertThat(user, hasProperty("username", equalTo("smith123")));
-        assertEquals(1, user.getRoles().size());
-        assertThat(user.getRoles().get(0), hasProperty("name", equalTo("TEST_ROLE")));
-    }
-
-    @Test
-    @DisplayName("Should replace user details")
-    void shouldReplaceUserDetails() {
-        //given
-        given(appUserRepository.findById(anyLong())).willReturn(Optional.ofNullable(appUserTest));
-        given(appUserUtil.overwriteAppUserDetails(Mockito.any(AppUser.class), Mockito.any(ReplaceAppUserByUserDTO.class))).willReturn(appUserTest);
-        given(appUserRepository.save(Mockito.any(AppUser.class))).willReturn(appUserTest);
-        given(appUserUtil.mapToAppUserDTO(Mockito.any(AppUser.class))).willReturn(appUserDTOTest);
-
-        // when
-        var user = appUserAdminService.replaceUserDetails(1L, replaceAppUserByUserDTO);
+        var user = appUserAdminService.replaceUserAllDetails(1L, replaceAppUserAllDetailsDTO);
 
         //then
         assertThat(user, instanceOf(AppUserDTO.class));

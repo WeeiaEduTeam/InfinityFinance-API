@@ -84,7 +84,7 @@ public class AppUserAdminService implements UserDetailsService {
 
     private void deleteUserWithRoles(long userId) {
         var user = getUserById(userId);
-        //deleteUser(user);
+        deleteUser(user);
         deleteRoleFromUser(user);
     }
 
@@ -105,8 +105,6 @@ public class AppUserAdminService implements UserDetailsService {
         var foundUser = getUserById(userId);
 
         var overwrittenUser = overwriteAppUserAllDetails(foundUser, replaceAppUserAllDetailsDTO);
-
-        //appUserRepository.save(overwrittenUser);
 
         return mapAppUserToAppUserDTO(overwrittenUser);
     }
