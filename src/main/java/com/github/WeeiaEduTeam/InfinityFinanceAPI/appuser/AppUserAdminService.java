@@ -1,11 +1,7 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserCredentialsDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.CreateAppUserDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.ReplaceAppUserByUserDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy.AppUserRoleStrategyFacade;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionAdminService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +15,15 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class AppUserService implements UserDetailsService {
+public class AppUserAdminService implements UserDetailsService {
 
     @Autowired
     private AppUserRepository appUserRepository;
     @Autowired
     private AppUserUtil appUserUtil;
     @Autowired
-    private RoleService roleService;
+    private AppUserRoleStrategyFacade appUserRoleStrategyFacade;
+
     private TransactionAdminService transactionAdminService;
 
     public void setTransactionAdminService(TransactionAdminService transactionAdminService) {
@@ -51,28 +48,34 @@ public class AppUserService implements UserDetailsService {
         return appUserRepository.getLoggedInUserId().orElseThrow(() -> new UsernameNotFoundException("User not found in the database"));
     }
 
-
     public List<AppUserDTO> getAllUsers() {
         var foundUsers = appUserRepository.findAll();
 
         return foundUsers.stream().map(appUserUtil::mapToAppUserDTO).toList();
     }
 
-    public AppUserDTO createUser(CreateAppUserDTO createAppUserDTO) {
-        AppUser user = createAppUserFromCreateAppUserDTOAndHashPassword(createAppUserDTO);
+    public AppUserDTO getSingleUser(long userId) {
+        var foundUser = getUserById(userId);
 
-        user.setRoles(getUserRoleList());
+        return appUserUtil.mapToAppUserDTO(foundUser);
+    }
+
+    public <T> AppUserDTO createAccount(T objectDTO) {
+        AppUser user = createAppUserFromCreateAppUserDTOAndHashPassword(objectDTO);
+
+        setRolesForUser(user, objectDTO);
 
         user = saveUser(user);
 
         return appUserUtil.mapToAppUserDTO(user); //TODO: new abstract layer
     }
 
-    private List<Role> getUserRoleList() {
-        return List.of(roleService.getUserRoleOrCreate());
+    private <T> void setRolesForUser(AppUser user, T objectDTO) {
+        appUserRoleStrategyFacade.addRolesForUser(user, objectDTO);
     }
 
-    private AppUser createAppUserFromCreateAppUserDTOAndHashPassword(CreateAppUserDTO createAppUserDTO) {
+
+    private <T> AppUser createAppUserFromCreateAppUserDTOAndHashPassword(T createAppUserDTO) {
         return appUserUtil.mapToAppUserFactory(createAppUserDTO);
     }
     @Transactional
@@ -92,18 +95,22 @@ public class AppUserService implements UserDetailsService {
     }
 
     private void deleteRoleFromUser(AppUser user) {
-        roleService.deleteRoleFromUser(user);
+        appUserRoleStrategyFacade.removeRoles(user);
     }
 
     private void deleteUser(AppUser user) {
         appUserRepository.delete(user);
     }
 
-    public AppUserDTO replaceUserDetails(Long userId, ReplaceAppUserByUserDTO replaceAppUserByUserDTO) {
-        var foundUser = getUserById(userId);
-        var overwrittenUser = overwriteAppUserDetails(foundUser, replaceAppUserByUserDTO);
+    AppUser saveUser(AppUser user) {
+        return appUserRepository.save(user);
+    }
 
-        overwrittenUser = saveUser(overwrittenUser);
+    @Transactional
+    public AppUserDTO replaceUserAllDetails(long userId, ReplaceAppUserAllDetailsDTO replaceAppUserAllDetailsDTO) {
+        var foundUser = getUserById(userId);
+
+        var overwrittenUser = overwriteAppUserAllDetails(foundUser, replaceAppUserAllDetailsDTO);
 
         return mapAppUserToAppUserDTO(overwrittenUser);
     }
@@ -112,24 +119,7 @@ public class AppUserService implements UserDetailsService {
         return appUserUtil.mapToAppUserDTO(user);
     }
 
-    private AppUser saveUser(AppUser user) {
-        return appUserRepository.save(user);
-    }
-
-    public AppUser overwriteAppUserDetails(AppUser foundUser, ReplaceAppUserByUserDTO replaceAppUserByUserDTO) {
-        return appUserUtil.overwriteAppUserDetails(foundUser, replaceAppUserByUserDTO);
-    }
-
-    public AppUserDTO replaceUserCredentials(Long userId, AppUserCredentialsDTO appUserCredentialsDTO) {
-        var foundUser = getUserById(userId);
-        var overwrittenUser = overwriteAppUserCredentials(foundUser, appUserCredentialsDTO);
-
-        overwrittenUser = saveUser(overwrittenUser);
-
-        return mapAppUserToAppUserDTO(overwrittenUser);
-    }
-
-    private AppUser overwriteAppUserCredentials(AppUser foundUser, AppUserCredentialsDTO appUserCredentialsDTO) {
-        return appUserUtil.overwriteAppUserCredentials(foundUser, appUserCredentialsDTO);
+    private AppUser overwriteAppUserAllDetails(AppUser foundUser, ReplaceAppUserAllDetailsDTO replaceAppUserAllDetailsDTO) {
+        return appUserUtil.overwriteAppUserAllDetails(foundUser, replaceAppUserAllDetailsDTO);
     }
 }

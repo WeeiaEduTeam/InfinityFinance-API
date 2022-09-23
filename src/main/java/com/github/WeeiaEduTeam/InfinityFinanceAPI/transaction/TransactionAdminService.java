@@ -1,12 +1,11 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserService;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserAdminService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.Category;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.CategoryService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +30,7 @@ public class TransactionAdminService {
     private CustomPageable customPageable;
 
     @Autowired
-    private AppUserService appUserService;
+    private AppUserAdminService appUserAdminService;
 
     /*
     *   Circular dependency between appUserService
@@ -42,11 +41,11 @@ public class TransactionAdminService {
 
     @PostConstruct
     public void init() {
-        appUserService.setTransactionAdminService(this);
+        appUserAdminService.setTransactionAdminService(this);
     }
 
-    public AppUserService getAppUserService() {
-        return appUserService;
+    public AppUserAdminService getAppUserService() {
+        return appUserAdminService;
     }
 
     public List<TransactionDTO> getAllTransactionsForGivenUserAndCategory(long userId, long categoryId, int pageNumber,

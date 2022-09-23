@@ -1,11 +1,15 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.role;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.role.RoleDTO;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserRepository;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.dto.RoleDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
+import static com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleUtil.ROLE_ADMIN;
 import static com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleUtil.ROLE_USER;
 
 @Service
@@ -21,6 +25,15 @@ public class RoleService {
 
         if(role == null)
             role = createRole(ROLE_USER);
+
+        return role;
+    }
+
+    public Role getAdminRoleOrCreate() {
+        var role = getRole(ROLE_ADMIN);
+
+        if(role == null)
+            role = createRole(ROLE_ADMIN);
 
         return role;
     }
@@ -43,21 +56,11 @@ public class RoleService {
         return roleUtil.mapRoleToRoleDTO(role);
     }
 
-    public void deleteRoleFromUser(AppUser user) {
-        var roles = user.getRoles();
+    public void deleteRolesFromUser(AppUser user) {
+        int roleLength = user.getRoles().size();
 
-        for(int i = 0; i < roles.toArray().length; i++) {
-            log.error(roles.get(i).getName());
-            log.error(String.valueOf(roles.get(i).getUsers().size()));
-        }
-
-        roles.stream()
-                .map(e -> getRole(e.getName()))
-                .forEach(e -> e.getUsers().remove(user));
-
-        for(int i = 0; i < roles.toArray().length; i++) {
-            log.error(roles.get(i).getName());
-            log.error(String.valueOf(roles.get(i).getUsers().size()));
+        if (roleLength > 0) {
+            user.getRoles().subList(0, roleLength).clear();
         }
     }
 }

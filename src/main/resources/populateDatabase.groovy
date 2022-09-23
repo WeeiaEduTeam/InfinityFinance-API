@@ -35,7 +35,7 @@ def generateCategories() {
     File categories = createFile("categories.sql")
     clearFileAndGenerateHeader(categories)
 
-    for (int i = 1; i <= 200; i++) {
+    for (int i = 1; i <= 20; i++) {
         def exampleTimestamp = LocalDateTime.now().minusDays(100 - i)
 
         def categoryInsert = "INSERT INTO category (name, created, updated) " +
@@ -124,13 +124,13 @@ def generateTransactions() {
     def transactionsMap = [0:"INCOME", 1:"OUTCOME"]
 
     def numberOfUsers = 22
-    for (int i = 1; i <= 8000; i++) {
+    for (int i = 1; i <= 1000; i++) {
         def exampleTimestamp = LocalDateTime.now().minusDays(i)
 
         def randomId = Math.abs(new Random().nextInt() % 2)
         def value = i + i + (i % 10) * 10 + i % 2
         def quantity = 100 - (i % 9) + 1
-        def category = (i % 200) + 1
+        def category = (i % 20) + 1
         def user = (i % numberOfUsers) + 1
 
         def categoryInsert = "INSERT INTO transaction (transaction_type, value, quantity, title, description, category_id, appuser_id, created, updated) VALUES " +

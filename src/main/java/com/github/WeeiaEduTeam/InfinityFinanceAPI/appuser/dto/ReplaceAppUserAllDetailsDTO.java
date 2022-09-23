@@ -8,17 +8,11 @@ import java.util.List;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldNameConstants
-public class AppUserDTO {
-    private long id;
+public class ReplaceAppUserAllDetailsDTO  extends CreateAppUserAdminDTO {
 
-    private String username;
-    private String email;
     private String firstName;
     private String secondName;
-
-    private List<RoleDTO> roles;
 }

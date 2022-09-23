@@ -1,13 +1,11 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserCredentialsDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.AppUserDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.CreateAppUserDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.ReplaceAppUserByUserDTO;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy.AppUserRoleStrategyFacade;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.role.RoleDTO;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.dto.RoleDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +19,7 @@ import java.util.List;
 public class AppUserUtil {
     private final PasswordEncoder encoder;
     private final RoleService roleService;
+    private final AppUserRoleStrategyFacade appUserRoleStrategyFacade;
 
     public AppUserDTO mapToAppUserDTO(AppUser appUser) {
 
@@ -40,29 +39,49 @@ public class AppUserUtil {
                 .toList();
     }
 
-    private AppUser mapToAppUser(CreateAppUserDTO createAppUserDTO) {
+    private AppUser mapToAppUser(CreateAppUserAdminDTO dto) {
 
         return AppUser.builder()
-                .username(createAppUserDTO.getUsername())
-                .email(createAppUserDTO.getEmail())
-                .password(createAppUserDTO.getPassword())
+                .username(dto.getUsername())
+                .email(dto.getEmail())
+                .password(dto.getPassword())
                 .build();
     }
 
-    private AppUser mapToAppUser(ReplaceAppUserByUserDTO replaceAppUserByUserDTO) {
+    private AppUser mapToAppUser(ReplaceAppUserByUserDTO dto) {
 
         return AppUser.builder()
-                .firstName(replaceAppUserByUserDTO.getFirstName())
-                .email(replaceAppUserByUserDTO.getEmail())
-                .secondName(replaceAppUserByUserDTO.getSecondName())
+                .firstName(dto.getFirstName())
+                .email(dto.getEmail())
+                .secondName(dto.getSecondName())
                 .build();
     }
 
-    private AppUser mapToAppUser(AppUserCredentialsDTO appUserCredentialsDTO) {
+    private AppUser mapToAppUser(AppUserCredentialsDTO dto) {
 
         return AppUser.builder()
-                .username(appUserCredentialsDTO.getUsername())
-                .password(appUserCredentialsDTO.getPassword())
+                .username(dto.getUsername())
+                .password(dto.getPassword())
+                .build();
+    }
+
+    private AppUser mapToAppUser(CreateAppUserUserDTO dto) {
+
+        return AppUser.builder()
+                .username(dto.getUsername())
+                .password(dto.getPassword())
+                .email(dto.getEmail())
+                .build();
+    }
+
+    private AppUser mapToAppUser(ReplaceAppUserAllDetailsDTO dto) {
+
+        return AppUser.builder()
+                .username(dto.getUsername())
+                .password(dto.getPassword())
+                .email(dto.getEmail())
+                .secondName(dto.getSecondName())
+                .firstName(dto.getFirstName())
                 .build();
     }
 
@@ -70,9 +89,18 @@ public class AppUserUtil {
     public <T> AppUser mapToAppUserFactory(T dto) {
         AppUser user = null;
 
-        if(dto instanceof CreateAppUserDTO) {
-            user = mapToAppUser((CreateAppUserDTO) dto);
-            user.setPassword(hashPassword(((CreateAppUserDTO) dto).getPassword()));
+        /* Keep given dtos higher than others
+         * ReplaceAll details > CreateAdminDTO > CreateUserDTO
+         * because of the inheritance */
+        if(dto instanceof ReplaceAppUserAllDetailsDTO) {
+            user = mapToAppUser((ReplaceAppUserAllDetailsDTO) dto);
+            user.setPassword(hashPassword(((ReplaceAppUserAllDetailsDTO) dto).getPassword()));
+        } else if(dto instanceof CreateAppUserAdminDTO) {
+            user = mapToAppUser((CreateAppUserAdminDTO) dto);
+            user.setPassword(hashPassword(((CreateAppUserAdminDTO) dto).getPassword()));
+        } else if(dto instanceof CreateAppUserUserDTO) {
+            user = mapToAppUser((CreateAppUserUserDTO) dto);
+            user.setPassword(hashPassword(((CreateAppUserUserDTO) dto).getPassword()));
         } else if(dto instanceof ReplaceAppUserByUserDTO) {
             user = mapToAppUser((ReplaceAppUserByUserDTO) dto);
         } else if(dto instanceof AppUserCredentialsDTO) {
@@ -103,6 +131,24 @@ public class AppUserUtil {
 
         foundUser.setPassword(convertedUser.getPassword());
         foundUser.setUsername(convertedUser.getUsername());
+
+        return foundUser;
+    }
+
+    public AppUser overwriteAppUserAllDetails(AppUser foundUser, ReplaceAppUserAllDetailsDTO replaceAppUserAllDetailsDTO) {
+        var convertedUser = mapToAppUserFactory(replaceAppUserAllDetailsDTO);
+
+        foundUser.setPassword(convertedUser.getPassword());
+        foundUser.setUsername(convertedUser.getUsername());
+        foundUser.setEmail(convertedUser.getEmail());
+        foundUser.setSecondName(convertedUser.getSecondName());
+        foundUser.setFirstName(convertedUser.getFirstName());
+
+        appUserRoleStrategyFacade.removeRoles(foundUser);
+
+        // USTAWIC ROLE I WYWALIC ROLE SERVICE KONTAKT Z FASADA
+        appUserRoleStrategyFacade.addRolesForUser(foundUser, replaceAppUserAllDetailsDTO);
+
 
         return foundUser;
     }
