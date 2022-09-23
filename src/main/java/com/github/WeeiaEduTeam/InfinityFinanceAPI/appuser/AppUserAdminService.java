@@ -54,6 +54,12 @@ public class AppUserAdminService implements UserDetailsService {
         return foundUsers.stream().map(appUserUtil::mapToAppUserDTO).toList();
     }
 
+    public AppUserDTO getSingleUser(long userId) {
+        var foundUser = getUserById(userId);
+
+        return appUserUtil.mapToAppUserDTO(foundUser);
+    }
+
     public <T> AppUserDTO createAccount(T objectDTO) {
         AppUser user = createAppUserFromCreateAppUserDTOAndHashPassword(objectDTO);
 

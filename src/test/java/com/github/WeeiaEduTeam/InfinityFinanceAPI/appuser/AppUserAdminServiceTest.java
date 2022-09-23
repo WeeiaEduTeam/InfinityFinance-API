@@ -141,6 +141,27 @@ class AppUserAdminServiceTest {
     }
 
     @Test
+    @DisplayName("Should get single user")
+    void shouldGetSingleUser() {
+        //given
+        given(appUserRepository.findById(anyLong())).willReturn(Optional.ofNullable(appUserTest));
+        given(appUserUtil.mapToAppUserDTO(Mockito.any(AppUser.class))).willReturn(appUserDTOTest);
+
+        // when
+        var user = appUserAdminService.getSingleUser(appUserTest.getId());
+
+        //then
+        assertThat(user, instanceOf(AppUserDTO.class));
+        assertThat(user, hasProperty("id", equalTo(1L)));
+        assertThat(user, hasProperty("email", equalTo("testemail@wp.pl")));
+        assertThat(user, hasProperty("firstName", equalTo("John")));
+        assertThat(user, hasProperty("secondName", equalTo("Smith")));
+        assertThat(user, hasProperty("username", equalTo("smith123")));
+        assertEquals(1, user.getRoles().size());
+        assertThat(user.getRoles().get(0), hasProperty("name", equalTo("TEST_ROLE")));
+    }
+
+    @Test
     @DisplayName("Should create user")
     void shouldCreateUser() {
         //given

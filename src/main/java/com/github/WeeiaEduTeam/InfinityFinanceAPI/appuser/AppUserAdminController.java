@@ -24,6 +24,14 @@ public class AppUserAdminController {
         return ResponseEntity.ok(users);
     }
 
+    @GetMapping("/admin/users{userId:[0-9]+}")
+    public ResponseEntity<AppUserDTO> getSingleUser(@PathVariable long userId) {
+
+        var user = appUserAdminService.getSingleUser(userId);
+
+        return ResponseEntity.ok(user);
+    }
+
     @PostMapping("/admin/users")
     ResponseEntity<AppUserDTO> createAccount(@RequestBody CreateAppUserAdminDTO createAppUserAdminDTO) {
 
