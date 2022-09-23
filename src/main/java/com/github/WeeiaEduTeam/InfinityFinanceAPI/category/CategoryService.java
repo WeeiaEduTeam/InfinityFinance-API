@@ -1,10 +1,10 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.category;
 
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
 
 @Service
 @RequiredArgsConstructor

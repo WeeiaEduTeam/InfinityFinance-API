@@ -34,5 +34,4 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     @NotNull
     @Query("SELECT DISTINCT u FROM AppUser u LEFT JOIN FETCH u.roles")
     List<AppUser> findAll();
-
 }
