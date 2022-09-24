@@ -34,7 +34,7 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
     @Override
     @Query( value = "FROM AppUser u LEFT JOIN FETCH u.roles", /* avoid n + 1 */
-            countQuery = "SELECT COUNT(a) FROM AppUser a LEFT JOIN a.roles") /* add pageable without n + 1 */
+            countQuery = "SELECT COUNT(u) FROM AppUser u LEFT JOIN u.roles") /* add pageable without n + 1 */
     @NotNull
     Page<AppUser> findAll(@NotNull Pageable pageable);
 

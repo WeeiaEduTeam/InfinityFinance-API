@@ -5,7 +5,9 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy.AppUserRoleSt
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.dto.RoleDTO;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.CustomPageable;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionAdminService;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +19,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Collections;
@@ -28,8 +30,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -51,6 +53,9 @@ class AppUserAdminServiceTest {
     private TransactionAdminService transactionAdminService;
     @Mock
     private AppUserRoleStrategyFacade appUserRoleStrategyFacade;
+
+    @Mock
+    private CustomPageable customPageable;
 
     private AppUser appUserTest;
     private AppUserDTO appUserDTOTest;
@@ -122,8 +127,10 @@ class AppUserAdminServiceTest {
     @DisplayName("Should get all users")
     void shouldGetAllUsers() {
         //given
-        given(appUserRepository.findAll()).willReturn(List.of(appUserTest));
+        final Page<AppUser> page = new PageImpl<>(List.of(appUserTest));
+        given(appUserRepository.findAll(any(Pageable.class))).willReturn(page);
         given(appUserUtil.mapToAppUserDTO(Mockito.any(AppUser.class))).willReturn(appUserDTOTest);
+        given(customPageable.validateAndCreatePageable(anyInt(), any(Sort.Direction.class), anyString(), ArgumentMatchers.<Class<A>>any())).willReturn(PageRequest.of(1,1));
 
         // when
         var users = appUserAdminService.getAllUsers(1, Sort.Direction.ASC, "id");

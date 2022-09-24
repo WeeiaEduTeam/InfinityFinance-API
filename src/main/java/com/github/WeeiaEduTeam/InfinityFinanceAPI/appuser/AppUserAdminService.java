@@ -57,9 +57,6 @@ public class AppUserAdminService implements UserDetailsService {
     public List<AppUserDTO> getAllUsers(Integer pageNumber, Sort.Direction sortDirection, String sortBy) {
         Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy, AppUser.class);
 
-
-        Pageable p = PageRequest.of(0, 5);
-
         var foundUsers = appUserRepository.findAll(page);
 
         return foundUsers.stream().map(appUserUtil::mapToAppUserDTO).toList();
