@@ -4,7 +4,6 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.dto.RoleDTO;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,7 +13,7 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class AppUserMapper  {
+public class AppUserMapperFactory {
 
     @Autowired
     private PasswordEncoder encoder;
@@ -24,7 +23,7 @@ public class AppUserMapper  {
     public <T> AppUser mapToAppUserFactory(T dto) {
         AppUser user = null;
 
-        /* Keep given dtos higher than others
+        /* Keep taken dtos higher than others
          * ReplaceAll details > CreateAdminDTO > CreateUserDTO
          * because of the inheritance */
         if(dto instanceof ReplaceAppUserAllDetailsDTO) {

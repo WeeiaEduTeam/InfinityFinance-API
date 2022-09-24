@@ -3,15 +3,9 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy.AppUserRoleStrategyFacade;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.dto.RoleDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 @Slf4j
@@ -19,15 +13,15 @@ import java.util.List;
 public class AppUserUtil {
 
 
-    private final AppUserMapper appUserMapper;
+    private final AppUserMapperFactory appUserMapperFactory;
     private final AppUserRoleStrategyFacade appUserRoleStrategyFacade;
 
     public <T> AppUser mapToAppUserFactory(T dto) {
-        return appUserMapper.mapToAppUserFactory(dto);
+        return appUserMapperFactory.mapToAppUserFactory(dto);
     }
 
     public AppUserDTO mapToAppUserDTO(AppUser appUser) {
-        return appUserMapper.mapToAppUserDTO(appUser);
+        return appUserMapperFactory.mapToAppUserDTO(appUser);
     }
 
     public AppUser overwriteAppUserDetails(AppUser foundUser, ReplaceAppUserByUserDTO replaceAppUserByUserDTO) {
@@ -41,7 +35,7 @@ public class AppUserUtil {
     }
 
     private <T> AppUser mapToAppUser(T dto) {
-        return appUserMapper.mapToAppUserFactory(dto);
+        return appUserMapperFactory.mapToAppUserFactory(dto);
     }
 
     public AppUser overwriteAppUserCredentials(AppUser foundUser, AppUserCredentialsDTO appUserCredentialsDTO) {

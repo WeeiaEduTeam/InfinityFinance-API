@@ -2,13 +2,12 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleType;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleUtil.ROLE_ADMIN;
 
 @Component
 public class AppUserAddAdminRole implements AppUserRoleStrategy {
@@ -49,7 +48,7 @@ public class AppUserAddAdminRole implements AppUserRoleStrategy {
     private boolean adminRoleExists(List<Role> roles) {
         return roles.stream()
                 .map(Role::getName)
-                .filter(e -> e.equals(ROLE_ADMIN))
+                .filter(e -> e.equals(RoleType.ROLE_ADMIN.getName()))
                 .toList()
                 .size() > 0;
     }
