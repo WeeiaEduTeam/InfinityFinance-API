@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleUtil.ROLE_ADMIN;
 import static com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleUtil.ROLE_USER;
@@ -62,5 +63,11 @@ public class RoleService {
         if (roleLength > 0) {
             user.getRoles().subList(0, roleLength).clear();
         }
+    }
+
+    public List<RoleDTO> mapToRolesDTO(List<Role> roles) {
+        return roles.stream()
+                .map(this::mapToRoleDTO)
+                .toList();
     }
 }

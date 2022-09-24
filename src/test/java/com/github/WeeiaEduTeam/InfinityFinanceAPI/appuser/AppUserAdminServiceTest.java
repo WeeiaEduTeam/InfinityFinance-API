@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -165,7 +166,7 @@ class AppUserAdminServiceTest {
     @DisplayName("Should create user")
     void shouldCreateUser() {
         //given
-        given(appUserUtil.mapToAppUserFactory(Mockito.any(CreateAppUserAdminDTO.class))).willReturn(appUserTest);
+        given(appUserUtil.mapToAppUserFactory(ArgumentMatchers.any())).willReturn(appUserTest);
         given(roleService.getUserRoleOrCreate()).willReturn(roleTest);
         given(appUserRepository.save(Mockito.any(AppUser.class))).willReturn(appUserTest);
         given(appUserUtil.mapToAppUserDTO(Mockito.any(AppUser.class))).willReturn(appUserDTOTest);
