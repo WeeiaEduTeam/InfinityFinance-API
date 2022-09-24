@@ -145,8 +145,8 @@ class TransactionAdminServiceTest {
     @DisplayName("Should create transaction for given user with known category.")
     void shouldCreateTransactionForGivenUserWithKnownCategory() {
         //given
-        given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class))).willReturn(transactionTest);
-        given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
+        given(transactionUtil.mapToTransaction(any(CreateTransactionDTO.class))).willReturn(transactionTest);
+        given(transactionUtil.mapToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
         given(appUserAdminService.getUserById(anyLong())).willReturn(appUserTest);
         given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
 
@@ -165,8 +165,8 @@ class TransactionAdminServiceTest {
     @DisplayName("Should save transaction for given user and found category.")
     void shouldCreateTransactionForGivenUser() {
         //given
-        given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class))).willReturn(transactionTest);
-        given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
+        given(transactionUtil.mapToTransaction(any(CreateTransactionDTO.class))).willReturn(transactionTest);
+        given(transactionUtil.mapToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
         given(appUserAdminService.getUserById(anyLong())).willReturn(appUserTest);
         given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
 
@@ -186,7 +186,7 @@ class TransactionAdminServiceTest {
     void shouldReplaceTransactionForGivenUser() {
         //given
         given(transactionUtil.overwriteTransactionByCreateTransactionDTO(any(Transaction.class), any(CreateTransactionDTO.class))).willReturn(transactionTest);
-        given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
+        given(transactionUtil.mapToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
         given(transactionRepository.findByIdAndAppuserId(1L, 1L)).willReturn(transactionTest);
 
         //when
@@ -208,7 +208,7 @@ class TransactionAdminServiceTest {
     void shouldGetAllTransactionsForGivenUserAndCategory() {
         //given
         given(customPageable.validateAndCreatePageable(anyInt(), any(Sort.Direction.class), anyString(), ArgumentMatchers.<Class<A>>any())).willReturn(PageRequest.of(1,1));
-        given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
+        given(transactionUtil.mapToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
         given(transactionRepository.findAllByAppuserIdAndCategoryId(anyLong(), anyLong(), any(Pageable.class))).willReturn(Collections.singletonList(transactionTest));
 
         //when
@@ -229,7 +229,7 @@ class TransactionAdminServiceTest {
     @DisplayName("Should get all transactions for given user.")
     void shouldGetAllTransactionsForGivenUser() {
         //given
-        given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
+        given(transactionUtil.mapToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
         given(customPageable.validateAndCreatePageable(anyInt(), any(Sort.Direction.class), anyString(), ArgumentMatchers.<Class<A>>any())).willReturn(PageRequest.of(1,1));
         given(transactionRepository.findAllByAppuserId(anyLong(), any(Pageable.class))).willReturn(Collections.singletonList(transactionTest));
 
@@ -253,11 +253,11 @@ class TransactionAdminServiceTest {
         //given
         transactionNullCategoryAndUserTest.setAppuser(appUserTest);
 
-        given(transactionUtil.mapTransactionToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
+        given(transactionUtil.mapToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
         given(categoryService.createCategory(anyString())).willReturn(categoryTest);
         given(transactionRepository.save(any(Transaction.class))).willReturn(transactionTest);
         given(appUserAdminService.getUserById(anyLong())).willReturn(appUserTest);
-        given(transactionUtil.mapCreateTransactionDTOToTransaction(any(CreateTransactionDTO.class)))
+        given(transactionUtil.mapToTransaction(any(CreateTransactionDTO.class)))
                 .willReturn(transactionNullCategoryAndUserTest);
 
         //when

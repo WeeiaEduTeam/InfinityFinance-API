@@ -1,7 +1,8 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -30,9 +31,11 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     @Query("SELECT u FROM AppUser u JOIN FETCH u.roles WHERE u.username = :username")
     AppUser findByUsername(String username);
 
+
     @Override
+    @Query( value = "FROM AppUser u LEFT JOIN FETCH u.roles", /* avoid n + 1 */
+            countQuery = "SELECT COUNT(a) FROM AppUser a LEFT JOIN a.roles") /* add pageable without n + 1 */
     @NotNull
-    @Query("SELECT DISTINCT u FROM AppUser u LEFT JOIN FETCH u.roles")
-    List<AppUser> findAll();
+    Page<AppUser> findAll(@NotNull Pageable pageable);
 
 }

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AppUserUtil {
 
-
     private final AppUserMapperFactory appUserMapperFactory;
     private final AppUserRoleStrategyFacade appUserRoleStrategyFacade;
 

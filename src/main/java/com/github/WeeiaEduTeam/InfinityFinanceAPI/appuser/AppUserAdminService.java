@@ -2,9 +2,13 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy.AppUserRoleStrategyFacade;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.CustomPageable;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionAdminService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,6 +27,8 @@ public class AppUserAdminService implements UserDetailsService {
     private AppUserUtil appUserUtil;
     @Autowired
     private AppUserRoleStrategyFacade appUserRoleStrategyFacade;
+    @Autowired
+    private CustomPageable customPageable;
 
     private TransactionAdminService transactionAdminService;
 
@@ -48,10 +54,19 @@ public class AppUserAdminService implements UserDetailsService {
         return appUserRepository.getLoggedInUserId().orElseThrow(() -> new UsernameNotFoundException("User not found in the database"));
     }
 
-    public List<AppUserDTO> getAllUsers() {
-        var foundUsers = appUserRepository.findAll();
+    public List<AppUserDTO> getAllUsers(Integer pageNumber, Sort.Direction sortDirection, String sortBy) {
+        Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy, AppUser.class);
+
+
+        Pageable p = PageRequest.of(0, 5);
+
+        var foundUsers = appUserRepository.findAll(page);
 
         return foundUsers.stream().map(appUserUtil::mapToAppUserDTO).toList();
+    }
+
+    private <T> Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy, Class<T> clazz) {
+        return customPageable.validateAndCreatePageable(pageNumber, sortDirection, sortBy, clazz);
     }
 
     public AppUserDTO getSingleUser(long userId) {

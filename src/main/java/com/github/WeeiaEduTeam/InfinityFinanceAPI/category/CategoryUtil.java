@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class CategoryUtil extends BaseUtil {
+public class CategoryUtil {
 
 
     public CategoryDTO mapCategoryToCategoryDTO(Category category) {
@@ -19,6 +19,6 @@ public class CategoryUtil extends BaseUtil {
     }
 
     public boolean isNumberPositive(int value) {
-        return isPositive(value);
+        return value > 0 ? Boolean.TRUE : Boolean.FALSE;
     }
 }

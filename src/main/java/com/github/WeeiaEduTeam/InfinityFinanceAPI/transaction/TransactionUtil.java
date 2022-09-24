@@ -2,7 +2,6 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.BaseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -10,35 +9,20 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class TransactionUtil extends BaseUtil {
+public class TransactionUtil {
 
-    public Transaction mapCreateTransactionDTOToTransaction(CreateTransactionDTO createTransactionDTO) {
-        return Transaction.builder()
-                .transactionType(createTransactionDTO.getTransactionType())
-                .value(createTransactionDTO.getValue())
-                .quantity(createTransactionDTO.getQuantity())
-                .title(createTransactionDTO.getTitle())
-                .description(createTransactionDTO.getDescription())
-                .build();
+    private final TransactionMapper transactionMapper;
+
+    public Transaction mapToTransaction(CreateTransactionDTO createTransactionDTO) {
+        return transactionMapper.mapToTransaction(createTransactionDTO);
     }
 
-    public TransactionDTO mapTransactionToTransactionDTO(Transaction transaction) {
-        String category = transaction.getCategory().getName();
-
-        return TransactionDTO.builder()
-                .id(transaction.getId())
-                .categoryName(category)
-                .transactionType(transaction.getTransactionType())
-                .value(transaction.getValue())
-                .quantity(transaction.getQuantity())
-                .title(transaction.getTitle())
-                .description(transaction.getDescription())
-                .username(transaction.getAppuser().getUsername())
-                .build();
+    public TransactionDTO mapToTransactionDTO(Transaction transaction) {
+        return transactionMapper.mapToTransactionDTO(transaction);
     }
 
     public Transaction overwriteTransactionByCreateTransactionDTO(Transaction main, CreateTransactionDTO toConvert) {
-       var convertedTransaction = mapCreateTransactionDTOToTransaction(toConvert);
+       var convertedTransaction = mapToTransaction(toConvert);
 
        main.setTransactionType(convertedTransaction.getTransactionType());
        main.setCategory(convertedTransaction.getCategory());
@@ -48,7 +32,15 @@ public class TransactionUtil extends BaseUtil {
        return main;
     }
 
-    public void validateIntArgumentsArePositive(int... values) {
-        validateArgumentsArePositive(values);
+
+    public void validateArgumentsArePositive(int... values) {
+        for(int i : values) {
+            if(!isPositive(i))
+                throw new IllegalArgumentException(String.format("Provided value %d is not positive!", i));
+        }
+    }
+
+    private boolean isPositive(long number) {
+        return number > 0 ? Boolean.TRUE : Boolean.FALSE;
     }
 }

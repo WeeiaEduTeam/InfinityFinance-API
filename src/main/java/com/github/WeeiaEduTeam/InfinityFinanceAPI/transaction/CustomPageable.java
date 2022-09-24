@@ -2,6 +2,10 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -9,14 +13,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
-@Component
 @Slf4j
+@Configuration
+@PropertySource("classpath:application.properties")
 @RequiredArgsConstructor
+public
 class CustomPageable {
+    private final int PAGE_SIZE = 6;
 
-    private static final int PAGE_SIZE = 6;
-
-    <T> Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy, Class<T> clazz) {
+    public <T> Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy, Class<T> clazz) {
         pageNumber = validateAndReturnPageNumber(pageNumber);
 
         sortBy = validateAndReturnSortString(sortBy, clazz);

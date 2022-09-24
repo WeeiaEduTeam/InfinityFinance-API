@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Collections;
@@ -125,7 +126,7 @@ class AppUserAdminServiceTest {
         given(appUserUtil.mapToAppUserDTO(Mockito.any(AppUser.class))).willReturn(appUserDTOTest);
 
         // when
-        var users = appUserAdminService.getAllUsers();
+        var users = appUserAdminService.getAllUsers(1, Sort.Direction.ASC, "id");
 
         //then
         assertEquals(1, users.size());

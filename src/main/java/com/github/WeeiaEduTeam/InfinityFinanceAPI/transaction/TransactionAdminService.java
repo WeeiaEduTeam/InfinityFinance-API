@@ -55,7 +55,7 @@ public class TransactionAdminService {
 
         var foundTransactions = getTransactionsByAppuserIdAndCategoryId(userId, categoryId, page);
 
-        return foundTransactions.stream().map(transactionUtil::mapTransactionToTransactionDTO).toList();
+        return foundTransactions.stream().map(transactionUtil::mapToTransactionDTO).toList();
     }
 
     private <T> Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy, Class<T> clazz) {
@@ -73,7 +73,7 @@ public class TransactionAdminService {
 
         var foundTransactions = getTransactionsByAppuserId(userId, page);
 
-        return foundTransactions.stream().map(transactionUtil::mapTransactionToTransactionDTO).toList();
+        return foundTransactions.stream().map(transactionUtil::mapToTransactionDTO).toList();
     }
 
     private List<Transaction> getTransactionsByAppuserId(long userId, Pageable page) {
@@ -93,7 +93,7 @@ public class TransactionAdminService {
     }
 
     private Transaction createTransactionFromCreateTransactionDTOAndUserId(CreateTransactionDTO createTransactionDTO, long userId) {
-        var transaction = transactionUtil.mapCreateTransactionDTOToTransaction(createTransactionDTO);
+        var transaction = transactionUtil.mapToTransaction(createTransactionDTO);
 
         var appUser = getUserById(userId);
 
@@ -148,11 +148,11 @@ public class TransactionAdminService {
 
     private TransactionDTO mapTransactionToTransactionDTO(Transaction transaction) {
 
-        return transactionUtil.mapTransactionToTransactionDTO(transaction);
+        return transactionUtil.mapToTransactionDTO(transaction);
     }
 
     private void validateArgumentsArePositive(int... values) {
-        transactionUtil.validateIntArgumentsArePositive(values);
+        transactionUtil.validateArgumentsArePositive(values);
     }
 
     private Transaction getTransactionById(long transactionId) {
