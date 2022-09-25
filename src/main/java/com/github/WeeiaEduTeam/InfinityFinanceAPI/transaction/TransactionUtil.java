@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class TransactionUtil {
+class TransactionUtil {
 
     private final TransactionMapper transactionMapper;
 

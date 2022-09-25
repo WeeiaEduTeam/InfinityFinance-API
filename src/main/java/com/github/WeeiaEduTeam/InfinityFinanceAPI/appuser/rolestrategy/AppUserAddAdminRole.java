@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class AppUserAddAdminRole implements AppUserRoleStrategy {
+class AppUserAddAdminRole implements AppUserRoleStrategy {
 
     private static AppUserAddAdminRole instance = null;
     private final RoleService roleService;

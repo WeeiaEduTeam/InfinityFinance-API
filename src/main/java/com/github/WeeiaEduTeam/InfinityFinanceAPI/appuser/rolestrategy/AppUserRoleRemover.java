@@ -3,7 +3,7 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.rolestrategy;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
 
-public class AppUserRoleRemover {
+class AppUserRoleRemover {
 
     private static AppUserRoleRemover instance = null;
     private final RoleService roleService;

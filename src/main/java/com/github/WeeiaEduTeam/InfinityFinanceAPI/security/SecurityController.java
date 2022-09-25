@@ -17,7 +17,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class SecurityController {
+class SecurityController {
     private final SecurityService securityService;
 
     @PostMapping("/login")

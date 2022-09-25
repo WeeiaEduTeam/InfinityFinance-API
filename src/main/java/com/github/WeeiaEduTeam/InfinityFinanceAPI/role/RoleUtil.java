@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class RoleUtil {
+class RoleUtil {
 
     private final RoleMapper roleMapper;
     public RoleDTO mapToRoleDTO(Role role) {

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class RoleMapper {
+class RoleMapper {
     public RoleDTO mapToRoleDTO(Role role) {
         return RoleDTO.builder()
                 .name(role.getName())

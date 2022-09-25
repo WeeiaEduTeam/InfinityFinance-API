@@ -1,7 +1,6 @@
-package com.github.WeeiaEduTeam.InfinityFinanceAPI.security;
+package com.github.WeeiaEduTeam.InfinityFinanceAPI.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.security.jwt.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +21,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfiguration {
+class SecurityConfiguration {
 
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder bCryptPasswordEncoder;

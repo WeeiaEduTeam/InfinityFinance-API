@@ -13,7 +13,7 @@ import java.util.Collections;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class AppUserTestHelper extends  AppUserNameHolder{
+class AppUserTestHelper extends  AppUserNameHolder{
     protected AppUser appUserTest;
     protected AppUserDTO appUserDTOTest;
     protected Role roleTest;

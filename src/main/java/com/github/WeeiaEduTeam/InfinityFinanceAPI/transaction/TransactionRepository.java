@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+interface TransactionRepository extends JpaRepository<Transaction, Long> {
     List<Transaction> findAllByAppuserIdAndCategoryId(long userId, long categoryId, Pageable pageable);
 
     @Query("SELECT DISTINCT t" +

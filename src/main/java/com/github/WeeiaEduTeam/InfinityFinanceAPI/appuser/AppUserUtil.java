@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class AppUserUtil {
+class AppUserUtil {
 
     private final AppUserMapperFactory appUserMapperFactory;
     private final AppUserRoleStrategyFacade appUserRoleStrategyFacade;

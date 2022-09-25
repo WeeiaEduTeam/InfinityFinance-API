@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AppUserRepository extends JpaRepository<AppUser, Long> {
+interface AppUserRepository extends JpaRepository<AppUser, Long> {
     default Optional<Long> getLoggedInUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 

@@ -17,8 +17,7 @@ import java.util.Arrays;
 @Configuration
 @PropertySource("classpath:application.properties")
 @RequiredArgsConstructor
-public
-class CustomPageable {
+public class CustomPageable {
     private final int PAGE_SIZE = 6;
 
     public <T> Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy, Class<T> clazz) {

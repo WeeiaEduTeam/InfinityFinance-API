@@ -8,10 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class CategoryUtil {
+class CategoryUtil {
 
-
-    public CategoryDTO mapCategoryToCategoryDTO(Category category) {
+    public CategoryDTO mapToCategoryDTO(Category category) {
         return CategoryDTO.builder()
                 .name(category.getName())
                 .build();

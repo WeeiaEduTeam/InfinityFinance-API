@@ -13,7 +13,7 @@ import static com.github.WeeiaEduTeam.InfinityFinanceAPI.security.jwt.JwtUtil.TO
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class SecurityService {
+class SecurityService {
     private final AppUserAdminService appUserAdminService;
     private final JwtUtil jwtUtil;
 

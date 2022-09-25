@@ -16,7 +16,7 @@ import java.util.Collections;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class TransactionTestHelper extends TransactionNameHolder{
+class TransactionTestHelper extends TransactionNameHolder{
     protected Transaction transactionTest;
     protected TransactionDTO transactionDTOTest;
     protected AppUser appUserTest;

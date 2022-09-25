@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1")
-public class AppUserAdminController {
+class AppUserAdminController {
 
     private final AppUserAdminService appUserAdminService;
 

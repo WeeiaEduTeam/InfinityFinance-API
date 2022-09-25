@@ -5,7 +5,7 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO
 import org.springframework.stereotype.Component;
 
 @Component
-public class TransactionMapper {
+class TransactionMapper {
 
     public Transaction mapToTransaction(CreateTransactionDTO createTransactionDTO) {
         return Transaction.builder()

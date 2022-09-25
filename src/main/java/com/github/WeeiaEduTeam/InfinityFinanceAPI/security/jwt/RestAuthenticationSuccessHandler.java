@@ -1,7 +1,6 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.security.jwt;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,7 +14,7 @@ import static com.github.WeeiaEduTeam.InfinityFinanceAPI.security.jwt.JwtUtil.TO
 
 @Component
 @RequiredArgsConstructor
-public class RestAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+class RestAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
 

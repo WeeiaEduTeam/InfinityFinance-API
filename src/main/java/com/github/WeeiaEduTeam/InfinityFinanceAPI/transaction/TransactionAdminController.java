@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1")
-public class TransactionAdminController {
+class TransactionAdminController {
 
     private final TransactionAdminService transactionAdminService;
 
