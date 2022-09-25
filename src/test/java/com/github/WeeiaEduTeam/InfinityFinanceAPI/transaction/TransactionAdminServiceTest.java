@@ -38,10 +38,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
 
-@Slf4j
-@ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
-class TransactionAdminServiceTest {
+class TransactionAdminServiceTest extends TransactionTestHelper{
 
     @InjectMocks
     private TransactionAdminService transactionAdminService;
@@ -61,72 +58,7 @@ class TransactionAdminServiceTest {
     @Mock
     private CustomPageable customPageable;
 
-    Transaction transactionTest;
-    TransactionDTO transactionDTOTest;
-    AppUser appUserTest;
-    Role roleTest;
-    Category categoryTest;
-    CreateTransactionDTO createTransactionDTOTest;
-    Transaction transactionNullCategoryAndUserTest;
 
-    @BeforeEach
-    void init() {
-        roleTest = Role.builder()
-                .id(1L)
-                .name("TEST_ROLE")
-                .build();
-
-        appUserTest = AppUser.builder()
-                .id(1L)
-                .email("testemail@wp.pl")
-                .firstName("John")
-                .secondName("Smith")
-                .username("smith123")
-                .password("123")
-                .roles(Collections.singletonList(roleTest))
-                .build();
-
-        categoryTest = Category.builder()
-                .id(1L)
-                .name("name")
-                .build();
-
-        transactionTest = Transaction.builder()
-                .id(1L)
-                .transactionType(TransactionType.INCOME)
-                .title("title")
-                .description("desc")
-                .category(categoryTest)
-                .appuser(appUserTest)
-                .value(600)
-                .quantity(2)
-                .build();
-
-        transactionDTOTest = TransactionDTO.builder()
-                .id(1L)
-                .transactionType(TransactionType.INCOME)
-                .title("title")
-                .description("desc")
-                .username("name")
-                .value(600)
-                .quantity(2)
-                .categoryName("name")
-                .build();
-
-        createTransactionDTOTest = CreateTransactionDTO.builder()
-                .transactionType(transactionTest.getTransactionType())
-                .title(transactionTest.getTitle())
-                .description(transactionTest.getDescription())
-                .value(transactionTest.getValue())
-                .quantity(transactionTest.getQuantity())
-                .categoryName(transactionTest.getCategory().getName())
-                .build();
-
-        transactionNullCategoryAndUserTest = Transaction.builder()
-                .appuser(null)
-                .category(null)
-                .build();
-        }
 
     @Test
     @DisplayName("Should delete transaction and related category with no relations.")
@@ -156,10 +88,10 @@ class TransactionAdminServiceTest {
 
         //then
         assertThat(savedTransaction, instanceOf(TransactionDTO.class));
-        assertThat(savedTransaction, hasProperty("transactionType", equalTo(TransactionType.INCOME)));
-        assertThat(savedTransaction, hasProperty("value", equalTo(600)));
-        assertThat(savedTransaction, hasProperty("quantity", equalTo(2)));
-        assertThat(savedTransaction, hasProperty("categoryName", equalTo("name")));
+        assertThat(savedTransaction, hasProperty("transactionType", equalTo(TEST_TRANSACTION_TYPE)));
+        assertThat(savedTransaction, hasProperty("value", equalTo(TEST_VALUE)));
+        assertThat(savedTransaction, hasProperty("quantity", equalTo(TEST_QUANTITY)));
+        assertThat(savedTransaction, hasProperty("categoryName", equalTo(TEST_CATEGORY_NAME)));
     }
 
     @Test
@@ -176,10 +108,10 @@ class TransactionAdminServiceTest {
 
         //then
         assertThat(savedTransaction, instanceOf(TransactionDTO.class));
-        assertThat(savedTransaction, hasProperty("transactionType", equalTo(TransactionType.INCOME)));
-        assertThat(savedTransaction, hasProperty("value", equalTo(600)));
-        assertThat(savedTransaction, hasProperty("quantity", equalTo(2)));
-        assertThat(savedTransaction, hasProperty("categoryName", equalTo("name")));
+        assertThat(savedTransaction, hasProperty("transactionType", equalTo(TEST_TRANSACTION_TYPE)));
+        assertThat(savedTransaction, hasProperty("value", equalTo(TEST_VALUE)));
+        assertThat(savedTransaction, hasProperty("quantity", equalTo(TEST_QUANTITY)));
+        assertThat(savedTransaction, hasProperty("categoryName", equalTo(TEST_CATEGORY_NAME)));
     }
 
     @Test
@@ -195,12 +127,12 @@ class TransactionAdminServiceTest {
 
         //then
         assertThat(savedTransaction, instanceOf(TransactionDTO.class));
-        assertThat(savedTransaction, hasProperty("transactionType", equalTo(TransactionType.INCOME)));
-        assertThat(savedTransaction, hasProperty("value", equalTo(600)));
-        assertThat(savedTransaction, hasProperty("quantity", equalTo(2)));
-        assertThat(savedTransaction, hasProperty("description", equalTo("desc")));
-        assertThat(savedTransaction, hasProperty("title", equalTo("title")));
-        assertThat(savedTransaction, hasProperty("categoryName", equalTo("name")));
+        assertThat(savedTransaction, hasProperty("transactionType", equalTo(TEST_TRANSACTION_TYPE)));
+        assertThat(savedTransaction, hasProperty("value", equalTo(TEST_VALUE)));
+        assertThat(savedTransaction, hasProperty("quantity", equalTo(TEST_QUANTITY)));
+        assertThat(savedTransaction, hasProperty("description", equalTo(TEST_DESCRIPTION)));
+        assertThat(savedTransaction, hasProperty("title", equalTo(TEST_TITLE)));
+        assertThat(savedTransaction, hasProperty("categoryName", equalTo(TEST_CATEGORY_NAME)));
     }
 
 
@@ -220,10 +152,10 @@ class TransactionAdminServiceTest {
 
         var firstTransaction = transactions.get(0);
         assertThat(firstTransaction, instanceOf(TransactionDTO.class));
-        assertThat(firstTransaction, hasProperty("transactionType", equalTo(TransactionType.INCOME)));
-        assertThat(firstTransaction, hasProperty("value", equalTo(600)));
-        assertThat(firstTransaction, hasProperty("quantity", equalTo(2)));
-        assertThat(firstTransaction, hasProperty("categoryName", equalTo("name")));
+        assertThat(firstTransaction, hasProperty("transactionType", equalTo(TEST_TRANSACTION_TYPE)));
+        assertThat(firstTransaction, hasProperty("value", equalTo(TEST_VALUE)));
+        assertThat(firstTransaction, hasProperty("quantity", equalTo(TEST_QUANTITY)));
+        assertThat(firstTransaction, hasProperty("categoryName", equalTo(TEST_CATEGORY_NAME)));
     }
 
     @Test
@@ -242,10 +174,10 @@ class TransactionAdminServiceTest {
 
         var firstTransaction = transactions.get(0);
         assertThat(firstTransaction, instanceOf(TransactionDTO.class));
-        assertThat(firstTransaction, hasProperty("transactionType", equalTo(TransactionType.INCOME)));
-        assertThat(firstTransaction, hasProperty("value", equalTo(600)));
-        assertThat(firstTransaction, hasProperty("quantity", equalTo(2)));
-        assertThat(firstTransaction, hasProperty("categoryName", equalTo("name")));
+        assertThat(firstTransaction, hasProperty("transactionType", equalTo(TEST_TRANSACTION_TYPE)));
+        assertThat(firstTransaction, hasProperty("value", equalTo(TEST_VALUE)));
+        assertThat(firstTransaction, hasProperty("quantity", equalTo(TEST_QUANTITY)));
+        assertThat(firstTransaction, hasProperty("categoryName", equalTo(TEST_CATEGORY_NAME)));
     }
 
     @Test
@@ -262,10 +194,10 @@ class TransactionAdminServiceTest {
                 .willReturn(transactionNullCategoryAndUserTest);
 
         //when
-        var transaction = transactionAdminService.createTransactionForGivenUser(1L, createTransactionDTOTest);
+        var transaction = transactionAdminService.createTransactionForGivenUser(TEST_ID, createTransactionDTOTest);
 
         assertThat(transaction, instanceOf(TransactionDTO.class));
-        assertThat(transaction, hasProperty("categoryName", equalTo(createTransactionDTOTest.getCategoryName())));
+        assertThat(transaction, hasProperty("categoryName", equalTo(TEST_CATEGORY_NAME)));
     }
 }
 

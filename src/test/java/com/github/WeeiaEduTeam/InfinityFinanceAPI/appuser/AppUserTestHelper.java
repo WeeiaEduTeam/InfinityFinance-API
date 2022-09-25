@@ -28,7 +28,7 @@ public class AppUserTestHelper extends  AppUserNameHolder{
     @BeforeEach
     void init() {
         roleTest = Role.builder()
-                .id(1L)
+                .id(TEST_ID)
                 .name(TEST_ROLENAME)
                 .build();
 
