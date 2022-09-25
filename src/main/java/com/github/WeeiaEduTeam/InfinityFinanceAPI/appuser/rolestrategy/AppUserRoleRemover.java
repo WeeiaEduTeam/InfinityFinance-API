@@ -1,4 +1,4 @@
-package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy;
+package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.rolestrategy;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;

@@ -1,4 +1,4 @@
-package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy;
+package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.rolestrategy;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.CreateAppUserAdminDTO;
@@ -6,7 +6,6 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.CreateAppUserUserD
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.ReplaceAppUserAllDetailsDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleType;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.dto.RoleDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

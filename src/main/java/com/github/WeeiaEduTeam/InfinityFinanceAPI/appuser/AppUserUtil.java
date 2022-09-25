@@ -2,7 +2,7 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy.AppUserRoleStrategyFacade;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.rolestrategy.AppUserRoleStrategyFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

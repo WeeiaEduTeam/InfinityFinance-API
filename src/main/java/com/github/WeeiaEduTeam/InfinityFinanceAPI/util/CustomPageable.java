@@ -1,4 +1,4 @@
-package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
+package com.github.WeeiaEduTeam.InfinityFinanceAPI.util;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

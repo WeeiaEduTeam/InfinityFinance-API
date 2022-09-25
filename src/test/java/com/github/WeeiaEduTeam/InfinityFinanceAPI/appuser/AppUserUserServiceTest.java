@@ -24,9 +24,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
-class AppUserUserServiceTest {
+class AppUserUserServiceTest extends AppUserTestHelper {
 
     @InjectMocks
     private AppUserUserService appUserUserService;
@@ -34,72 +32,6 @@ class AppUserUserServiceTest {
     private AppUserAdminService appUserAdminService;
     @Mock
     private AppUserUtil appUserUtil;
-
-    private AppUser appUserTest;
-    private AppUserDTO appUserDTOTest;
-    private Role roleTest;
-    private RoleDTO roleDTOTest;
-    private CreateAppUserUserDTO createAppUserUserDTO;
-    private AppUserCredentialsDTO appUserCredentialsDTO;
-    private ReplaceAppUserByUserDTO replaceAppUserByUserDTO;
-    private ReplaceAppUserAllDetailsDTO replaceAppUserAllDetailsDTO;
-
-    @BeforeEach
-    void init() {
-        roleTest = Role.builder()
-                .id(1L)
-                .name("TEST_ROLE")
-                .build();
-
-        roleDTOTest = RoleDTO.builder()
-                .name("TEST_ROLE")
-                .build();
-
-        appUserTest = AppUser.builder()
-                .id(1L)
-                .password("{noop}example")
-                .email("testemail@wp.pl")
-                .firstName("John")
-                .secondName("Smith")
-                .username("smith123")
-                .password("123")
-                .roles(Collections.singletonList(roleTest))
-                .build();
-
-        appUserDTOTest = AppUserDTO.builder()
-                .id(1L)
-                .email("testemail@wp.pl")
-                .firstName("John")
-                .secondName("Smith")
-                .username("smith123")
-                .roles(Collections.singletonList(roleDTOTest))
-                .build();
-
-        createAppUserUserDTO = new CreateAppUserUserDTO();
-        createAppUserUserDTO.setPassword("{noop}example");
-        createAppUserUserDTO.setEmail("example@wp.pl");
-        createAppUserUserDTO.setUsername("example");
-
-        appUserCredentialsDTO = AppUserCredentialsDTO.builder()
-                .password("{noop}example")
-                .username("example")
-                .build();
-
-        replaceAppUserByUserDTO = ReplaceAppUserByUserDTO.builder()
-                .email("example@wp.pl")
-                .firstName("example")
-                .secondName("example")
-                .build();
-
-        replaceAppUserAllDetailsDTO = new ReplaceAppUserAllDetailsDTO();
-        replaceAppUserAllDetailsDTO.setPassword("{noop}example");
-        replaceAppUserAllDetailsDTO.setEmail("example@wp.pl");
-        replaceAppUserAllDetailsDTO.setUsername("example");
-        replaceAppUserAllDetailsDTO.setFirstName("example");
-        replaceAppUserAllDetailsDTO.setSecondName("example");
-        replaceAppUserAllDetailsDTO.setRoles(Collections.singletonList(roleDTOTest));
-
-    }
 
     @Test
     @DisplayName("Should get current logged user information.")
@@ -114,13 +46,13 @@ class AppUserUserServiceTest {
 
         //then
         assertThat(user, instanceOf(AppUserDTO.class));
-        assertThat(user, hasProperty("id", equalTo(1L)));
-        assertThat(user, hasProperty("email", equalTo("testemail@wp.pl")));
-        assertThat(user, hasProperty("firstName", equalTo("John")));
-        assertThat(user, hasProperty("secondName", equalTo("Smith")));
-        assertThat(user, hasProperty("username", equalTo("smith123")));
+        assertThat(user, hasProperty("id", equalTo(TEST_ID)));
+        assertThat(user, hasProperty("email", equalTo(TEST_EMAIL)));
+        assertThat(user, hasProperty("firstName", equalTo(TEST_FIRSTNAME)));
+        assertThat(user, hasProperty("secondName", equalTo(TEST_SECONDNAME)));
+        assertThat(user, hasProperty("username", equalTo(TEST_USERNAME)));
         assertEquals(1, user.getRoles().size());
-        assertThat(user.getRoles().get(0), hasProperty("name", equalTo("TEST_ROLE")));
+        assertThat(user.getRoles().get(0), hasProperty("name", equalTo(TEST_ROLENAME)));
     }
 
     @Test
@@ -133,13 +65,13 @@ class AppUserUserServiceTest {
 
         //then
         assertThat(user, instanceOf(AppUserDTO.class));
-        assertThat(user, hasProperty("id", equalTo(1L)));
-        assertThat(user, hasProperty("email", equalTo("testemail@wp.pl")));
-        assertThat(user, hasProperty("firstName", equalTo("John")));
-        assertThat(user, hasProperty("secondName", equalTo("Smith")));
-        assertThat(user, hasProperty("username", equalTo("smith123")));
+        assertThat(user, hasProperty("id", equalTo(TEST_ID)));
+        assertThat(user, hasProperty("email", equalTo(TEST_EMAIL)));
+        assertThat(user, hasProperty("firstName", equalTo(TEST_FIRSTNAME)));
+        assertThat(user, hasProperty("secondName", equalTo(TEST_SECONDNAME)));
+        assertThat(user, hasProperty("username", equalTo(TEST_USERNAME)));
         assertEquals(1, user.getRoles().size());
-        assertThat(user.getRoles().get(0), hasProperty("name", equalTo("TEST_ROLE")));
+        assertThat(user.getRoles().get(0), hasProperty("name", equalTo(TEST_ROLENAME)));
     }
 
     @Test
@@ -168,13 +100,13 @@ class AppUserUserServiceTest {
 
         //then
         assertThat(user, instanceOf(AppUserDTO.class));
-        assertThat(user, hasProperty("id", equalTo(1L)));
-        assertThat(user, hasProperty("email", equalTo("testemail@wp.pl")));
-        assertThat(user, hasProperty("firstName", equalTo("John")));
-        assertThat(user, hasProperty("secondName", equalTo("Smith")));
-        assertThat(user, hasProperty("username", equalTo("smith123")));
+        assertThat(user, hasProperty("id", equalTo(TEST_ID)));
+        assertThat(user, hasProperty("email", equalTo(TEST_EMAIL)));
+        assertThat(user, hasProperty("firstName", equalTo(TEST_FIRSTNAME)));
+        assertThat(user, hasProperty("secondName", equalTo(TEST_SECONDNAME)));
+        assertThat(user, hasProperty("username", equalTo(TEST_USERNAME)));
         assertEquals(1, user.getRoles().size());
-        assertThat(user.getRoles().get(0), hasProperty("name", equalTo("TEST_ROLE")));
+        assertThat(user.getRoles().get(0), hasProperty("name", equalTo(TEST_ROLENAME)));
     }
 
     @Test
@@ -191,12 +123,12 @@ class AppUserUserServiceTest {
 
         //then
         assertThat(user, instanceOf(AppUserDTO.class));
-        assertThat(user, hasProperty("id", equalTo(1L)));
-        assertThat(user, hasProperty("email", equalTo("testemail@wp.pl")));
-        assertThat(user, hasProperty("firstName", equalTo("John")));
-        assertThat(user, hasProperty("secondName", equalTo("Smith")));
-        assertThat(user, hasProperty("username", equalTo("smith123")));
+        assertThat(user, hasProperty("id", equalTo(TEST_ID)));
+        assertThat(user, hasProperty("email", equalTo(TEST_EMAIL)));
+        assertThat(user, hasProperty("firstName", equalTo(TEST_FIRSTNAME)));
+        assertThat(user, hasProperty("secondName", equalTo(TEST_SECONDNAME)));
+        assertThat(user, hasProperty("username", equalTo(TEST_USERNAME)));
         assertEquals(1, user.getRoles().size());
-        assertThat(user.getRoles().get(0), hasProperty("name", equalTo("TEST_ROLE")));
+        assertThat(user.getRoles().get(0), hasProperty("name", equalTo(TEST_ROLENAME)));
     }
 }

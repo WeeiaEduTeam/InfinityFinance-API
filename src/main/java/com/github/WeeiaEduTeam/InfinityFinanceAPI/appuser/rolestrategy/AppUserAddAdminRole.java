@@ -1,4 +1,4 @@
-package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy;
+package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.rolestrategy;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
@@ -10,18 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class AppUserAddUserRole implements AppUserRoleStrategy {
+public class AppUserAddAdminRole implements AppUserRoleStrategy {
 
-    private static AppUserAddUserRole instance = null;
+    private static AppUserAddAdminRole instance = null;
     private final RoleService roleService;
 
-    private AppUserAddUserRole(RoleService roleService) {
+    private AppUserAddAdminRole(RoleService roleService) {
         this.roleService = roleService;
     }
 
-    public static AppUserAddUserRole getInstance(RoleService roleService) {
+    public static AppUserAddAdminRole getInstance(RoleService roleService) {
         if (instance == null) {
-            instance = new AppUserAddUserRole(roleService);
+            instance = new AppUserAddAdminRole(roleService);
         }
 
         return instance;
@@ -31,8 +31,8 @@ public class AppUserAddUserRole implements AppUserRoleStrategy {
     public void addRolesForUser(AppUser user) {
         var roles = getRoles(user);
 
-        if(!userRoleExists(roles)) {
-            var userRoles = getUserRoleList();
+        if(!adminRoleExists(roles)) {
+            var userRoles = getAdminRoleList();
 
             user.setRoles(userRoles);
         }
@@ -45,15 +45,16 @@ public class AppUserAddUserRole implements AppUserRoleStrategy {
         return user.getRoles();
     }
 
-    private boolean userRoleExists(List<Role> roles) {
+    private boolean adminRoleExists(List<Role> roles) {
         return roles.stream()
                 .map(Role::getName)
-                .filter(e -> e.equals(RoleType.ROLE_USER.getName()))
+                .filter(e -> e.equals(RoleType.ROLE_ADMIN.getName()))
                 .toList()
                 .size() > 0;
     }
 
-    private List<Role> getUserRoleList() {
-        return List.of(roleService.getUserRoleOrCreate());
+
+    private List<Role> getAdminRoleList() {
+        return List.of(roleService.getUserRoleOrCreate(), roleService.getAdminRoleOrCreate());
     }
 }
