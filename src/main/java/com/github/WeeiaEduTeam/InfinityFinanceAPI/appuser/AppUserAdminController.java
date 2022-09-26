@@ -2,6 +2,7 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,14 +13,17 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1")
-public class AppUserAdminController {
+class AppUserAdminController {
 
     private final AppUserAdminService appUserAdminService;
 
     @GetMapping("/admin/users")
-    public ResponseEntity<List<AppUserDTO>> getAllUsers() {
+    public ResponseEntity<List<AppUserDTO>> getAllUsers(
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "ASC") Sort.Direction direction,
+            @RequestParam(defaultValue = "id") String by) {
 
-        var users = appUserAdminService.getAllUsers();
+        var users = appUserAdminService.getAllUsers(page, direction, by);
 
         return ResponseEntity.ok(users);
     }

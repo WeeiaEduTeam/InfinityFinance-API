@@ -12,7 +12,7 @@ import org.testcontainers.utility.DockerImageName;
 @SpringBootTest
 @ActiveProfiles("test")
 @Testcontainers
-public class BaseIntegrationTests {
+class BaseIntegrationTests {
 
     private static final String SPRING_DB_URL_PROPERTY = "spring.datasource.url";
     private static final String SPRING_DB_USERNAME_PROPERTY = "spring.datasource.username";

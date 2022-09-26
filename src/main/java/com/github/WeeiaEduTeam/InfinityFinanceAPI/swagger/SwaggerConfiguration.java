@@ -21,7 +21,7 @@ import static java.util.Collections.singletonList;
 
 @Configuration
 @EnableCaching
-public class SwaggerConfiguration {
+class SwaggerConfiguration {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
 

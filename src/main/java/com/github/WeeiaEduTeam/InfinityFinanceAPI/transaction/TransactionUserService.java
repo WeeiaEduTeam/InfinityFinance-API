@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class TransactionUserService {
+class TransactionUserService {
     private final AppUserAdminService appUserAdminService;
 
     private final TransactionAdminService transactionAdminService;

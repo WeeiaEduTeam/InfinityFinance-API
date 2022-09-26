@@ -20,7 +20,7 @@ import java.net.URI;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1")
-public class AppUserUserController {
+class AppUserUserController {
 
     private final AppUserUserService appUserUserService;
 

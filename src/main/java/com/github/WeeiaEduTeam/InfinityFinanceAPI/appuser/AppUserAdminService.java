@@ -1,10 +1,14 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy.AppUserRoleStrategyFacade;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.rolestrategy.AppUserRoleStrategyFacade;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.CustomPageable;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionAdminService;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.function.Function;
 
 @Service
 @Slf4j
@@ -23,6 +28,8 @@ public class AppUserAdminService implements UserDetailsService {
     private AppUserUtil appUserUtil;
     @Autowired
     private AppUserRoleStrategyFacade appUserRoleStrategyFacade;
+    @Autowired
+    private CustomPageable customPageable;
 
     private TransactionAdminService transactionAdminService;
 
@@ -48,15 +55,30 @@ public class AppUserAdminService implements UserDetailsService {
         return appUserRepository.getLoggedInUserId().orElseThrow(() -> new UsernameNotFoundException("User not found in the database"));
     }
 
-    public List<AppUserDTO> getAllUsers() {
-        var foundUsers = appUserRepository.findAll();
+    public List<AppUserDTO> getAllUsers(Integer pageNumber, Sort.Direction sortDirection, String sortBy) {
+        Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy);
 
-        return foundUsers.stream().map(appUserUtil::mapToAppUserDTO).toList();
+        var foundUsers = appUserRepository.findAll(page);
+
+        return foundUsers.stream().map(mapToAppUserDTO()).toList();
+    }
+
+    @NotNull
+    private Function<AppUser, AppUserDTO> mapToAppUserDTO() {
+        return appUserUtil::mapToAppUserDTO;
+    }
+
+    private Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy) {
+        return customPageable.validateAndCreatePageable(pageNumber, sortDirection, sortBy, AppUser.class);
     }
 
     public AppUserDTO getSingleUser(long userId) {
         var foundUser = getUserById(userId);
 
+        return mapToAppUserDTO(foundUser);
+    }
+
+    private AppUserDTO mapToAppUserDTO(AppUser foundUser) {
         return appUserUtil.mapToAppUserDTO(foundUser);
     }
 
@@ -67,7 +89,7 @@ public class AppUserAdminService implements UserDetailsService {
 
         user = saveUser(user);
 
-        return appUserUtil.mapToAppUserDTO(user); //TODO: new abstract layer
+        return mapToAppUserDTO(user);
     }
 
     private <T> void setRolesForUser(AppUser user, T objectDTO) {

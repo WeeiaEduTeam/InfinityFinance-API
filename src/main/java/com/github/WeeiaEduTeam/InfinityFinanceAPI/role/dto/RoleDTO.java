@@ -1,6 +1,5 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.role.dto;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.BaseUtil;
 import lombok.*;
 
 @Getter
@@ -8,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoleDTO extends BaseUtil {
+public class RoleDTO {
     private String name;
 
     @Override

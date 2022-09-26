@@ -13,7 +13,7 @@ import static com.github.WeeiaEduTeam.InfinityFinanceAPI.security.jwt.JwtUtil.TO
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class SecurityService {
+class SecurityService {
     private final AppUserAdminService appUserAdminService;
     private final JwtUtil jwtUtil;
 
@@ -23,9 +23,11 @@ public class SecurityService {
 
         AppUser user = appUserAdminService.getUserByUserName(username);
 
+        var roleNames = user.getRoles().stream().map(Role::getName).toList();
+
         String accessToken = jwtUtil.generateAccessToken(
                 username,
-                user.getRoles().stream().map(Role::getName).toList(),
+                roleNames,
                 issuer);
 
         return TOKEN_PREFIX + accessToken;

@@ -14,7 +14,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class JsonObjectAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+class JsonObjectAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final ObjectMapper objectMapper;
 

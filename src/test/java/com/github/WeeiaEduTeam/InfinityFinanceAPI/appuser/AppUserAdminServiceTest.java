@@ -1,24 +1,20 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy.AppUserRoleStrategyFacade;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.rolestrategy.AppUserRoleStrategyFacade;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.dto.RoleDTO;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.CustomPageable;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionAdminService;
-import org.junit.jupiter.api.BeforeEach;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,21 +22,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
-class AppUserAdminServiceTest {
+class AppUserAdminServiceTest extends AppUserTestHelper {
 
     @InjectMocks
     private AppUserAdminService appUserAdminService;
 
     @Mock
     private AppUserRepository appUserRepository;
-
     @Mock
     private AppUserUtil appUserUtil;
     @Mock
@@ -49,95 +42,33 @@ class AppUserAdminServiceTest {
     private TransactionAdminService transactionAdminService;
     @Mock
     private AppUserRoleStrategyFacade appUserRoleStrategyFacade;
-
-    private AppUser appUserTest;
-    private AppUserDTO appUserDTOTest;
-    private Role roleTest;
-    private RoleDTO roleDTOTest;
-    private CreateAppUserAdminDTO createAppUserAdminDTOTest;
-    private AppUserCredentialsDTO appUserCredentialsDTO;
-    private ReplaceAppUserByUserDTO replaceAppUserByUserDTO;
-    private ReplaceAppUserAllDetailsDTO replaceAppUserAllDetailsDTO;
-
-    @BeforeEach
-    void init() {
-        roleTest = Role.builder()
-                .id(1L)
-                .name("TEST_ROLE")
-                .build();
-
-        roleDTOTest = RoleDTO.builder()
-                .name("TEST_ROLE")
-                .build();
-
-        appUserTest = AppUser.builder()
-                .id(1L)
-                .password("{noop}example")
-                .email("testemail@wp.pl")
-                .firstName("John")
-                .secondName("Smith")
-                .username("smith123")
-                .password("123")
-                .roles(Collections.singletonList(roleTest))
-                .build();
-
-        appUserDTOTest = AppUserDTO.builder()
-                .id(1L)
-                .email("testemail@wp.pl")
-                .firstName("John")
-                .secondName("Smith")
-                .username("smith123")
-                .roles(Collections.singletonList(roleDTOTest))
-                .build();
-
-        createAppUserAdminDTOTest = new CreateAppUserAdminDTO();
-        createAppUserAdminDTOTest.setPassword("{noop}example");
-        createAppUserAdminDTOTest.setEmail("example@wp.pl");
-        createAppUserAdminDTOTest.setUsername("example");
-
-        appUserCredentialsDTO = AppUserCredentialsDTO.builder()
-                .password("{noop}example")
-                .username("example")
-                .build();
-
-        replaceAppUserByUserDTO = ReplaceAppUserByUserDTO.builder()
-                .email("example@wp.pl")
-                .firstName("example")
-                .secondName("example")
-                .build();
-
-        replaceAppUserAllDetailsDTO = new ReplaceAppUserAllDetailsDTO();
-        replaceAppUserAllDetailsDTO.setPassword("{noop}example");
-        replaceAppUserAllDetailsDTO.setEmail("example@wp.pl");
-        replaceAppUserAllDetailsDTO.setUsername("example");
-        replaceAppUserAllDetailsDTO.setFirstName("example");
-        replaceAppUserAllDetailsDTO.setSecondName("example");
-        replaceAppUserAllDetailsDTO.setRoles(Collections.singletonList(roleDTOTest));
-
-    }
+    @Mock
+    private CustomPageable customPageable;
 
     @Test
     @DisplayName("Should get all users")
     void shouldGetAllUsers() {
         //given
-        given(appUserRepository.findAll()).willReturn(List.of(appUserTest));
+        final Page<AppUser> page = new PageImpl<>(List.of(appUserTest));
+        given(appUserRepository.findAll(any(Pageable.class))).willReturn(page);
         given(appUserUtil.mapToAppUserDTO(Mockito.any(AppUser.class))).willReturn(appUserDTOTest);
+        given(customPageable.validateAndCreatePageable(anyInt(), any(Sort.Direction.class), anyString(), ArgumentMatchers.<Class<A>>any())).willReturn(PageRequest.of(1,1));
 
         // when
-        var users = appUserAdminService.getAllUsers();
+        var users = appUserAdminService.getAllUsers(1, Sort.Direction.ASC, "id");
 
         //then
         assertEquals(1, users.size());
 
         var firstUser = users.get(0);
         assertThat(firstUser, instanceOf(AppUserDTO.class));
-        assertThat(firstUser, hasProperty("id", equalTo(1L)));
-        assertThat(firstUser, hasProperty("email", equalTo("testemail@wp.pl")));
-        assertThat(firstUser, hasProperty("firstName", equalTo("John")));
-        assertThat(firstUser, hasProperty("secondName", equalTo("Smith")));
-        assertThat(firstUser, hasProperty("username", equalTo("smith123")));
+        assertThat(firstUser, hasProperty("id", equalTo(TEST_ID)));
+        assertThat(firstUser, hasProperty("email", equalTo(TEST_EMAIL)));
+        assertThat(firstUser, hasProperty("firstName", equalTo(TEST_FIRSTNAME)));
+        assertThat(firstUser, hasProperty("secondName", equalTo(TEST_SECONDNAME)));
+        assertThat(firstUser, hasProperty("username", equalTo(TEST_USERNAME)));
         assertEquals(1, firstUser.getRoles().size());
-        assertThat(firstUser.getRoles().get(0), hasProperty("name", equalTo("TEST_ROLE")));
+        assertThat(firstUser.getRoles().get(0), hasProperty("name", equalTo(TEST_ROLENAME)));
     }
 
     @Test
@@ -152,20 +83,20 @@ class AppUserAdminServiceTest {
 
         //then
         assertThat(user, instanceOf(AppUserDTO.class));
-        assertThat(user, hasProperty("id", equalTo(1L)));
-        assertThat(user, hasProperty("email", equalTo("testemail@wp.pl")));
-        assertThat(user, hasProperty("firstName", equalTo("John")));
-        assertThat(user, hasProperty("secondName", equalTo("Smith")));
-        assertThat(user, hasProperty("username", equalTo("smith123")));
+        assertThat(user, hasProperty("id", equalTo(TEST_ID)));
+        assertThat(user, hasProperty("email", equalTo(TEST_EMAIL)));
+        assertThat(user, hasProperty("firstName", equalTo(TEST_FIRSTNAME)));
+        assertThat(user, hasProperty("secondName", equalTo(TEST_SECONDNAME)));
+        assertThat(user, hasProperty("username", equalTo(TEST_USERNAME)));
         assertEquals(1, user.getRoles().size());
-        assertThat(user.getRoles().get(0), hasProperty("name", equalTo("TEST_ROLE")));
+        assertThat(user.getRoles().get(0), hasProperty("name", equalTo(TEST_ROLENAME)));
     }
 
     @Test
     @DisplayName("Should create user")
     void shouldCreateUser() {
         //given
-        given(appUserUtil.mapToAppUserFactory(Mockito.any(CreateAppUserAdminDTO.class))).willReturn(appUserTest);
+        given(appUserUtil.mapToAppUserFactory(ArgumentMatchers.any())).willReturn(appUserTest);
         given(roleService.getUserRoleOrCreate()).willReturn(roleTest);
         given(appUserRepository.save(Mockito.any(AppUser.class))).willReturn(appUserTest);
         given(appUserUtil.mapToAppUserDTO(Mockito.any(AppUser.class))).willReturn(appUserDTOTest);
@@ -175,13 +106,13 @@ class AppUserAdminServiceTest {
 
         //then
         assertThat(user, instanceOf(AppUserDTO.class));
-        assertThat(user, hasProperty("id", equalTo(1L)));
-        assertThat(user, hasProperty("email", equalTo("testemail@wp.pl")));
-        assertThat(user, hasProperty("firstName", equalTo("John")));
-        assertThat(user, hasProperty("secondName", equalTo("Smith")));
-        assertThat(user, hasProperty("username", equalTo("smith123")));
+        assertThat(user, hasProperty("id", equalTo(TEST_ID)));
+        assertThat(user, hasProperty("email", equalTo(TEST_EMAIL)));
+        assertThat(user, hasProperty("firstName", equalTo(TEST_FIRSTNAME)));
+        assertThat(user, hasProperty("secondName", equalTo(TEST_SECONDNAME)));
+        assertThat(user, hasProperty("username", equalTo(TEST_USERNAME)));
         assertEquals(1, user.getRoles().size());
-        assertThat(user.getRoles().get(0), hasProperty("name", equalTo("TEST_ROLE")));
+        assertThat(user.getRoles().get(0), hasProperty("name", equalTo(TEST_ROLENAME)));
     }
 
     @Test
@@ -191,10 +122,10 @@ class AppUserAdminServiceTest {
         given(appUserRepository.findById(anyLong())).willReturn(Optional.ofNullable(appUserTest));
 
         // when
-        appUserAdminService.findAndDeleteUserWithRolesAndTransactions(1L);
+        appUserAdminService.findAndDeleteUserWithRolesAndTransactions(TEST_ID);
 
         //then
-        verify(transactionAdminService).deleteTransactionsRelatedWithUser(1L);
+        verify(transactionAdminService).deleteTransactionsRelatedWithUser(TEST_ID);
         verify(appUserRepository).delete(appUserTest);
         verify(appUserRoleStrategyFacade).removeRoles(appUserTest);
     }
@@ -210,17 +141,17 @@ class AppUserAdminServiceTest {
         given(appUserUtil.mapToAppUserDTO(Mockito.any(AppUser.class))).willReturn(appUserDTOTest);
 
         // when
-        var user = appUserAdminService.replaceUserAllDetails(1L, replaceAppUserAllDetailsDTO);
+        var user = appUserAdminService.replaceUserAllDetails(TEST_ID, replaceAppUserAllDetailsDTO);
 
         //then
         assertThat(user, instanceOf(AppUserDTO.class));
-        assertThat(user, hasProperty("id", equalTo(1L)));
-        assertThat(user, hasProperty("email", equalTo("testemail@wp.pl")));
-        assertThat(user, hasProperty("firstName", equalTo("John")));
-        assertThat(user, hasProperty("secondName", equalTo("Smith")));
-        assertThat(user, hasProperty("username", equalTo("smith123")));
+        assertThat(user, hasProperty("id", equalTo(TEST_ID)));
+        assertThat(user, hasProperty("email", equalTo(TEST_EMAIL)));
+        assertThat(user, hasProperty("firstName", equalTo(TEST_FIRSTNAME)));
+        assertThat(user, hasProperty("secondName", equalTo(TEST_SECONDNAME)));
+        assertThat(user, hasProperty("username", equalTo(TEST_USERNAME)));
         assertEquals(1, user.getRoles().size());
-        assertThat(user.getRoles().get(0), hasProperty("name", equalTo("TEST_ROLE")));
+        assertThat(user.getRoles().get(0), hasProperty("name", equalTo(TEST_ROLENAME)));
     }
 
     @Test
@@ -242,7 +173,7 @@ class AppUserAdminServiceTest {
         given(appUserRepository.findById(anyLong())).willReturn(Optional.ofNullable(null));
 
         // when
-        assertThatThrownBy(() -> appUserAdminService.getUserById(1L))
+        assertThatThrownBy(() -> appUserAdminService.getUserById(TEST_ID))
                 .isInstanceOf(UsernameNotFoundException.class)
                 .hasMessage("User not found in the database");
 

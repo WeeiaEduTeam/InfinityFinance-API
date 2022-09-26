@@ -1,7 +1,7 @@
-package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.strategy;
+package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.rolestrategy;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 
-public interface AppUserRoleStrategy {
+interface AppUserRoleStrategy {
     void addRolesForUser(AppUser user);
 }

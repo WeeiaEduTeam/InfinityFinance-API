@@ -1,16 +1,12 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.role;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserRepository;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.dto.RoleDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-
-import static com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleUtil.ROLE_ADMIN;
-import static com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleUtil.ROLE_USER;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,19 +17,19 @@ public class RoleService {
     private final RoleUtil roleUtil;
 
     public Role getUserRoleOrCreate() {
-        var role = getRole(ROLE_USER);
+        var role = getRole(RoleType.ROLE_USER.getName());
 
         if(role == null)
-            role = createRole(ROLE_USER);
+            role = createRole(RoleType.ROLE_USER.getName());
 
         return role;
     }
 
     public Role getAdminRoleOrCreate() {
-        var role = getRole(ROLE_ADMIN);
+        var role = getRole(RoleType.ROLE_ADMIN.getName());
 
         if(role == null)
-            role = createRole(ROLE_ADMIN);
+            role = createRole(RoleType.ROLE_ADMIN.getName());
 
         return role;
     }
@@ -53,7 +49,7 @@ public class RoleService {
     }
 
     public RoleDTO mapToRoleDTO(Role role) {
-        return roleUtil.mapRoleToRoleDTO(role);
+        return roleUtil.mapToRoleDTO(role);
     }
 
     public void deleteRolesFromUser(AppUser user) {
@@ -62,5 +58,11 @@ public class RoleService {
         if (roleLength > 0) {
             user.getRoles().subList(0, roleLength).clear();
         }
+    }
+
+    public List<RoleDTO> mapToRolesDTO(List<Role> roles) {
+        return roles.stream()
+                .map(this::mapToRoleDTO)
+                .toList();
     }
 }
