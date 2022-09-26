@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 class TransactionUtil {
 
-    private final TransactionMapper transactionMapper;
+    private final TransactionMapperFactory transactionMapperFactory;
 
     public Transaction mapToTransaction(CreateTransactionDTO createTransactionDTO) {
-        return transactionMapper.mapToTransaction(createTransactionDTO);
+        return transactionMapperFactory.mapToTransaction(createTransactionDTO);
     }
 
     public TransactionDTO mapToTransactionDTO(Transaction transaction) {
-        return transactionMapper.mapToTransactionDTO(transaction);
+        return transactionMapperFactory.mapToTransactionDTO(transaction);
     }
 
     public Transaction overwriteTransactionByCreateTransactionDTO(Transaction main, CreateTransactionDTO toConvert) {

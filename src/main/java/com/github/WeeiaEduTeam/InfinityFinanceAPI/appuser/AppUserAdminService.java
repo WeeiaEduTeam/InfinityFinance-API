@@ -5,6 +5,7 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.rolestrategy.AppUserRo
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.CustomPageable;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionAdminService;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.function.Function;
 
 @Service
 @Slf4j
@@ -54,20 +56,29 @@ public class AppUserAdminService implements UserDetailsService {
     }
 
     public List<AppUserDTO> getAllUsers(Integer pageNumber, Sort.Direction sortDirection, String sortBy) {
-        Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy, AppUser.class);
+        Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy);
 
         var foundUsers = appUserRepository.findAll(page);
 
-        return foundUsers.stream().map(appUserUtil::mapToAppUserDTO).toList();
+        return foundUsers.stream().map(mapToAppUserDTO()).toList();
     }
 
-    private <T> Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy, Class<T> clazz) {
-        return customPageable.validateAndCreatePageable(pageNumber, sortDirection, sortBy, clazz);
+    @NotNull
+    private Function<AppUser, AppUserDTO> mapToAppUserDTO() {
+        return appUserUtil::mapToAppUserDTO;
+    }
+
+    private Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy) {
+        return customPageable.validateAndCreatePageable(pageNumber, sortDirection, sortBy, AppUser.class);
     }
 
     public AppUserDTO getSingleUser(long userId) {
         var foundUser = getUserById(userId);
 
+        return mapToAppUserDTO(foundUser);
+    }
+
+    private AppUserDTO mapToAppUserDTO(AppUser foundUser) {
         return appUserUtil.mapToAppUserDTO(foundUser);
     }
 
@@ -78,7 +89,7 @@ public class AppUserAdminService implements UserDetailsService {
 
         user = saveUser(user);
 
-        return appUserUtil.mapToAppUserDTO(user); //TODO: new abstract layer
+        return mapToAppUserDTO(user);
     }
 
     private <T> void setRolesForUser(AppUser user, T objectDTO) {

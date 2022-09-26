@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 @Configuration
 @SpringBootApplication
-public class InfinityFinanceApiApplication {
+class InfinityFinanceApiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(InfinityFinanceApiApplication.class, args);

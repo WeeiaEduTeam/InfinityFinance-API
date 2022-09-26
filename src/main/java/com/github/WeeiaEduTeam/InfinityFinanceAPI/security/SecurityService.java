@@ -23,9 +23,11 @@ class SecurityService {
 
         AppUser user = appUserAdminService.getUserByUserName(username);
 
+        var roleNames = user.getRoles().stream().map(Role::getName).toList();
+
         String accessToken = jwtUtil.generateAccessToken(
                 username,
-                user.getRoles().stream().map(Role::getName).toList(),
+                roleNames,
                 issuer);
 
         return TOKEN_PREFIX + accessToken;

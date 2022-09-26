@@ -8,6 +8,7 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransact
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.CustomPageable;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.function.Function;
 
 @Service
 @Slf4j
@@ -52,15 +54,20 @@ public class TransactionAdminService {
     public List<TransactionDTO> getAllTransactionsForGivenUserAndCategory(long userId, long categoryId, int pageNumber,
                                                                           Sort.Direction sortDirection, String sortBy) {
 
-        Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy, Transaction.class);
+        Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy);
 
         var foundTransactions = getTransactionsByAppuserIdAndCategoryId(userId, categoryId, page);
 
-        return foundTransactions.stream().map(transactionUtil::mapToTransactionDTO).toList();
+        return foundTransactions.stream().map(mapToTransactionDTO()).toList();
     }
 
-    private <T> Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy, Class<T> clazz) {
-        return customPageable.validateAndCreatePageable(pageNumber, sortDirection, sortBy, clazz);
+    @NotNull
+    private Function<Transaction, TransactionDTO> mapToTransactionDTO() {
+        return transactionUtil::mapToTransactionDTO;
+    }
+
+    private Pageable validateAndCreatePageable(int pageNumber, Sort.Direction sortDirection, String sortBy) {
+        return customPageable.validateAndCreatePageable(pageNumber, sortDirection, sortBy, Transaction.class);
     }
 
 
@@ -70,11 +77,11 @@ public class TransactionAdminService {
 
     public List<TransactionDTO> getAllTransactionsForGivenUser(long userId, int pageNumber,
                                                                Sort.Direction sortDirection, String sortBy) {
-        Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy, Transaction.class);
+        Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy);
 
         var foundTransactions = getTransactionsByAppuserId(userId, page);
 
-        return foundTransactions.stream().map(transactionUtil::mapToTransactionDTO).toList();
+        return foundTransactions.stream().map(mapToTransactionDTO()).toList();
     }
 
     private List<Transaction> getTransactionsByAppuserId(long userId, Pageable page) {
@@ -168,7 +175,7 @@ public class TransactionAdminService {
 
     void deleteTransactionWithCategory(Transaction transaction) {
         transactionRepository.delete(transaction);
-        categoryService.checkAndDeleteCategoryIfNotRelated(transaction.getCategory().getId()); // N + 1
+        categoryService.checkAndDeleteCategoryIfNotRelated(transaction.getCategory().getId());
     }
 
     Transaction getTransactionByIdAndByAppuserId(long transactionId, long loggedInUserId) {

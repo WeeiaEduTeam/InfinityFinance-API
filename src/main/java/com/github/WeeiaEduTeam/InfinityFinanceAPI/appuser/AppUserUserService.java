@@ -21,6 +21,10 @@ public class AppUserUserService {
 
         var user = getUserById(loggedInUserId);
 
+        return mapToAppUserDTO(user);
+    }
+
+    private AppUserDTO mapToAppUserDTO(AppUser user) {
         return appUserUtil.mapToAppUserDTO(user);
     }
 
@@ -51,7 +55,7 @@ public class AppUserUserService {
 
         overwrittenUser = saveUser(overwrittenUser);
 
-        return mapAppUserToAppUserDTO(overwrittenUser);
+        return mapToAppUserDTO(overwrittenUser);
     }
 
     private AppUser overwriteAppUserCredentials(AppUser foundUser, AppUserCredentialsDTO appUserCredentialsDTO) {
@@ -67,7 +71,7 @@ public class AppUserUserService {
 
         overwrittenUser = saveUser(overwrittenUser);
 
-        return mapAppUserToAppUserDTO(overwrittenUser);
+        return mapToAppUserDTO(overwrittenUser);
     }
 
     public AppUser overwriteAppUserDetails(AppUser foundUser, ReplaceAppUserByUserDTO replaceAppUserByUserDTO) {
@@ -78,7 +82,4 @@ public class AppUserUserService {
         return appUserAdminService.saveUser(user);
     }
 
-    private AppUserDTO mapAppUserToAppUserDTO(AppUser user) {
-        return appUserUtil.mapToAppUserDTO(user);
-    }
 }
