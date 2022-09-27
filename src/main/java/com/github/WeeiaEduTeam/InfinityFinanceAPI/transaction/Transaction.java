@@ -7,8 +7,11 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 
 @Entity
@@ -26,10 +29,13 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
+    @Min(4)
     private int value;
     private int quantity;
 
+    @NotEmpty
     private String title;
+    @NotNull
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)

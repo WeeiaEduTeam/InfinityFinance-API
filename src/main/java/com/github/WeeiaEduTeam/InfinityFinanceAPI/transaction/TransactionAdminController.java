@@ -6,8 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -28,7 +30,7 @@ class TransactionAdminController {
             @PathVariable long userId, @PathVariable long categoryId,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "ASC") Sort.Direction direction,
-            @RequestParam(defaultValue = "id") String by) {
+            @RequestParam(defaultValue = "id") String by){
 
         var transactions = transactionAdminService.getAllTransactionsForGivenUserAndCategory(
                 userId, categoryId, page, direction, by);
@@ -41,7 +43,7 @@ class TransactionAdminController {
             @PathVariable long userId,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "ASC") Sort.Direction direction,
-            @RequestParam(defaultValue = "id") String by) {
+            @RequestParam(defaultValue = "id") String by) throws Exception {
 
         var transactions = transactionAdminService.getAllTransactionsForGivenUser(userId, page, direction, by);
 
@@ -49,7 +51,7 @@ class TransactionAdminController {
     }
 
     @PostMapping("/admin/users/{userId:[0-9]+}/transactions")
-    ResponseEntity<TransactionDTO> createTransactionForGivenUser(@PathVariable long userId, @RequestBody CreateTransactionDTO createTransactionDTO) {
+    ResponseEntity<TransactionDTO> createTransactionForGivenUser(@PathVariable long userId, @RequestBody @Valid CreateTransactionDTO createTransactionDTO){
         var transaction = transactionAdminService.createTransactionForGivenUser(userId, createTransactionDTO);
 
         return ResponseEntity.created(URI.create("/users/" + userId + "/transactions")).body(transaction);

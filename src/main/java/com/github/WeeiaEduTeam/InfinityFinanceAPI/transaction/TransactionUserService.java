@@ -21,7 +21,9 @@ class TransactionUserService {
     public List<TransactionDTO> getAllTransactionsForLoggedUser(int pageNumber, Sort.Direction sortDirection, String sortBy) {
         long loggedInUserId = getLoggedUserId();
 
-        return transactionAdminService.getAllTransactionsForGivenUser(loggedInUserId, pageNumber, sortDirection, sortBy);
+        return null;
+
+        //return transactionAdminService.getAllTransactionsForGivenUser(loggedInUserId, pageNumber, sortDirection, sortBy);
     }
 
     public List<TransactionDTO> getAllTransactionsForLoggedUserAndGivenCategory(long categoryId, int pageNumber, Sort.Direction sortDirection, String sortBy) {
@@ -40,7 +42,7 @@ class TransactionUserService {
     public TransactionDTO createTransactionForLoggedUser(CreateTransactionDTO createTransactionDTO) {
         long loggedInUserId = getLoggedUserId();
 
-        return transactionAdminService.createTransactionForGivenUser(loggedInUserId, createTransactionDTO);
+        return null;//return transactionAdminService.createTransactionForGivenUser(loggedInUserId, createTransactionDTO);
     }
 
     public TransactionDTO replaceTransactionForLoggedUser(Long transactionId, CreateTransactionDTO createTransactionDTO) {

@@ -13,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.annotation.PostConstruct;
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.function.Function;
 
@@ -76,7 +78,8 @@ public class TransactionAdminService {
     }
 
     public List<TransactionDTO> getAllTransactionsForGivenUser(long userId, int pageNumber,
-                                                               Sort.Direction sortDirection, String sortBy) {
+                                                               Sort.Direction sortDirection, String sortBy) throws Exception {
+
         Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy);
 
         var foundTransactions = getTransactionsByAppuserId(userId, page);
