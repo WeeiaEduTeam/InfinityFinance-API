@@ -28,8 +28,6 @@ public class Transaction {
 
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
-
-    @Min(4)
     private int value;
     private int quantity;
 

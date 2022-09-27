@@ -1,50 +1,48 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.exception;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice(basePackages = "com.github.WeeiaEduTeam.InfinityFinanceAPI")
 public class ExceptionAdvice {
 
-    /*@ExceptionHandler({MethodArgumentNotValidException.class})
-    public Result<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    public ResponseEntity<Result<Map<String, String>>> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
 
-        BindingResult bindingResult = ex.getBindingResult();
+        Map<String, String> errors = new HashMap<>();
 
-        StringBuilder sb = new StringBuilder("valid err:");
+        exception.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
 
-        for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            sb.append(fieldError.getField()).append("：").append(fieldError.getDefaultMessage()).append(", ");
-        }
 
-        String msg = sb.toString();
-
-        if (StringUtils.hasText(msg)) {
-            return Result.failed(-11, msg);
-        }
-
-        return Result.failed(-12, "MethodArgumentNotValid");
+        return Result.failedValidation(errors);
     }
 
+
     @ExceptionHandler({ConstraintViolationException.class})
-    public Result<?> handleConstraintViolationException(ConstraintViolationException ex) {
+    public ResponseEntity<Result<String>> handleConstraintViolationException(ConstraintViolationException ex) {
 
         if (StringUtils.hasText(ex.getMessage())) {
-            return Result.failed(-13, ex.getMessage());
+            Result.failedValidation("errors");
         }
 
-        return Result.failed(-14, "ConstraintViolation");
+        return Result.failedValidation("errors");
     }
 
     @ExceptionHandler({Exception.class})
-    public Result<?> handle(Exception ex) {
-        return Result.failed(-9, ex.getMessage());
-    }*/
+    public ResponseEntity<Result<String>> handle(Exception ex) {
+        return Result.failedValidation("errors");
+    }
 
 }

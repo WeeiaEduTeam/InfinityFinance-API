@@ -120,7 +120,7 @@ class TransactionAdminServiceTest extends TransactionTestHelper{
         //given
         given(transactionUtil.overwriteTransactionByCreateTransactionDTO(any(Transaction.class), any(CreateTransactionDTO.class))).willReturn(transactionTest);
         given(transactionUtil.mapToTransactionDTO(any(Transaction.class))).willReturn(transactionDTOTest);
-        given(transactionRepository.findByIdAndAppuserId(1L, 1L)).willReturn(transactionTest);
+        given(transactionRepository.findByIdAndAppuserId(anyLong(), anyLong())).willReturn(transactionTest);
 
         //when
         var savedTransaction = transactionAdminService.replaceTransaction(transactionTest.getAppuser().getId(), transactionTest.getId(), createTransactionDTOTest);

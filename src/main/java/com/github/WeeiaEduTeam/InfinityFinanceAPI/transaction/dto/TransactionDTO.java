@@ -6,6 +6,7 @@ import lombok.experimental.FieldNameConstants;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
@@ -18,13 +19,19 @@ public class TransactionDTO {
 
     private TransactionType transactionType;
 
-    @Min(value = 1, message = "Movies are mainly more than a minute")
-    @Max(value = 300, message = "Movies are less than 5 hours")
-    private int value;
     private int quantity;
 
-    private String title;
+    @Min(value = 1, message = "Value has to be higher or equal to 1")
+    private int value;
+
     private String description;
+
+    @NotBlank(message = "Title can not be blank")
+    private String title;
+    
+    @NotBlank(message = "Title can not be blank")
     private String categoryName;
+
+    @NotBlank(message = "Title can not be blank")
     private String username;
 }

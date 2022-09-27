@@ -78,7 +78,7 @@ public class TransactionAdminService {
     }
 
     public List<TransactionDTO> getAllTransactionsForGivenUser(long userId, int pageNumber,
-                                                               Sort.Direction sortDirection, String sortBy) throws Exception {
+                                                               Sort.Direction sortDirection, String sortBy) {
 
         Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy);
 
@@ -92,7 +92,6 @@ public class TransactionAdminService {
     }
 
     public TransactionDTO createTransactionForGivenUser(long userId, CreateTransactionDTO createTransactionDTO) {
-        validateArgumentsArePositive(createTransactionDTO.getQuantity(), createTransactionDTO.getValue());
 
         var transaction = createTransactionFromCreateTransactionDTOAndUserId(createTransactionDTO, userId);
 
@@ -137,7 +136,6 @@ public class TransactionAdminService {
     }
 
     public TransactionDTO replaceTransaction(Long userId, Long transactionId, CreateTransactionDTO createTransactionDTO) {
-        validateArgumentsArePositive(createTransactionDTO.getQuantity(), createTransactionDTO.getValue());
 
         var foundTransaction = getTransactionByIdAndByAppuserId(transactionId, userId);
 
@@ -160,10 +158,6 @@ public class TransactionAdminService {
     private TransactionDTO mapTransactionToTransactionDTO(Transaction transaction) {
 
         return transactionUtil.mapToTransactionDTO(transaction);
-    }
-
-    private void validateArgumentsArePositive(int... values) {
-        transactionUtil.validateArgumentsArePositive(values);
     }
 
     private Transaction getTransactionById(long transactionId) {

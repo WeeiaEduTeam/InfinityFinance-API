@@ -31,16 +31,4 @@ class TransactionUtil {
 
        return main;
     }
-
-
-    public void validateArgumentsArePositive(int... values) {
-        for(int i : values) {
-            if(!isPositive(i))
-                throw new IllegalArgumentException(String.format("Provided value %d is not positive!", i));
-        }
-    }
-
-    private boolean isPositive(long number) {
-        return number > 0 ? Boolean.TRUE : Boolean.FALSE;
-    }
 }

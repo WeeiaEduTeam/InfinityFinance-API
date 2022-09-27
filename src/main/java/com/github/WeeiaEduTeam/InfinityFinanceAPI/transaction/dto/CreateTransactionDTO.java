@@ -15,18 +15,16 @@ public class CreateTransactionDTO {
 
     private TransactionType transactionType;
 
-    @Min(45)
-    private int value;
-    @Min(value = 1, message = "Movies are mainly more than a minute")
-    @Max(value = 300, message = "Movies are less than 5 hours")
     private int quantity;
 
-    @NotEmpty
-    @Email
+    @Min(value = 1, message = "Value has to be higher or equal to 1")
+    private int value;
+
+    private String description;
+
+    @NotBlank(message = "Title can not be blank")
     private String title;
 
-    @Pattern(regexp = "^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$")
-    private String description;
-    @Email
+    @NotBlank(message = "Title can not be blank")
     private String categoryName;
 }
