@@ -10,7 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 @Slf4j
 @RestControllerAdvice(basePackages = "com.github.WeeiaEduTeam.InfinityFinanceAPI")
-public class ResponseAdvice implements ResponseBodyAdvice<Object> {
+class ResponseAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(@NotNull MethodParameter returnType, @NotNull Class<? extends HttpMessageConverter<?>> converterType) {

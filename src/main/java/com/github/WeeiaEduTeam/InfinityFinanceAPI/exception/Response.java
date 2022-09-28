@@ -2,10 +2,13 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.exception;
 
 import org.springframework.http.HttpStatus;
 
-public enum Response {
+enum Response {
+    UNSUPPORTED_OPERATION(-1, "Status code is unsupported"),
     SUCCESS(HttpStatus.OK, "OK"),
     VALIDATE_FAILED(HttpStatus.BAD_REQUEST, "Validation failed"),
-    UNSUPPORTED_OPERATION(-1, "Status code is unsupported")
+
+    CONSTRAINT_VIOLATION(HttpStatus.CONFLICT, "The request could not be completed due to a conflict with the current state of the resource"),
+
     ;
 
     private final Integer code;
