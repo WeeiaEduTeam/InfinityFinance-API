@@ -1,12 +1,12 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.exception.ResourceNotFoundException;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -43,7 +43,7 @@ class TransactionAdminController {
             @PathVariable long userId,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "ASC") Sort.Direction direction,
-            @RequestParam(defaultValue = "id") String by) throws Exception {
+            @RequestParam(defaultValue = "id") String by) {
 
         var transactions = transactionAdminService.getAllTransactionsForGivenUser(userId, page, direction, by);
 

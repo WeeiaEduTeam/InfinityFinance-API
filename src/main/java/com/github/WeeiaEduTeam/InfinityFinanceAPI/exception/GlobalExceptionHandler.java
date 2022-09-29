@@ -35,19 +35,31 @@ class GlobalExceptionHandler {
 
 
     @ExceptionHandler({ConstraintViolationException.class})
-    public ResponseEntity<Result<Map<String, String>>> handleConstraintViolationException(ConstraintViolationException ex) {
+    public ResponseEntity<Result<Map<String, String>>> handleConstraintViolationException(ConstraintViolationException exception) {
 
         Map<String, String> errors = new HashMap<>();
-        errors.put("repository", ex.getMessage());
+        errors.put("repository", exception.getMessage());
 
         log.error("Constraint violation: {}", errors);
 
         return Result.constraintViolation(errors);
     }
 
+    @ExceptionHandler({ResourceNotFoundException.class})
+    public @NotNull ResponseEntity<Result<Object>> handleUnknownResourceError(RuntimeException exception) {
+
+        log.error(exception.getMessage());
+
+        return Result.resourceNotFound();
+    }
+
     @ExceptionHandler({Exception.class})
-    public @NotNull ResponseEntity<Result<String>> handleUnknownError(Exception exception) {
-        return Result.unknownError(exception.getMessage());
+    public @NotNull ResponseEntity<Result<Object>> handleUnknownError(Exception exception) {
+
+        log.error(exception.getMessage());
+        exception.printStackTrace();
+
+        return Result.unknownError();
     }
 
 }

@@ -4,6 +4,7 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserAdminService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.Category;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.CategoryService;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.exception.ResourceNotFoundException;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.CustomPageable;
@@ -13,10 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.annotation.PostConstruct;
-import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.function.Function;
 
@@ -139,8 +138,7 @@ public class TransactionAdminService {
 
         var foundTransaction = getTransactionByIdAndByAppuserId(transactionId, userId);
 
-        if(foundTransaction == null)
-            throw new RuntimeException("Transaction not found or is transaction id is not related with user id");
+        checkIfTransactionDoesNotExist(foundTransaction); // move to upper function
 
         var overwrittenTransaction = transactionUtil.overwriteTransactionByCreateTransactionDTO(foundTransaction, createTransactionDTO);
 
@@ -149,6 +147,11 @@ public class TransactionAdminService {
         saveTransaction(overwrittenTransaction);
 
         return mapTransactionToTransactionDTO(overwrittenTransaction);
+    }
+
+    private void checkIfTransactionDoesNotExist(Transaction foundTransaction) {
+        if(foundTransaction == null)
+            throw ResourceNotFoundException.createWith("Transaction not found or transaction id is not related with user id");
     }
 
     private void saveTransaction(Transaction transaction) {
@@ -160,8 +163,8 @@ public class TransactionAdminService {
         return transactionUtil.mapToTransactionDTO(transaction);
     }
 
-    private Transaction getTransactionById(long transactionId) {
-        return transactionRepository.findById(transactionId).orElseThrow(() -> new RuntimeException("Transaction not found in the database"));
+    private Transaction getTransactionById(long transactionId)  {
+        return transactionRepository.findById(transactionId).orElseThrow(); //todo
     }
 
     public void deleteOneTransaction(long transactionId) {

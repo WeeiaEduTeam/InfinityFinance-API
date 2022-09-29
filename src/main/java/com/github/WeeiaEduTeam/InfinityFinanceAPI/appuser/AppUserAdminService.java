@@ -2,6 +2,7 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.rolestrategy.AppUserRoleStrategyFacade;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.exception.ResourceNotFoundException;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.CustomPageable;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionAdminService;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +40,7 @@ public class AppUserAdminService implements UserDetailsService {
 
     public AppUser getUserById(long userId) {
 
-        return appUserRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found in the database"));
+        return appUserRepository.findById(userId).orElseThrow(() -> ResourceNotFoundException.createWith("Could not find any user with id " + userId));
     }
 
     public AppUser getUserByUserName(String username) {
@@ -58,7 +59,7 @@ public class AppUserAdminService implements UserDetailsService {
     public List<AppUserDTO> getAllUsers(Integer pageNumber, Sort.Direction sortDirection, String sortBy) {
         Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy);
 
-        var foundUsers = appUserRepository.findAll(page);
+        var foundUsers = appUserRepository.findAll(page); //todo
 
         return foundUsers.stream().map(mapToAppUserDTO()).toList();
     }

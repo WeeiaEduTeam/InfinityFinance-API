@@ -16,25 +16,37 @@ class Result<T> {
 
     public static <T> ResponseEntity<Result<T>> success(T data) {
         var cause = Response.SUCCESS;
-        var result = getResult(cause, data);
-        return getResultWithStatus(cause, result);
+        return getWrappedResultResponseEntity(data, cause);
     }
 
     public static <T> ResponseEntity<Result<T>> failedValidation(T data) {
         var cause = Response.VALIDATE_FAILED;
-        var result = getResult(cause, data);
-        return getResultWithStatus(cause, result);
+        return getWrappedResultResponseEntity(data, cause);
     }
 
     public static <T> ResponseEntity<Result<T>> constraintViolation(T data) {
         var cause = Response.CONSTRAINT_VIOLATION;
-        var result = getResult(cause, data);
+        return getWrappedResultResponseEntity(data, cause);
+    }
+
+    public static @NotNull ResponseEntity<Result<Object>> unknownError() {
+        var cause = Response.UNSUPPORTED_OPERATION;
+        return getWrappedResultResponseEntity(cause);
+    }
+
+    public static @NotNull ResponseEntity<Result<Object>> resourceNotFound() { // dac nulla np
+        var cause = Response.NOT_FOUND;
+        return getWrappedResultResponseEntity(cause);
+    }
+
+    private static @NotNull <T> ResponseEntity<Result<Object>> getWrappedResultResponseEntity(Response cause) {
+        var result = getResult(cause, null);
         return getResultWithStatus(cause, result);
     }
 
-    public static @NotNull ResponseEntity<Result<String>> unknownError(String error) {
-        var cause = Response.UNSUPPORTED_OPERATION;
-        var result = getResult(cause, error);
+    @NotNull
+    private static <T> ResponseEntity<Result<T>> getWrappedResultResponseEntity(T data, Response cause) {
+        var result = getResult(cause, data);
         return getResultWithStatus(cause, result);
     }
 
