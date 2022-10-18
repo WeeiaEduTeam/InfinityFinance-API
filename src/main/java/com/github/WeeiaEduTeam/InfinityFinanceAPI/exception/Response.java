@@ -9,7 +9,7 @@ enum Response {
 
     CONSTRAINT_VIOLATION(HttpStatus.CONFLICT, "The request could not be completed due to a conflict with the current state of the resource"),
     NOT_FOUND(HttpStatus.NOT_FOUND, "Resource not found"),
-
+    FORBIDDEN(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase()),
     ;
 
     private final Integer code;

@@ -2,7 +2,10 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,12 +48,20 @@ class GlobalExceptionHandler {
         return Result.constraintViolation(errors);
     }
 
-    @ExceptionHandler({ResourceNotFoundException.class})
+    @ExceptionHandler({ResourceNotFoundException.class, InvalidDataAccessApiUsageException.class})
     public @NotNull ResponseEntity<Result<Object>> handleUnknownResourceError(RuntimeException exception) {
 
         log.error(exception.getMessage());
 
         return Result.resourceNotFound();
+    }
+
+    @ExceptionHandler({UsernameNotFoundException.class})
+    public @NotNull ResponseEntity<Result<Object>> handleForbiddenError(RuntimeException exception) {
+
+        log.error(exception.getMessage());
+
+        return Result.forbidden();
     }
 
     @ExceptionHandler({Exception.class})
