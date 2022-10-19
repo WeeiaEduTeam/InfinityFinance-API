@@ -138,8 +138,6 @@ public class TransactionAdminService {
 
         var foundTransaction = getTransactionByIdAndByAppuserId(transactionId, userId);
 
-        checkIfTransactionDoesNotExist(foundTransaction); // move to upper function
-
         var overwrittenTransaction = transactionUtil.overwriteTransactionByCreateTransactionDTO(foundTransaction, createTransactionDTO);
 
         ifCategoryDoesNotExistsCreate(overwrittenTransaction, createTransactionDTO.getCategoryName());
@@ -164,7 +162,8 @@ public class TransactionAdminService {
     }
 
     private Transaction getTransactionById(long transactionId)  {
-        return transactionRepository.findById(transactionId).orElseThrow(); //todo
+        return transactionRepository.findById(transactionId)
+                .orElseThrow(() -> ResourceNotFoundException.createWith("Could not find any user with id " + transactionId));
     }
 
     public void deleteOneTransaction(long transactionId) {
@@ -179,7 +178,11 @@ public class TransactionAdminService {
     }
 
     Transaction getTransactionByIdAndByAppuserId(long transactionId, long loggedInUserId) {
-        return transactionRepository.findByIdAndAppuserId(transactionId, loggedInUserId);
+        var transaction = transactionRepository.findByIdAndAppuserId(transactionId, loggedInUserId);
+
+        checkIfTransactionDoesNotExist(transaction);
+
+        return transaction;
     }
 
     public void deleteTransactionsRelatedWithUser(long userId) {

@@ -10,5 +10,4 @@ import lombok.Getter;
 public class AppUserCredentialsDTO {
     private String username;
     private String password;
-
 }

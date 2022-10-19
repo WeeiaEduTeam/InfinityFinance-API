@@ -8,6 +8,7 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionAdminSe
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -59,9 +60,13 @@ public class AppUserAdminService implements UserDetailsService {
     public List<AppUserDTO> getAllUsers(Integer pageNumber, Sort.Direction sortDirection, String sortBy) {
         Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy);
 
-        var foundUsers = appUserRepository.findAll(page); //todo
+        var foundUsers = getUsers(page);
 
         return foundUsers.stream().map(mapToAppUserDTO()).toList();
+    }
+
+    private @NotNull Page<AppUser> getUsers(Pageable page) {
+        return appUserRepository.findAll(page);
     }
 
     @NotNull
