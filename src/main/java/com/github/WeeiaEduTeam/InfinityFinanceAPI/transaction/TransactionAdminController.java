@@ -20,11 +20,6 @@ class TransactionAdminController {
 
     private final TransactionAdminService transactionAdminService;
 
-    /*
-        TODO: pageable
-        req param income, outcome
-        req param category name instead of id?
-     */
     @GetMapping("/admin/users/{userId:[0-9]+}/transactions/category/{categoryId:[0-9]+}")
     public ResponseEntity<List<TransactionDTO>> getAllTransactionsForGivenUserAndCategory(
             @PathVariable long userId, @PathVariable long categoryId,

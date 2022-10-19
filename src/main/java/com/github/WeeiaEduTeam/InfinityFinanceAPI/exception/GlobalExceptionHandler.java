@@ -2,6 +2,7 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
@@ -37,7 +38,7 @@ class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler({ConstraintViolationException.class})
+    @ExceptionHandler({ConstraintViolationException.class, DataIntegrityViolationException.class})
     public ResponseEntity<Result<Map<String, String>>> handleConstraintViolationException(ConstraintViolationException exception) {
 
         Map<String, String> errors = new HashMap<>();

@@ -24,6 +24,8 @@ class TransactionUtil {
     public Transaction overwriteTransactionByCreateTransactionDTO(Transaction main, CreateTransactionDTO toConvert) {
        var convertedTransaction = mapToTransaction(toConvert);
 
+       main.setDescription(convertedTransaction.getDescription());
+       main.setTitle(convertedTransaction.getTitle());
        main.setTransactionType(convertedTransaction.getTransactionType());
        main.setCategory(convertedTransaction.getCategory());
        main.setValue(convertedTransaction.getValue());
