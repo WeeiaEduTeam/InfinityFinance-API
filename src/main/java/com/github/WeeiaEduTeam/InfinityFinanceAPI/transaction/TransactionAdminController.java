@@ -1,6 +1,5 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.exception.ResourceNotFoundException;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
@@ -63,8 +62,8 @@ class TransactionAdminController {
     }
 
     @DeleteMapping("/admin/users/transactions/{transactionId:[0-9]+}")
-    ResponseEntity<Void> deleteSingleTransaction(@PathVariable long transactionId) {
-        transactionAdminService.deleteOneTransaction(transactionId);
+    ResponseEntity<Void> deleteTransaction(@PathVariable long transactionId) {
+        transactionAdminService.deleteTransaction(transactionId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

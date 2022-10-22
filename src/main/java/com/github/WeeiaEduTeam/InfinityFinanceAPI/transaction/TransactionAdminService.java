@@ -166,7 +166,7 @@ public class TransactionAdminService {
                 .orElseThrow(() -> ResourceNotFoundException.createWith("Could not find any user with id " + transactionId));
     }
 
-    public void deleteOneTransaction(long transactionId) {
+    public void deleteTransaction(long transactionId) {
         var foundTransaction = getTransactionById(transactionId);
 
         deleteTransactionWithCategory(foundTransaction);

@@ -1,19 +1,13 @@
 package com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction;
 
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserAdminService;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.Category;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.CategoryService;
-import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.Role;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.CustomPageable;
-import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.A;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 
@@ -23,9 +17,6 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.*;
 
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -67,7 +58,7 @@ class TransactionAdminServiceTest extends TransactionTestHelper{
         given(transactionRepository.findById(anyLong())).willReturn(Optional.ofNullable(transactionTest));
 
         // when
-        transactionAdminService.deleteOneTransaction(transactionTest.getId());
+        transactionAdminService.deleteTransaction(transactionTest.getId());
 
         // then
         verify(transactionRepository).delete(transactionTest);
