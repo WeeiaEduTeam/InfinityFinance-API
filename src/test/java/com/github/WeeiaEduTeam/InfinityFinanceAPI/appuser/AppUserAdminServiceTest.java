@@ -2,6 +2,7 @@ package com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser;
 
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.dto.*;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.rolestrategy.AppUserRoleStrategyFacade;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.exception.ResourceNotFoundException;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.role.RoleService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.CustomPageable;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.TransactionAdminService;
@@ -174,8 +175,8 @@ class AppUserAdminServiceTest extends AppUserTestHelper {
 
         // when
         assertThatThrownBy(() -> appUserAdminService.getUserById(TEST_ID))
-                .isInstanceOf(UsernameNotFoundException.class)
-                .hasMessage("User not found in the database");
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Could not find any user with id " + TEST_ID);
 
     }
 

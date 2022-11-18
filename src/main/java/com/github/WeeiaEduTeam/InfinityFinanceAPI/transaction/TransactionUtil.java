@@ -24,23 +24,13 @@ class TransactionUtil {
     public Transaction overwriteTransactionByCreateTransactionDTO(Transaction main, CreateTransactionDTO toConvert) {
        var convertedTransaction = mapToTransaction(toConvert);
 
+       main.setDescription(convertedTransaction.getDescription());
+       main.setTitle(convertedTransaction.getTitle());
        main.setTransactionType(convertedTransaction.getTransactionType());
        main.setCategory(convertedTransaction.getCategory());
        main.setValue(convertedTransaction.getValue());
        main.setQuantity(convertedTransaction.getQuantity());
 
        return main;
-    }
-
-
-    public void validateArgumentsArePositive(int... values) {
-        for(int i : values) {
-            if(!isPositive(i))
-                throw new IllegalArgumentException(String.format("Provided value %d is not positive!", i));
-        }
-    }
-
-    private boolean isPositive(long number) {
-        return number > 0 ? Boolean.TRUE : Boolean.FALSE;
     }
 }

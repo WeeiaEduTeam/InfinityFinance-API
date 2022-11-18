@@ -80,6 +80,7 @@ class TransactionTestHelper extends TransactionNameHolder{
         transactionNullCategoryAndUserTest = Transaction.builder()
                 .appuser(null)
                 .category(null)
+                .description(TEST_DESCRIPTION)
                 .build();
     }
 }

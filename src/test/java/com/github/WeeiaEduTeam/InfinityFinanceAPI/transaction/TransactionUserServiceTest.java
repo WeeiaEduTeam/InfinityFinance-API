@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Sort;
 
+import javax.swing.border.TitledBorder;
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,7 +33,7 @@ import static org.mockito.Mockito.verify;
 @Slf4j
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class TransactionUserServiceTest {
+class TransactionUserServiceTest extends TransactionTestHelper {
 
     @InjectMocks
     private TransactionUserService transactionUserService;
@@ -49,89 +50,23 @@ class TransactionUserServiceTest {
     @Mock
     private CategoryService categoryService;
 
-    Transaction transactionTest;
-    TransactionDTO transactionDTOTest;
-    AppUser appUserTest;
-    Role roleTest;
-    Category categoryTest;
-    CreateTransactionDTO createTransactionDTOTest;
-    Transaction transactionNullCategoryAndUserTest;
-
-    @BeforeEach
-    void init() {
-        roleTest = Role.builder()
-                .id(1L)
-                .name("TEST_ROLE")
-                .build();
-
-        appUserTest = AppUser.builder()
-                .id(1L)
-                .email("testemail@wp.pl")
-                .firstName("John")
-                .secondName("Smith")
-                .username("smith123")
-                .password("123")
-                .roles(Collections.singletonList(roleTest))
-                .build();
-
-        categoryTest = Category.builder()
-                .id(1L)
-                .name("name")
-                .build();
-
-        transactionTest = Transaction.builder()
-                .id(1L)
-                .transactionType(TransactionType.INCOME)
-                .title("title")
-                .description("desc")
-                .category(categoryTest)
-                .appuser(appUserTest)
-                .value(600)
-                .quantity(2)
-                .build();
-
-        transactionDTOTest = TransactionDTO.builder()
-                .id(1L)
-                .transactionType(TransactionType.INCOME)
-                .title("title")
-                .description("desc")
-                .username("name")
-                .value(600)
-                .quantity(2)
-                .categoryName("name")
-                .build();
-
-        createTransactionDTOTest = CreateTransactionDTO.builder()
-                .transactionType(transactionTest.getTransactionType())
-                .title(transactionTest.getTitle())
-                .description(transactionTest.getDescription())
-                .value(transactionTest.getValue())
-                .quantity(transactionTest.getQuantity())
-                .categoryName(transactionTest.getCategory().getName())
-                .build();
-
-        transactionNullCategoryAndUserTest = Transaction.builder()
-                .appuser(null)
-                .category(null)
-                .build();
-    }
-
     @Test
     @DisplayName("Should get all transactions for current logged user.")
     void shouldGetAllTransactionsForLoggedUser() {
         //given
         given(appUserAdminService.getLoggedInUserId()).willReturn(1L);
-        given(transactionAdminService.getAllTransactionsForGivenUser(anyLong(),anyInt(), any(Sort.Direction.class), anyString())).willReturn(Collections.singletonList(transactionDTOTest));
+        given(transactionAdminService.getAllTransactionsForGivenUser(anyLong(), anyInt(), any(Sort.Direction.class), anyString())).willReturn(Collections.singletonList(transactionDTOTest));
+
         //when
         var transactions = transactionUserService.getAllTransactionsForLoggedUser(1, Sort.Direction.valueOf("ASC"), "id");
 
         //then
         var firstTransaction = transactions.get(0);
         assertThat(firstTransaction, instanceOf(TransactionDTO.class));
-        assertThat(firstTransaction, hasProperty("transactionType", equalTo(TransactionType.INCOME)));
-        assertThat(firstTransaction, hasProperty("value", equalTo(600)));
-        assertThat(firstTransaction, hasProperty("quantity", equalTo(2)));
-        assertThat(firstTransaction, hasProperty("categoryName", equalTo("name")));
+        assertThat(firstTransaction, hasProperty("transactionType", equalTo(TEST_TRANSACTION_TYPE)));
+        assertThat(firstTransaction, hasProperty("value", equalTo(TEST_VALUE)));
+        assertThat(firstTransaction, hasProperty("quantity", equalTo(TEST_QUANTITY)));
+        assertThat(firstTransaction, hasProperty("categoryName", equalTo(TEST_CATEGORY_NAME)));
     }
 
     @Test
@@ -146,10 +81,10 @@ class TransactionUserServiceTest {
         //then
         var firstTransaction = transactions.get(0);
         assertThat(firstTransaction, instanceOf(TransactionDTO.class));
-        assertThat(firstTransaction, hasProperty("transactionType", equalTo(TransactionType.INCOME)));
-        assertThat(firstTransaction, hasProperty("value", equalTo(600)));
-        assertThat(firstTransaction, hasProperty("quantity", equalTo(2)));
-        assertThat(firstTransaction, hasProperty("categoryName", equalTo("name")));
+        assertThat(firstTransaction, hasProperty("transactionType", equalTo(TEST_TRANSACTION_TYPE)));
+        assertThat(firstTransaction, hasProperty("value", equalTo(TEST_VALUE)));
+        assertThat(firstTransaction, hasProperty("quantity", equalTo(TEST_QUANTITY)));
+        assertThat(firstTransaction, hasProperty("categoryName", equalTo(TEST_CATEGORY_NAME)));
     }
 
     @Test
@@ -170,7 +105,7 @@ class TransactionUserServiceTest {
     @DisplayName("Should create transaction for logged user with known category.")
     void shouldCreateTransactionForLoggedUserWithKnownCategory() {
         //given
-        given(appUserAdminService.getLoggedInUserId()).willReturn(1L);
+        given(appUserAdminService.getLoggedInUserId()).willReturn(TEST_ID);
         given(transactionAdminService.createTransactionForGivenUser(anyLong(), any(CreateTransactionDTO.class))).willReturn(transactionDTOTest);
 
         //when
@@ -178,10 +113,10 @@ class TransactionUserServiceTest {
 
         //then
         assertThat(savedTransaction, instanceOf(TransactionDTO.class));
-        assertThat(savedTransaction, hasProperty("transactionType", equalTo(TransactionType.INCOME)));
-        assertThat(savedTransaction, hasProperty("value", equalTo(600)));
-        assertThat(savedTransaction, hasProperty("quantity", equalTo(2)));
-        assertThat(savedTransaction, hasProperty("categoryName", equalTo("name")));
+        assertThat(savedTransaction, hasProperty("transactionType", equalTo(TEST_TRANSACTION_TYPE)));
+        assertThat(savedTransaction, hasProperty("value", equalTo(TEST_VALUE)));
+        assertThat(savedTransaction, hasProperty("quantity", equalTo(TEST_QUANTITY)));
+        assertThat(savedTransaction, hasProperty("categoryName", equalTo(TEST_CATEGORY_NAME)));
     }
 
     @Test
@@ -196,11 +131,10 @@ class TransactionUserServiceTest {
 
         //then
         assertThat(savedTransaction, instanceOf(TransactionDTO.class));
-        assertThat(savedTransaction, hasProperty("transactionType", equalTo(TransactionType.INCOME)));
-        assertThat(savedTransaction, hasProperty("value", equalTo(600)));
-        assertThat(savedTransaction, hasProperty("quantity", equalTo(2)));
-        assertThat(savedTransaction, hasProperty("description", equalTo("desc")));
-        assertThat(savedTransaction, hasProperty("title", equalTo("title")));
-        assertThat(savedTransaction, hasProperty("categoryName", equalTo("name")));
+        assertThat(savedTransaction, hasProperty("transactionType", equalTo(TEST_TRANSACTION_TYPE)));
+        assertThat(savedTransaction, hasProperty("value", equalTo(TEST_VALUE)));
+        assertThat(savedTransaction, hasProperty("quantity", equalTo(TEST_QUANTITY)));
+        assertThat(savedTransaction, hasProperty("categoryName", equalTo(TEST_CATEGORY_NAME)));
+        assertThat(savedTransaction, hasProperty("title", equalTo(TEST_TITLE)));
     }
 }

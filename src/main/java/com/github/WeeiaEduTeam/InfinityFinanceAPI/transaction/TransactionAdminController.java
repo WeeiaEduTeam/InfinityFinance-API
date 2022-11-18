@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -18,17 +19,12 @@ class TransactionAdminController {
 
     private final TransactionAdminService transactionAdminService;
 
-    /*
-        TODO: pageable
-        req param income, outcome
-        req param category name instead of id?
-     */
     @GetMapping("/admin/users/{userId:[0-9]+}/transactions/category/{categoryId:[0-9]+}")
     public ResponseEntity<List<TransactionDTO>> getAllTransactionsForGivenUserAndCategory(
             @PathVariable long userId, @PathVariable long categoryId,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "ASC") Sort.Direction direction,
-            @RequestParam(defaultValue = "id") String by) {
+            @RequestParam(defaultValue = "id") String by){
 
         var transactions = transactionAdminService.getAllTransactionsForGivenUserAndCategory(
                 userId, categoryId, page, direction, by);
@@ -49,7 +45,7 @@ class TransactionAdminController {
     }
 
     @PostMapping("/admin/users/{userId:[0-9]+}/transactions")
-    ResponseEntity<TransactionDTO> createTransactionForGivenUser(@PathVariable long userId, @RequestBody CreateTransactionDTO createTransactionDTO) {
+    ResponseEntity<TransactionDTO> createTransactionForGivenUser(@PathVariable long userId, @RequestBody @Valid CreateTransactionDTO createTransactionDTO){
         var transaction = transactionAdminService.createTransactionForGivenUser(userId, createTransactionDTO);
 
         return ResponseEntity.created(URI.create("/users/" + userId + "/transactions")).body(transaction);
@@ -66,8 +62,8 @@ class TransactionAdminController {
     }
 
     @DeleteMapping("/admin/users/transactions/{transactionId:[0-9]+}")
-    ResponseEntity<Void> deleteSingleTransaction(@PathVariable long transactionId) {
-        transactionAdminService.deleteOneTransaction(transactionId);
+    ResponseEntity<Void> deleteTransaction(@PathVariable long transactionId) {
+        transactionAdminService.deleteTransaction(transactionId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

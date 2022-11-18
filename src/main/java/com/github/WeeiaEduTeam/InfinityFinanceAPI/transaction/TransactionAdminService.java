@@ -4,6 +4,7 @@ import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUser;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.appuser.AppUserAdminService;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.Category;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.category.CategoryService;
+import com.github.WeeiaEduTeam.InfinityFinanceAPI.exception.ResourceNotFoundException;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.CreateTransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.transaction.dto.TransactionDTO;
 import com.github.WeeiaEduTeam.InfinityFinanceAPI.util.CustomPageable;
@@ -77,6 +78,7 @@ public class TransactionAdminService {
 
     public List<TransactionDTO> getAllTransactionsForGivenUser(long userId, int pageNumber,
                                                                Sort.Direction sortDirection, String sortBy) {
+
         Pageable page = validateAndCreatePageable(pageNumber, sortDirection, sortBy);
 
         var foundTransactions = getTransactionsByAppuserId(userId, page);
@@ -89,7 +91,6 @@ public class TransactionAdminService {
     }
 
     public TransactionDTO createTransactionForGivenUser(long userId, CreateTransactionDTO createTransactionDTO) {
-        validateArgumentsArePositive(createTransactionDTO.getQuantity(), createTransactionDTO.getValue());
 
         var transaction = createTransactionFromCreateTransactionDTOAndUserId(createTransactionDTO, userId);
 
@@ -134,12 +135,8 @@ public class TransactionAdminService {
     }
 
     public TransactionDTO replaceTransaction(Long userId, Long transactionId, CreateTransactionDTO createTransactionDTO) {
-        validateArgumentsArePositive(createTransactionDTO.getQuantity(), createTransactionDTO.getValue());
 
         var foundTransaction = getTransactionByIdAndByAppuserId(transactionId, userId);
-
-        if(foundTransaction == null)
-            throw new RuntimeException("Transaction not found or is transaction id is not related with user id");
 
         var overwrittenTransaction = transactionUtil.overwriteTransactionByCreateTransactionDTO(foundTransaction, createTransactionDTO);
 
@@ -148,6 +145,11 @@ public class TransactionAdminService {
         saveTransaction(overwrittenTransaction);
 
         return mapTransactionToTransactionDTO(overwrittenTransaction);
+    }
+
+    private void checkIfTransactionDoesNotExist(Transaction foundTransaction) {
+        if(foundTransaction == null)
+            throw ResourceNotFoundException.createWith("Transaction not found or transaction id is not related with user id");
     }
 
     private void saveTransaction(Transaction transaction) {
@@ -159,15 +161,12 @@ public class TransactionAdminService {
         return transactionUtil.mapToTransactionDTO(transaction);
     }
 
-    private void validateArgumentsArePositive(int... values) {
-        transactionUtil.validateArgumentsArePositive(values);
+    private Transaction getTransactionById(long transactionId)  {
+        return transactionRepository.findById(transactionId)
+                .orElseThrow(() -> ResourceNotFoundException.createWith("Could not find any user with id " + transactionId));
     }
 
-    private Transaction getTransactionById(long transactionId) {
-        return transactionRepository.findById(transactionId).orElseThrow(() -> new RuntimeException("Transaction not found in the database"));
-    }
-
-    public void deleteOneTransaction(long transactionId) {
+    public void deleteTransaction(long transactionId) {
         var foundTransaction = getTransactionById(transactionId);
 
         deleteTransactionWithCategory(foundTransaction);
@@ -179,7 +178,11 @@ public class TransactionAdminService {
     }
 
     Transaction getTransactionByIdAndByAppuserId(long transactionId, long loggedInUserId) {
-        return transactionRepository.findByIdAndAppuserId(transactionId, loggedInUserId);
+        var transaction = transactionRepository.findByIdAndAppuserId(transactionId, loggedInUserId);
+
+        checkIfTransactionDoesNotExist(transaction);
+
+        return transaction;
     }
 
     public void deleteTransactionsRelatedWithUser(long userId) {
